@@ -1,0 +1,548 @@
+@import "tailwindcss";
+
+html {
+  scroll-behavior: smooth;
+  /* The navbar is fixed, so an un-padded anchor jump drops the target
+     underneath it. Keeps #services / #work / #contact landing in view. */
+  scroll-padding-top: 6.5rem;
+}
+
+/* Smooth scrolling is a comfort, not a requirement — never override an
+   explicit OS-level preference for reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* ── Lenis (components/SmoothScroll.tsx) ────────────────────────────────────
+   The `.lenis` class is added to <html> only while the smooth-scroll instance
+   is alive, so all of this is inert when it isn't — including for anyone with
+   reduced motion, where the instance is never created.
+
+   Written out here rather than importing `lenis/dist/lenis.css`, because that
+   stylesheet also ships `.lenis.lenis-smooth iframe { pointer-events: none }`.
+   Three sections of this site are live iframe demos of client sites; that one
+   rule would make every one of them unclickable. */
+html.lenis {
+  /* Native smooth scrolling and Lenis both animate the same scroll position
+     and fight over it. While Lenis owns scrolling, the CSS path stands down.
+
+     Lenis also ships `html.lenis, html.lenis body { height: auto }`. That is
+     deliberately not copied: <html> here carries `h-full` and <body>
+     `min-h-full`, and unpicking that would change how every page on the site
+     sizes itself. Lenis measures `documentElement.scrollHeight`, which is
+     unaffected either way. */
+  scroll-behavior: auto;
+}
+
+/* Anything marked `data-lenis-prevent` keeps its own native scrolling and
+   stops the gesture from bubbling out into the page ease once it bottoms out. */
+.lenis [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+/* Lenis sets this while a programmatic scroll is in flight. */
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Sunrise Amber — the site-wide palette.
+   Warm white paper, cocoa ink, the original #ff9500 orange as the accent
+   with a gold secondary. These are the single source of truth: `royal.css`
+   and every component read from here rather than re-declaring their stops.
+
+   Two accent roles, kept distinct on purpose:
+     --brand       fills, gradients, glows — never body text on white
+     --brand-deep  text and icons on light surfaces (passes AA at ~4.6:1)
+   ───────────────────────────────────────────────────────────────────────── */
+:root {
+  --paper: #fffdf9;
+  --paper-tint: #fff6ea;
+  --card: #ffffff;
+  --ink: #1f1408;
+  --ink-2: #402b16;
+  --muted: #7c6552;
+  --faint: #a28b76;
+  --brand: #ff9500;
+  --brand-deep: #c2560a;
+  --brand-lite: #ffab2e;
+  --brand-soft: #ffd200;
+  --mist: #ffe9cc;
+  --hair: rgba(255, 149, 0, 0.16);
+  --hair-2: rgba(224, 102, 0, 0.3);
+  --lift: 0 24px 60px -28px rgba(122, 62, 8, 0.28);
+  --lift-lg: 0 40px 90px -34px rgba(122, 62, 8, 0.34);
+
+  /* The ramp every gradient in the site walks: gold → lite → brand → deep. */
+  --grad-brand: linear-gradient(135deg, #ffd200 0%, #ffab2e 34%, #ff9500 68%, #e06600 100%);
+
+  /* Tailwind-facing aliases (kept for the @theme bridge below). */
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --primary: var(--brand);
+  --secondary: var(--brand-soft);
+
+  /* One shared easing so motion across the site reads as a single system. */
+  --ease-out-quint: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --font-sans: var(--font-poppins);
+}
+
+/* Hide all scrollbars globally across the site */
+* {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+*::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, and Opera */
+}
+
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* Warm paper with two faint sunrise blooms. Kept at 0.10/0.07 rather than the
+   original 0.25/0.18 — the heavier wash tinted every white card sitting on it. */
+body {
+  background:
+    radial-gradient(circle at 15% 20%, rgba(255, 210, 0, 0.14), transparent 34%),
+    radial-gradient(circle at 85% 12%, rgba(255, 149, 0, 0.09), transparent 30%),
+    linear-gradient(150deg, #fffdf9 0%, #fff8ee 45%, #fffdf9 100%);
+  /* Deliberately NOT `background-attachment: fixed` — it forces a full-viewport
+     repaint on every scroll frame and is the classic mobile scroll-jank cause. */
+  color: var(--foreground);
+  font-family: var(--font-poppins), sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: rgba(255, 149, 0, 0.26);
+  color: var(--ink);
+}
+
+/*
+  Scope transitions to interactive elements only.
+  A universal `* { transition: ...transform... }` forces the browser to
+  reconcile a CSS transition against every JS/scroll-driven transform on the
+  page, which was the main cause of scroll jank. Interactive polish is kept
+  here without paying that cost on every element.
+*/
+a,
+button,
+[role="button"],
+input,
+select,
+textarea,
+summary,
+label {
+  transition-property: color, background-color, border-color, box-shadow;
+  transition-duration: 200ms;
+  transition-timing-function: ease;
+}
+
+/* Respect users who prefer reduced motion — kill non-essential animation. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+section {
+  @apply py-12 md:py-24;
+}
+
+@keyframes graffitiFloat {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(0, -18px, 0) scale(1.04);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes strokeDrift {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translate3d(12px, -10px, 0) rotate(3deg);
+    opacity: 0.72;
+  }
+  100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+    opacity: 0.4;
+  }
+}
+
+.graffiti-blob {
+  position: absolute;
+  border-radius: 9999px;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.7), rgba(255, 210, 0, 0.18) 42%, rgba(255, 149, 0, 0.06) 70%, transparent 100%);
+  filter: blur(14px);
+  animation: graffitiFloat 7s ease-in-out infinite;
+  will-change: transform;
+}
+
+.graffiti-stroke {
+  position: absolute;
+  opacity: 0.45;
+  filter: drop-shadow(0 6px 12px rgba(255, 149, 0, 0.24));
+  animation: strokeDrift 8.5s ease-in-out infinite;
+  will-change: transform;
+}
+
+@keyframes marqueeLeft {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes marqueeRight {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.animate-marquee-left {
+  display: flex;
+  width: max-content;
+  animation: marqueeLeft 35s linear infinite;
+  will-change: transform;
+}
+
+.animate-marquee-right {
+  display: flex;
+  width: max-content;
+  animation: marqueeRight 35s linear infinite;
+  will-change: transform;
+}
+
+.animate-marquee-left:hover,
+.animate-marquee-right:hover {
+  animation-play-state: paused;
+}
+
+/* Custom button hover transitions on hover-capable devices (Desktops/Laptops) */
+@media (hover: hover) {
+  .btn-base-layer {
+    transition: opacity 0.3s ease;
+  }
+  .btn-group:hover .btn-base-layer {
+    opacity: 0 !important;
+  }
+  .btn-hover-layer {
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .btn-group:hover .btn-hover-layer {
+    transform: translateY(0) !important;
+  }
+  .btn-text-layer-outline {
+    transition: color 0.3s ease;
+  }
+  .btn-group:hover .btn-text-layer-outline {
+    color: white !important;
+  }
+}
+
+/* Custom liquid/water rising wave hover animation */
+.liquid-card {
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+.liquid-card::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.liquid-card:hover::before {
+  transform: scaleY(1);
+}
+
+/* Three tones of the sunrise ramp — gold, deep orange, brand orange. The
+   -blue suffix below is a legacy name kept so its call sites don't churn; it
+   now selects the same warm family as the rest. */
+.liquid-card-orange::before {
+  background: linear-gradient(to top, rgba(255, 210, 0, 0.09) 0%, rgba(255, 210, 0, 0.01) 100%);
+}
+
+.liquid-card-rose::before {
+  background: linear-gradient(to top, rgba(224, 102, 0, 0.08) 0%, rgba(224, 102, 0, 0.01) 100%);
+}
+
+.liquid-card-amber::before {
+  background: linear-gradient(to top, rgba(255, 149, 0, 0.08) 0%, rgba(255, 149, 0, 0.01) 100%);
+}
+
+.liquid-card-blue::before {
+  background: linear-gradient(to top, rgba(255, 171, 46, 0.08) 0%, rgba(255, 171, 46, 0.01) 100%);
+}
+
+/* SEO Link Button Liquid Wave Hover */
+.seo-liquid-btn {
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  transition: color 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.35s ease, box-shadow 0.35s ease;
+}
+
+.seo-liquid-btn::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(to top, #f38200 0%, #d2540a 100%);
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.seo-liquid-btn:hover {
+  color: #ffffff !important;
+  border-color: #d2540a !important;
+  box-shadow: 0 4px 12px rgba(255, 149, 0, 0.2);
+}
+
+.seo-liquid-btn:hover::before {
+  transform: scaleY(1);
+}
+
+/* Service card liquid hover background fill */
+.service-card-liquid {
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  transition: border-color 0.5s ease, box-shadow 0.5s ease;
+}
+
+.service-card-liquid::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(135deg, #f38200 0%, #d2540a 100%);
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.service-card-liquid:hover::before {
+  transform: scaleY(1);
+}
+
+/* Project card water-fill hover background fill */
+.project-card-waterfill {
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+.project-card-waterfill::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(135deg, #f38200 0%, #d2540a 100%);
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.project-card-waterfill:hover::before {
+  transform: scaleY(1);
+}
+
+/* Mirror Marquee Animations using CSS Variables for dynamic bounds */
+@keyframes marqueeMirrorLeft {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(var(--max-scroll), 0, 0);
+  }
+}
+
+@keyframes marqueeMirrorRight {
+  0% {
+    transform: translate3d(var(--max-scroll), 0, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.animate-mirror-left {
+  display: flex;
+  width: max-content;
+  animation: marqueeMirrorLeft 25s linear infinite alternate;
+  will-change: transform;
+}
+
+.animate-mirror-right {
+  display: flex;
+  width: max-content;
+  animation: marqueeMirrorRight 25s linear infinite alternate;
+  will-change: transform;
+}
+
+.animate-mirror-left:hover,
+.animate-mirror-right:hover {
+  animation-play-state: paused;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Card + Button styles — defined ONCE here globally.
+   Previously each <Card> and <Button> injected this entire CSS block via an
+   inline <style> tag on every instance. On pages with many cards (e.g. the
+   /locations directory) that meant hundreds of duplicate <style> elements,
+   bloating the HTML and slowing parse/render. Hoisted here so the browser
+   parses it a single time.
+   ───────────────────────────────────────────────────────────────────────── */
+.lq-card {
+  position: relative;
+  background: rgba(255, 255, 255, 0.66);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 20px 50px rgba(29, 29, 31, 0.09), 0 4px 14px rgba(224, 102, 0, 0.06);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease, background 0.4s ease;
+}
+.lq-card::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  z-index: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(140deg,
+    rgba(255, 255, 255, 0.85) 0%,
+    rgba(255, 210, 0, 0.36) 24%,
+    rgba(224, 102, 0, 0.10) 50%,
+    rgba(224, 102, 0, 0.32) 78%,
+    rgba(255, 255, 255, 0.7) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+.lq-card > * { position: relative; z-index: 1; }
+.lq-card.hover:hover {
+  transform: translateY(-4px);
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: 0 26px 60px rgba(29, 29, 31, 0.12), 0 6px 18px rgba(224, 102, 0, 0.10);
+}
+@media (prefers-reduced-motion: reduce) {
+  .lq-card { transition: none; }
+}
+
+.lq-btn {
+  position: relative;
+  overflow: hidden;
+  font-family: var(--font-dm-sans), sans-serif;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.35s ease, background 0.3s ease, color 0.3s ease;
+}
+.lq-btn:active { transform: scale(0.97); }
+.lq-btn:disabled { opacity: 0.45; cursor: not-allowed; pointer-events: none; }
+.lq-btn:focus-visible { outline: 2px solid #d2540a; outline-offset: 2px; }
+.lq-btn.size-sm { font-size: 0.8rem; padding: 0.55rem 1.1rem; border-radius: 10px; gap: 0.35rem; }
+.lq-btn.size-md { font-size: 0.88rem; padding: 0.8rem 1.6rem; border-radius: 12px; gap: 0.4rem; }
+.lq-btn.size-lg { font-size: 0.96rem; padding: 1rem 2.1rem; border-radius: 14px; gap: 0.45rem; }
+.lq-btn.primary {
+  color: #fff;
+  background: linear-gradient(135deg, #ffd200 0%, #f38200 38%, #d2540a 72%, #a8420a 100%);
+  box-shadow: 0 2px 12px rgba(224, 102, 0, 0.26), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+}
+.lq-btn.primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(224, 102, 0, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.26);
+}
+.lq-btn.secondary {
+  color: #1d1d1f;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+.lq-btn.secondary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 6px 18px rgba(255, 149, 0, 0.12);
+}
+.lq-btn.tertiary { color: #d2540a; background: transparent; padding-inline: 0.2rem; }
+.lq-btn.tertiary:hover:not(:disabled) { color: #a8420a; }
+.lq-btn.dark { color: #fff; background: #1d1d1f; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.16); }
+.lq-btn.dark:hover:not(:disabled) { background: #000; transform: translateY(-1px); }
+.lq-btn-ripple {
+  position: absolute;
+  border-radius: 50%;
+  transform: scale(0);
+  background: rgba(255, 255, 255, 0.3);
+  pointer-events: none;
+  animation: lqRipple 0.5s ease-out forwards;
+}
+@keyframes lqRipple { to { transform: scale(3.4); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .lq-btn { transition: none; }
+  .lq-btn-ripple { animation: none; display: none; }
+}

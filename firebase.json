@@ -1,0 +1,19 @@
+{
+  "apphosting": [
+    {
+      "backendId": "ashishprojectbyani",
+      "rootDir": "/",
+      "ignore": [
+        "node_modules",
+        ".git",
+        ".agents",
+        ".claude",
+        "skills-lock.json",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "functions"
+      ],
+      "alwaysDeployFromSource": true
+    }
+  ]
+}

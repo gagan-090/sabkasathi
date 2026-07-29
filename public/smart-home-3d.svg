@@ -1,0 +1,30 @@
+<svg width="440" height="360" viewBox="0 0 440 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="220" cy="300" rx="140" ry="24" fill="#9EC1FF" fill-opacity="0.28"/>
+  <path d="M220 62L320 118V238L220 292L120 238V118L220 62Z" fill="url(#body)"/>
+  <path d="M220 62L320 118L220 176L120 118L220 62Z" fill="url(#roof)"/>
+  <path d="M220 176L320 118V238L220 292V176Z" fill="url(#right)"/>
+  <rect x="188" y="188" width="64" height="84" rx="10" fill="#F9FBFF"/>
+  <rect x="140" y="154" width="52" height="42" rx="8" fill="#DDEBFF"/>
+  <rect x="248" y="154" width="52" height="42" rx="8" fill="#DDEBFF"/>
+  <circle cx="170" cy="122" r="10" fill="#78ADFF"/>
+  <circle cx="220" cy="100" r="10" fill="#78ADFF"/>
+  <circle cx="270" cy="122" r="10" fill="#78ADFF"/>
+  <path d="M170 122L220 100L270 122" stroke="#4F8CFF" stroke-width="3" stroke-linecap="round"/>
+  <path d="M170 122V154" stroke="#4F8CFF" stroke-width="3" stroke-linecap="round"/>
+  <path d="M220 100V148" stroke="#4F8CFF" stroke-width="3" stroke-linecap="round"/>
+  <path d="M270 122V154" stroke="#4F8CFF" stroke-width="3" stroke-linecap="round"/>
+  <defs>
+    <linearGradient id="body" x1="220" y1="62" x2="220" y2="292" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#EEF5FF"/>
+      <stop offset="1" stop-color="#D8E8FF"/>
+    </linearGradient>
+    <linearGradient id="roof" x1="220" y1="62" x2="220" y2="176" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7AB0FF"/>
+      <stop offset="1" stop-color="#4F8CFF"/>
+    </linearGradient>
+    <linearGradient id="right" x1="220" y1="118" x2="320" y2="238" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#8EBBFF"/>
+      <stop offset="1" stop-color="#5D97FF"/>
+    </linearGradient>
+  </defs>
+</svg>

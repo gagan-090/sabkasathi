@@ -1,0 +1,33 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAdmin() {
+      return request.auth != null &&
+        request.auth.token.email.toLowerCase() in [
+          'arvindyadav70075@gmail.com',
+          'ashushk1249@gmail.com'
+        ];
+    }
+
+    match /blogs/{blogId} {
+      allow read: if isAdmin() || (resource == null || resource.data.status == 'published');
+      allow write: if isAdmin();
+    }
+
+    match /developers/{devId} {
+      allow read: if isAdmin() || (resource == null || resource.data.status == 'active');
+      allow write: if isAdmin();
+    }
+
+    match /projects/{projectId} {
+      allow read: if isAdmin() || (resource == null || resource.data.active == true);
+      allow write: if isAdmin();
+    }
+
+    match /recentProjects/{recentProjectId} {
+      allow read: if isAdmin() || (resource == null || resource.data.active == true);
+      allow write: if isAdmin();
+    }
+  }
+}

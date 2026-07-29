@@ -1,0 +1,2232 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   The home page surface — warm white paper, sunrise-orange accent.
+   Palette tokens live in globals.css at :root; this file only styles the
+   sections that compose the home page, still namespaced under .rh-root so
+   the section-level rules can't reach the rest of the site.
+
+   Scroll reveals, tilt and parallax are owned by framer-motion in
+   components/royal/motion.tsx — not by this file. What lives here are the
+   static surfaces plus the few looping CSS animations (marquee, shimmer,
+   pulse) that never need to know about scroll position.
+
+   Animations are transform/opacity only so they composite on the GPU.
+   ───────────────────────────────────────────────────────────────────────── */
+
+.rh-root {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-dm-sans), sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Sections own their own generous vertical rhythm for expansive breathing room */
+.rh-root section {
+  padding-block: clamp(5.5rem, 9vw, 9.5rem);
+}
+
+.rh-shell {
+  width: 100%;
+  max-width: 1240px;
+  margin-inline: auto;
+  padding-inline: clamp(1.25rem, 5vw, 3.25rem);
+}
+
+.rh-display {
+  font-family: var(--font-instrument-serif), Georgia, serif;
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  line-height: 1.04;
+  color: var(--ink);
+}
+
+/* The `body:has(.rh-root)` chrome overrides that used to live here re-tinted
+   the Navbar, call button and buttons from orange to amethyst for this route
+   only. The whole site is amethyst now, so they were deleted rather than left
+   to shadow the real rules in globals.css. */
+
+/* ── shared atoms ───────────────────────────────────────────────────────── */
+
+.rh-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.62rem;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--brand);
+}
+
+.rh-eyebrow::before {
+  content: "";
+  width: 26px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--hair-2));
+}
+
+.rh-lead {
+  font-size: clamp(1rem, 1.1vw, 1.08rem);
+  line-height: 1.75;
+  color: var(--muted);
+}
+
+/* ── buttons ────────────────────────────────────────────────────────────── */
+
+.rh-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  overflow: hidden;
+  border-radius: 999px;
+  padding: 0.95rem 1.85rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.45s ease,
+    border-color 0.45s ease, background 0.4s ease, color 0.35s ease;
+}
+
+.rh-btn-primary {
+  color: #fff;
+  border: 1px solid rgba(168, 66, 10, 0.55);
+  background: linear-gradient(135deg, #f38200 0%, #d2540a 52%, #a8420a 100%);
+  box-shadow: 0 14px 30px -14px rgba(224, 102, 0, 0.85),
+    inset 0 1px 0 rgba(255, 255, 255, 0.24);
+}
+
+/* Sheen sweep — one pass on hover, not a looping shimmer. */
+.rh-btn-primary::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-120%) skewX(-18deg);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.34), transparent);
+  transition: transform 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.rh-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 22px 44px -16px rgba(224, 102, 0, 0.95),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.rh-btn-primary:hover::after {
+  transform: translateX(120%) skewX(-18deg);
+}
+
+.rh-btn-ghost {
+  color: var(--ink);
+  border: 1px solid var(--hair);
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 8px 22px -16px rgba(122, 62, 8, 0.6);
+}
+
+.rh-btn-ghost:hover {
+  transform: translateY(-2px);
+  border-color: var(--hair-2);
+  background: #fff;
+  box-shadow: 0 16px 34px -20px rgba(122, 62, 8, 0.7);
+}
+
+/* Glass variant — for buttons sitting on the video, where the paper-white
+   ghost button would punch a hole in the footage. */
+.rh-btn-glass {
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.13);
+  backdrop-filter: blur(16px) saturate(1.4);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.32),
+    0 14px 34px -22px rgba(0, 0, 0, 0.95);
+}
+
+.rh-btn-glass:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.rh-btn-arrow {
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.rh-btn:hover .rh-btn-arrow {
+  transform: translateX(4px);
+}
+
+/* ═════════════════════════════════════════════════════════════════════════
+   VIDEO HERO
+   Layer order, back to front: footage → scrims → grain → copy → chips.
+   Everything decorative sits on a negative z-index so the copy never has to
+   fight it for stacking context.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.vh {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  /* svh, not vh: on mobile Safari `100vh` is the *expanded* viewport, so the
+     hero would sit taller than the screen until the URL bar collapsed. */
+  min-height: 100svh;
+  padding: clamp(7rem, 14vh, 10rem) 0 clamp(4.5rem, 9vh, 7rem);
+  color: #fff;
+  background: #170d03;
+}
+
+/* Bled top and bottom so the parallax drift never exposes an edge. */
+.vh-media {
+  position: absolute;
+  inset: -12% 0 -22%;
+  z-index: -3;
+  will-change: transform;
+}
+
+.vh-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Warms the footage toward the brand without a coloured overlay on top. */
+  filter: saturate(1.05) contrast(1.04);
+}
+
+/* Contrast scrim. Bottom-weighted because that is where the facts row sits. */
+.vh-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background: linear-gradient(
+    180deg,
+    rgba(23, 13, 3, 0.74) 0%,
+    rgba(23, 13, 3, 0.5) 34%,
+    rgba(23, 13, 3, 0.66) 70%,
+    rgba(23, 13, 3, 0.88) 100%
+  );
+}
+
+/* Brand wash — two sunrise blooms that tie the footage to the palette. */
+.vh-scrim-warm {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background:
+    radial-gradient(ellipse 68% 58% at 12% 18%, rgba(255, 149, 0, 0.34), transparent 62%),
+    radial-gradient(ellipse 62% 56% at 88% 82%, rgba(255, 210, 0, 0.2), transparent 64%);
+}
+
+/* Film grain. An inline feTurbulence keeps it to a few hundred bytes and
+   avoids a network request for a texture. */
+.vh-grain {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 0.16;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.vh-inner {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 1240px;
+  margin-inline: auto;
+  padding-inline: clamp(1.25rem, 5vw, 3.25rem);
+}
+
+.vh-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(14px) saturate(1.4);
+  -webkit-backdrop-filter: blur(14px) saturate(1.4);
+  padding: 0.5rem 1.1rem 0.5rem 0.8rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.94);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.26),
+    0 10px 30px -18px rgba(0, 0, 0, 0.9);
+}
+
+.vh-badge-dot {
+  position: relative;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--brand-lite);
+  box-shadow: 0 0 10px 2px rgba(255, 171, 46, 0.7);
+}
+
+.vh-badge-dot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--brand-lite);
+  animation: vhPulse 2.6s ease-out infinite;
+}
+
+@keyframes vhPulse {
+  0% { transform: scale(1); opacity: 0.65; }
+  70%, 100% { transform: scale(3.6); opacity: 0; }
+}
+
+.vh-title {
+  margin: clamp(1.4rem, 2.6vw, 2.1rem) 0 0;
+  font-family: var(--font-instrument-serif), Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(2.7rem, 6.6vw, 5.4rem);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  max-width: 14ch;
+  text-shadow: 0 2px 40px rgba(0, 0, 0, 0.45);
+}
+
+.vh-line {
+  display: block;
+}
+
+/* The mask is what the word slides out of. The word gap is a margin rather
+   than a text space, which an inline-block would trim. */
+.vh-word-mask {
+  display: inline-block;
+  overflow: hidden;
+  margin-right: 0.22em;
+  padding-bottom: 0.1em;
+  margin-bottom: -0.1em;
+  vertical-align: bottom;
+}
+
+.vh-word {
+  display: inline-block;
+}
+
+.vh-accent {
+  font-style: italic;
+  background: linear-gradient(100deg, #ffd200 0%, #ffab2e 32%, #ff9500 62%, #ffd200 100%);
+  background-size: 260% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: vhShimmer 8s linear infinite 2s;
+}
+
+@keyframes vhShimmer {
+  0% { background-position: 140% 0; }
+  100% { background-position: -140% 0; }
+}
+
+.vh-lead {
+  margin: clamp(1.3rem, 2.2vw, 1.75rem) 0 0;
+  max-width: 52ch;
+  font-size: clamp(1rem, 1.15vw, 1.12rem);
+  line-height: 1.75;
+  color: rgba(255, 255, 255, 0.84);
+  text-shadow: 0 1px 20px rgba(0, 0, 0, 0.5);
+}
+
+.vh-cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-top: clamp(1.8rem, 3vw, 2.4rem);
+}
+
+.vh-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(1rem, 3vw, 2.6rem);
+  margin-top: clamp(2.2rem, 4vw, 3rem);
+  padding: clamp(1rem, 2vw, 1.35rem) clamp(1.1rem, 2.4vw, 1.8rem);
+  border-radius: 20px;
+  width: fit-content;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.09);
+  backdrop-filter: blur(18px) saturate(1.3);
+  -webkit-backdrop-filter: blur(18px) saturate(1.3);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 24px 60px -34px rgba(0, 0, 0, 0.9);
+}
+
+.vh-fact-value {
+  display: block;
+  font-family: var(--font-instrument-serif), Georgia, serif;
+  font-size: clamp(1.5rem, 2.3vw, 2rem);
+  line-height: 1.1;
+  color: #fff;
+}
+
+.vh-fact-label {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.64rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.66);
+  white-space: nowrap;
+}
+
+/* ── floating glass chips ── */
+
+.vh-chip {
+  position: absolute;
+  z-index: 1;
+  padding: 0.9rem 1.2rem;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.11);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    0 30px 60px -30px rgba(0, 0, 0, 0.95);
+  pointer-events: none;
+}
+
+.vh-chip-a { top: 20%; right: 7%; }
+.vh-chip-b { top: 46%; right: 15%; }
+.vh-chip-c { top: 70%; right: 6%; }
+
+.vh-chip-value {
+  display: block;
+  font-family: var(--font-instrument-serif), Georgia, serif;
+  font-size: 1.55rem;
+  line-height: 1.1;
+  color: #fff;
+}
+
+.vh-chip-label {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.66);
+}
+
+/* They are decoration, and on a narrow screen they would sit on top of the
+   headline. Nothing is lost by dropping them — the same figures are in the
+   facts row. */
+@media (max-width: 1099px) {
+  .vh-chip { display: none; }
+}
+
+/* ── scroll cue ── */
+
+.vh-scroll {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(1.4rem, 3.5vh, 2.4rem);
+  translate: -50% 0;
+  z-index: 1;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.62rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+}
+
+.vh-scroll:hover { color: #fff; }
+
+.vh-scroll-track {
+  display: flex;
+  justify-content: center;
+  width: 24px;
+  height: 38px;
+  padding-top: 7px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.vh-scroll-dot {
+  width: 3px;
+  height: 7px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.85);
+}
+
+@media (max-height: 620px) {
+  .vh-scroll { display: none; }
+}
+
+/* ═════════════════════════════════════════════════════════════════════════
+   BROWSER-CHROME DOT — shared by the solution cards
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.rh-frame-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(31, 20, 8, 0.14);
+}
+
+/* ═════════════════════════════════════════════════════════════════════════
+   STACK STRIP — two rows of real brand marks, scrolling opposite ways.
+   The scroll is a CSS keyframe on a `transform`, so it composites off the
+   main thread and stays smooth no matter what React is doing.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.rh-strip {
+  position: relative;
+  border-block: 1px solid var(--hair);
+  background: linear-gradient(180deg, #fff 0%, #fffaf2 100%);
+  padding-block: clamp(1.1rem, 2.4vw, 1.7rem);
+  overflow: hidden;
+}
+
+.tm {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.tm-row {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent);
+}
+
+.tm-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+}
+
+.tm-track-left { animation: tmLeft 48s linear infinite; }
+.tm-track-right { animation: tmRight 56s linear infinite; }
+
+.tm-row:hover .tm-track { animation-play-state: paused; }
+
+.tm-set {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding-right: 0.7rem;
+}
+
+@keyframes tmLeft {
+  to { transform: translateX(-50%); }
+}
+
+@keyframes tmRight {
+  from { transform: translateX(-50%); }
+  to { transform: translateX(0); }
+}
+
+/* Liquid-glass pill: translucent fill, inner top highlight, soft drop. */
+.tm-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  white-space: nowrap;
+  padding: 0.5rem 1rem 0.5rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid rgba(224, 102, 0, 0.13);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 246, 234, 0.86));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 6px 16px -10px rgba(122, 62, 8, 0.5);
+  transition: transform 0.35s var(--ease-out-quint), box-shadow 0.35s ease, border-color 0.35s ease;
+}
+
+.tm-chip:hover {
+  transform: translateY(-2px);
+  border-color: rgba(224, 102, 0, 0.3);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 12px 26px -12px rgba(122, 62, 8, 0.55);
+}
+
+.tm-chip-logo {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: inset 0 0 0 1px rgba(31, 20, 8, 0.06), 0 2px 6px -3px rgba(31, 20, 8, 0.4);
+}
+
+.tm-chip-logo img {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+}
+
+.tm-chip-label {
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--ink-2);
+}
+
+/* ═════════════════════════════════════════════════════════════════════════
+   SECTION FRAME
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.rh-section {
+  position: relative;
+  padding-block: clamp(3.8rem, 6vw, 5.8rem);
+  border-top: 1px solid var(--hair);
+}
+
+/* Sits directly under the section above it */
+.rh-section-tight {
+  padding-block: clamp(2.8rem, 4.5vw, 4.2rem);
+}
+
+.rh-section-paper {
+  background: var(--paper);
+}
+
+.rh-section-tint {
+  background:
+    radial-gradient(ellipse 55% 45% at 84% 4%, rgba(255, 210, 0, 0.14), transparent 64%),
+    var(--paper-tint);
+}
+
+.rh-head {
+  display: grid;
+  gap: clamp(1rem, 2vw, 1.6rem);
+  align-items: end;
+  margin-bottom: clamp(2.2rem, 3.8vw, 3.4rem);
+}
+
+@media (min-width: 900px) {
+  .rh-head {
+    grid-template-columns: 1.12fr 0.88fr;
+    gap: clamp(2rem, 4vw, 3.5rem);
+  }
+}
+
+.rh-head-title {
+  margin: 0.65rem 0 0;
+  font-size: clamp(1.9rem, 3.6vw, 2.8rem);
+  max-width: 17ch;
+}
+
+/* ═════════════════════════════════════════════════════════════════════════
+   SERVICES
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.rh-cards {
+  display: grid;
+  gap: clamp(1rem, 1.5vw, 1.35rem);
+}
+
+@media (min-width: 700px) {
+  .rh-cards { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (min-width: 1080px) {
+  .rh-cards { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* The grid children are the reveal wrappers; the card itself is nested one
+   level in, so it has to be told to fill the cell. */
+.rh-cards > * { display: flex; }
+
+.rh-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  border-radius: 18px;
+  border: 1px solid var(--hair);
+  /* Skeuomorphic stack: a hairline inner highlight along the top edge, a
+     tinted base, and a wide soft drop — glass sitting on warm paper. */
+  background: linear-gradient(180deg, #fff 0%, #fffaf3 100%);
+  padding: 0.9rem 1rem 1rem 1rem;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 12px 30px -26px rgba(122, 62, 8, 0.55);
+  /* No `transform` here: the tilt owns this element's transform inline. */
+  transition: box-shadow 0.45s ease, border-color 0.45s ease;
+}
+
+/* Warm wash that rises on hover */
+.rh-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 0;
+  background: linear-gradient(180deg, rgba(255, 210, 0, 0.12), rgba(255, 149, 0, 0.03));
+  transition: opacity 0.5s ease;
+}
+
+.rh-card:hover {
+  border-color: var(--hair-2);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    var(--lift);
+}
+
+.rh-card:hover::before { opacity: 1; }
+
+/* ── card image header ── */
+
+.rh-card-shot {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  width: 100%;
+  flex-shrink: 0;
+  overflow: hidden;
+  border-radius: 12px;
+  background: var(--paper-tint);
+  box-shadow: inset 0 0 0 1px rgba(224, 102, 0, 0.1);
+}
+
+.rh-card-img {
+  object-fit: cover;
+  transition: transform 0.8s var(--ease-out-quint);
+}
+
+.rh-card:hover .rh-card-img { transform: scale(1.07); }
+
+/* Specular sweep that follows the pointer across the artwork. --mx/--my are
+   written by the tilt handler. */
+.rh-card-sheen {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(
+    circle 140px at var(--mx, 50%) var(--my, 50%),
+    rgba(255, 255, 255, 0.42),
+    transparent 70%
+  );
+  transition: opacity 0.4s ease;
+}
+
+.rh-card:hover .rh-card-sheen { opacity: 1; }
+
+.rh-card-headrow {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.55rem;
+}
+
+.rh-card-headrow .rh-card-title { flex: 1; }
+
+.rh-card-icon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: linear-gradient(140deg, #fff2dc, #ffe2b8);
+  border: 1px solid rgba(224, 102, 0, 0.16);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  color: var(--brand-deep);
+  transition: background 0.4s ease, color 0.4s ease;
+}
+
+.rh-card:hover .rh-card-icon {
+  background: linear-gradient(140deg, #ff9500, #d2540a);
+  color: #fff;
+}
+
+.rh-card-index {
+  font-family: var(--font-instrument-serif), Georgia, serif;
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: rgba(224, 102, 0, 0.45);
+}
+
+.rh-card-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin-top: 0.1rem;
+}
+
+.rh-card-body {
+  font-size: 0.85rem;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+.rh-card-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-top: auto;
+  padding-top: 0.4rem;
+  list-style: none;
+}
+
+.rh-tag {
+  border: 1px solid var(--hair);
+  border-radius: 999px;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.68rem;
+  color: var(--ink-2);
+  background: rgba(255, 255, 255, 0.7);
+  transition: border-color 0.4s ease, color 0.4s ease, background 0.4s ease;
+}
+
+.rh-card:hover .rh-tag {
+  border-color: var(--hair-2);
+  color: var(--brand);
+  background: #fff;
+}
+
+/* ═════════════════════════════════════════════════════════════════════════
+   NUMBERS
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.rh-numbers {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  border: 1px solid var(--hair);
+  border-radius: 22px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 24px 60px -44px rgba(122, 62, 8, 0.8);
+}
+
+@media (min-width: 820px) {
+  .rh-numbers { grid-template-columns: repeat(4, 1fr); }
+}
+
+.rh-number {
+  padding: clamp(1.9rem, 3.4vw, 2.7rem) clamp(1.1rem, 2.2vw, 1.8rem);
+  text-align: center;
+  border-right: 1px solid var(--hair);
+  border-bottom: 1px solid var(--hair);
+}
+
+.rh-number:nth-child(2n) { border-right: 0; }
+.rh-number:nth-child(n + 3) { border-bottom: 0; }
+
+@media (min-width: 820px) {
+  .rh-number { border-bottom: 0; }
+  .rh-number:nth-child(2n) { border-right: 1px solid var(--hair); }
+  .rh-number:last-child { border-right: 0; }
+}
+
+.rh-number-value {
+  font-family: var(--font-instrument-serif), Georgia, serif;
+  font-size: clamp(2.4rem, 5vw, 3.7rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  background: linear-gradient(160deg, #a8420a 10%, #ffd200);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.rh-number-label {
+  margin-top: 0.8rem;
+  font-size: 0.67rem;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+/* ═════════════════════════════════════════════════════════════════════════
+   PROCESS
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.rh-steps-wrap {
+  position: relative;
+}
+
+/* The scroll-drawn rail. The wrapper spans the whole steps block on purpose:
+   `useScroll` needs a target with real height to measure against, and a 2px
+   rail has none. The visible line is the inner span, pinned to the top. */
+.rh-steps-line {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: none;
+  pointer-events: none;
+}
+
+.rh-steps-line > span {
+  position: absolute;
+  top: 7px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--brand-soft), var(--brand) 55%, var(--brand-deep));
+  box-shadow: 0 0 14px rgba(255, 149, 0, 0.55);
+}
+
+/* Only drawn where the timeline actually reads as a timeline — below 900px
+   the steps stack vertically and a horizontal rail would be meaningless. */
+@media (min-width: 900px) {
+  .rh-steps-line { display: block; }
+}
+
+.rh-steps {
+  position: relative;
+  display: grid;
+  gap: clamp(2rem, 4vw, 2.8rem);
+}
+
+@media (min-width: 900px) {
+  .rh-steps { grid-template-columns: repeat(4, 1fr); }
+  /* The rail the step markers sit on. */
+  .rh-steps::before {
+    content: "";
+    position: absolute;
+    top: 7px;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, var(--hair-2), var(--hair) 65%, transparent);
+  }
+}
+
+.rh-step-marker {
+  position: relative;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  border: 1px solid var(--hair-2);
+  background: var(--paper-tint);
+  margin-bottom: 1.4rem;
+}
+
+.rh-step-marker::after {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  background: var(--brand-lite);
+}
+
+.rh-step-kicker {
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--brand);
+}
+
+.rh-step-title {
+  margin: 0.65rem 0 0.55rem;
+  font-size: 1.18rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.rh-step-body {
+  font-size: 0.92rem;
+  line-height: 1.7;
+  color: var(--muted);
+}
+
+/* ═════════════════════════════════════════════════════════════════════════
+   WORK
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.rh-work {
+  display: grid;
+  gap: clamp(1rem, 1.8vw, 1.5rem);
+}
+
+/* The spans are set on the grid children, which are the reveal wrappers —
+   `.rh-work-item` itself is one level deeper and would never match here. */
+@media (min-width: 780px) {
+  .rh-work { grid-template-columns: repeat(6, 1fr); }
+  .rh-work > *:nth-child(1) { grid-column: span 4; }
+  .rh-work > *:nth-child(2) { grid-column: span 2; }
+  .rh-work > *:nth-child(3) { grid-column: span 2; }
+  .rh-work > *:nth-child(4) { grid-column: span 4; }
+}
+
+.rh-work-item {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  border-radius: 20px;
+  border: 1px solid var(--hair);
+  background: #fff;
+  text-decoration: none;
+  box-shadow: 0 18px 44px -36px rgba(122, 62, 8, 0.75);
+  transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s ease,
+    border-color 0.5s ease;
+}
+
+.rh-work-item:hover {
+  transform: translateY(-6px);
+  border-color: var(--hair-2);
+  box-shadow: var(--lift);
+}
+
+.rh-work-canvas {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: var(--mist);
+}
+
+/* Carries the scroll-in settle. It has to be a positioned box of its own
+   because the `fill` image inside measures against its nearest ancestor. */
+.rh-work-canvas-inner {
+  position: absolute;
+  inset: 0;
+}
+
+.rh-work-canvas img {
+  object-fit: cover;
+  transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.rh-work-item:hover .rh-work-canvas img {
+  transform: scale(1.05);
+}
+
+.rh-work-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: clamp(1.1rem, 2vw, 1.5rem);
+  border-top: 1px solid var(--hair);
+}
+
+.rh-work-name {
+  font-size: 1.02rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.rh-work-kind {
+  margin-top: 0.2rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+.rh-work-go {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid var(--hair);
+  color: var(--brand);
+  transition: background 0.4s ease, border-color 0.4s ease, transform 0.4s ease,
+    color 0.4s ease;
+}
+
+.rh-work-item:hover .rh-work-go {
+  background: linear-gradient(140deg, #f38200, #d2540a);
+  border-color: transparent;
+  color: #fff;
+  transform: rotate(45deg);
+}
+
+/* ═════════════════════════════════════════════════════════════════════════
+   SOLUTIONS — browser-chrome cards, one per system type we ship
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.rh-solutions {
+  display: grid;
+  gap: clamp(1rem, 1.8vw, 1.5rem);
+}
+
+@media (min-width: 700px) {
+  .rh-solutions { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (min-width: 1080px) {
+  .rh-solutions { grid-template-columns: repeat(3, 1fr); }
+}
+
+.rh-solution {
+  display: flex;
+  flex-direction: column;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid var(--hair);
+  background: #fff;
+  box-shadow: 0 18px 44px -38px rgba(122, 62, 8, 0.8);
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s ease,
+    border-color 0.5s ease;
+}
+
+.rh-solution:hover {
+  transform: translateY(-5px);
+  border-color: var(--hair-2);
+  box-shadow: var(--lift);
+}
+
+.rh-solution-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.7rem 0.95rem;
+  border-bottom: 1px solid var(--hair);
+  background: linear-gradient(180deg, #fbfaff, #f5f2ff);
+}
+
+.rh-solution-label {
+  margin-left: 0.5rem;
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--brand);
+}
+
+.rh-solution-shot {
+  position: relative;
+  height: 152px;
+  width: 100%;
+  overflow: hidden;
+  background: var(--paper-tint);
+}
+
+.rh-solution-img {
+  object-fit: cover;
+  transition: transform 0.85s var(--ease-out-quint);
+}
+
+.rh-solution:hover .rh-solution-img { transform: scale(1.07); }
+
+.rh-solution-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  padding: clamp(1.4rem, 2.4vw, 1.9rem);
+}
+
+.rh-solution-title {
+  font-size: 1.12rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.rh-solution-desc {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: var(--muted);
+}
+
+/* A miniature of the interface the card is describing — enough to read the
+   shape of the product without pretending to be a screenshot. */
+.rh-solution-mini {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 0.35rem;
+  padding: 0.75rem;
+  border-radius: 10px;
+  background: linear-gradient(160deg, #f6f3ff, #f0ecff);
+  border: 1px solid var(--hair);
+}
+
+.rh-solution-mini span {
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(224, 102, 0, 0.16);
+}
+
+.rh-solution-mini span:nth-child(1) { width: 62%; background: rgba(224, 102, 0, 0.34); }
+.rh-solution-mini span:nth-child(2) { width: 100%; }
+.rh-solution-mini span:nth-child(3) { width: 84%; }
+.rh-solution-mini span:nth-child(4) { width: 46%; }
+
+.rh-solution-tech {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: auto;
+  padding-top: 0.9rem;
+  list-style: none;
+}
+
+.rh-solution-tech li {
+  font-size: 0.69rem;
+  color: var(--faint);
+  border: 1px solid var(--hair);
+  border-radius: 999px;
+  padding: 0.24rem 0.62rem;
+}
+
+/* ═════════════════════════════════════════════════════════════════════════
+   TECH STACK GRID
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── 3D logo ring ──────────────────────────────────────────────────────────
+   A cylinder of logo cards. Each face is placed once with a static
+   `rotateY(n) translateZ(r)`; only the parent's rotateY animates, so a spin
+   is one composited transform rather than fourteen. */
+
+.tr-stage {
+  position: relative;
+  height: clamp(230px, 34vw, 320px);
+  margin: clamp(1rem, 3vw, 2.2rem) 0 clamp(2.2rem, 4vw, 3.2rem);
+  perspective: 1200px;
+  cursor: grab;
+  touch-action: pan-y;
+  /* Fades the ring's left and right extremes so faces dissolve rather than
+     clip at the container edge. */
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 16%, #000 84%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 16%, #000 84%, transparent);
+  --tr-radius: 320px;
+}
+
+.tr-stage:active { cursor: grabbing; }
+
+.tr-glow {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(70%, 560px);
+  aspect-ratio: 2 / 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(255, 149, 0, 0.22), transparent 70%);
+  filter: blur(30px);
+  pointer-events: none;
+}
+
+.tr-ring {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  /* Tipped back a few degrees so you read it as a ring rather than a row. */
+  rotate: x 4deg;
+  will-change: transform;
+}
+
+.tr-face {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 132px;
+  margin: -56px 0 0 -66px;
+  backface-visibility: hidden;
+}
+
+.tr-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  height: 112px;
+  border-radius: 18px;
+  border: 1px solid rgba(224, 102, 0, 0.16);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.97), rgba(255, 244, 230, 0.9));
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 22px 40px -26px rgba(122, 62, 8, 0.85);
+}
+
+.tr-card-logo {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+}
+
+.tr-card-label {
+  font-size: 0.74rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--ink-2);
+  text-align: center;
+}
+
+.tr-hint {
+  position: absolute;
+  left: 50%;
+  bottom: -0.4rem;
+  translate: -50% 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.66rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--faint);
+  white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+  .tr-stage { --tr-radius: 240px; }
+  .tr-face { width: 112px; margin-left: -56px; }
+  .tr-card { height: 100px; }
+}
+
+@media (max-width: 560px) {
+  .tr-stage { --tr-radius: 170px; }
+  .tr-face { width: 92px; margin-left: -46px; }
+  .tr-card { height: 88px; border-radius: 14px; }
+  .tr-card-logo { width: 26px; height: 26px; }
+  .tr-card-label { font-size: 0.64rem; }
+}
+
+.rh-tech {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  list-style: none;
+}
+
+.rh-tech-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--hair);
+  border-radius: 12px;
+  background: #fff;
+  padding: 0.7rem 1.05rem;
+  font-size: 0.86rem;
+  font-weight: 500;
+  color: var(--ink-2);
+  box-shadow: 0 10px 26px -26px rgba(122, 62, 8, 0.9);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease,
+    color 0.4s ease, box-shadow 0.4s ease;
+}
+
+.rh-tech-chip:hover {
+  transform: translateY(-3px);
+  border-color: var(--hair-2);
+  color: var(--brand);
+  box-shadow: 0 16px 30px -22px rgba(122, 62, 8, 0.9);
+}
+
+.rh-tech-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: linear-gradient(140deg, #ffd200, #d2540a);
+  flex-shrink: 0;
+}
+
+/* On a phone the desktop chip metrics only fit 2–3 per row, so 24 items
+   stretch into a ~13-row wall. Tightening the padding, gap and type packs
+   them 3–4 per row and roughly halves the section height. */
+@media (max-width: 640px) {
+  .rh-tech {
+    gap: 0.4rem;
+  }
+
+  .rh-tech-chip {
+    gap: 0.38rem;
+    padding: 0.48rem 0.72rem;
+    border-radius: 10px;
+    font-size: 0.76rem;
+  }
+
+  .rh-tech-dot {
+    width: 5px;
+    height: 5px;
+  }
+}
+
+/* ═════════════════════════════════════════════════════════════════════════
+   INCLUDED / GUARANTEES
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.rh-included {
+  display: grid;
+  gap: clamp(0.9rem, 1.6vw, 1.2rem);
+}
+
+@media (min-width: 640px) {
+  .rh-included { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (min-width: 1000px) {
+  .rh-included { grid-template-columns: repeat(4, 1fr); }
+}
+
+.rh-include {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  border-radius: 16px;
+  border: 1px solid var(--hair);
+  background: rgba(255, 255, 255, 0.72);
+  padding: clamp(1.3rem, 2.2vw, 1.7rem);
+  transition: border-color 0.4s ease, background 0.4s ease;
+}
+
+.rh-include:hover {
+  border-color: var(--hair-2);
+  background: #fff;
+}
+
+.rh-include-check {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: linear-gradient(140deg, #f38200, #d2540a);
+  color: #fff;
+  margin-bottom: 0.3rem;
+}
+
+.rh-include-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.rh-include-body {
+  font-size: 0.88rem;
+  line-height: 1.68;
+  color: var(--muted);
+}
+
+/* ═════════════════════════════════════════════════════════════════════════
+   TESTIMONIALS
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.rh-quotes {
+  display: grid;
+  gap: clamp(1rem, 1.8vw, 1.5rem);
+}
+
+@media (min-width: 860px) {
+  .rh-quotes { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* Grid children are the reveal wrappers; the card sits one level in. */
+.rh-quotes > * { display: flex; }
+
+.rh-testimonial {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  border-radius: 20px;
+  border: 1px solid var(--hair);
+  background: linear-gradient(180deg, #fff 0%, #fffbf5 100%);
+  padding: clamp(1.6rem, 2.6vw, 2.1rem);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 18px 44px -38px rgba(122, 62, 8, 0.8);
+  /* No `transform` — the tilt owns this element's transform inline. */
+  transition: box-shadow 0.5s ease, border-color 0.5s ease;
+}
+
+.rh-testimonial:hover {
+  border-color: var(--hair-2);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    var(--lift);
+}
+
+.rh-stars {
+  display: flex;
+  gap: 3px;
+  color: var(--brand-lite);
+}
+
+.rh-stars .dim { color: rgba(224, 102, 0, 0.2); }
+
+.rh-testimonial-text {
+  font-size: 0.97rem;
+  line-height: 1.75;
+  color: var(--ink-2);
+}
+
+.rh-testimonial-by {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: auto;
+  padding-top: 0.4rem;
+}
+
+.rh-testimonial-avatar {
+  position: relative;
+  display: block;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1px solid var(--hair-2);
+  box-shadow: 0 4px 12px -6px rgba(122, 62, 8, 0.7);
+}
+
+.rh-testimonial-avatar img { object-fit: cover; }
+
+.rh-testimonial-id {
+  display: flex;
+  flex-direction: column;
+}
+
+.rh-testimonial-name {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.rh-testimonial-role {
+  font-size: 0.76rem;
+  color: var(--faint);
+}
+
+/* ═════════════════════════════════════════════════════════════════════════
+   LOCATIONS
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.rh-locations-grid {
+  display: grid;
+  gap: clamp(2rem, 4vw, 3.2rem);
+  align-items: center;
+}
+
+@media (min-width: 1000px) {
+  .rh-locations-grid { grid-template-columns: 1fr 1fr; }
+}
+
+/* The globe is the interactive centrepiece of this section now that the hero
+   is video. It keeps its own perspective context. */
+.rh-globe-stage {
+  position: relative;
+  perspective: 1200px;
+}
+
+.rh-places {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  list-style: none;
+}
+
+.rh-place {
+  border: 1px solid var(--hair);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 0.5rem 1rem;
+  font-size: 0.83rem;
+  color: var(--ink-2);
+  text-decoration: none;
+  transition: border-color 0.35s ease, color 0.35s ease, background 0.35s ease,
+    transform 0.35s ease;
+}
+
+.rh-place:hover {
+  transform: translateY(-2px);
+  border-color: var(--hair-2);
+  color: var(--brand);
+  background: #fff;
+}
+
+.rh-place-more {
+  border-style: dashed;
+  color: var(--brand);
+  font-weight: 500;
+}
+
+/* ═════════════════════════════════════════════════════════════════════════
+   CONTACT
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.rh-contact-grid {
+  display: grid;
+  gap: clamp(1.5rem, 3vw, 2.4rem);
+  align-items: start;
+}
+
+@media (min-width: 960px) {
+  .rh-contact-grid { grid-template-columns: 0.85fr 1.15fr; }
+}
+
+.rh-contact-cards {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.rh-contact-card {
+  display: flex;
+  gap: 0.9rem;
+  align-items: flex-start;
+  border-radius: 16px;
+  border: 1px solid var(--hair);
+  background: #fff;
+  padding: 1.2rem 1.3rem;
+  text-decoration: none;
+  transition: border-color 0.4s ease, transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.rh-contact-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--hair-2);
+  box-shadow: var(--lift);
+}
+
+.rh-contact-icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  background: linear-gradient(140deg, #f0ebff, #e2d9ff);
+  border: 1px solid var(--hair);
+  color: var(--brand);
+  flex-shrink: 0;
+}
+
+.rh-contact-label {
+  display: block;
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+.rh-contact-value {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.95rem;
+  color: var(--ink);
+  line-height: 1.55;
+}
+
+.rh-form {
+  border-radius: 22px;
+  border: 1px solid var(--hair);
+  background: #fff;
+  padding: clamp(1.6rem, 3vw, 2.4rem);
+  box-shadow: var(--lift);
+}
+
+.rh-form-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.rh-form-note {
+  margin-top: 0.4rem;
+  font-size: 0.88rem;
+  color: var(--muted);
+}
+
+.rh-form-grid {
+  display: grid;
+  gap: 1.1rem;
+  margin-top: 1.7rem;
+}
+
+@media (min-width: 640px) {
+  .rh-form-grid { grid-template-columns: repeat(2, 1fr); }
+  .rh-field-wide { grid-column: 1 / -1; }
+}
+
+.rh-field label {
+  display: block;
+  margin-bottom: 0.45rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+.rh-field input,
+.rh-field textarea {
+  width: 100%;
+  border: 1px solid var(--hair);
+  border-radius: 12px;
+  background: #fdfcff;
+  padding: 0.85rem 1rem;
+  font-family: inherit;
+  font-size: 0.92rem;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+}
+
+.rh-field textarea {
+  min-height: 118px;
+  resize: vertical;
+}
+
+.rh-field input::placeholder,
+.rh-field textarea::placeholder {
+  color: #a49dbf;
+}
+
+.rh-field input:focus,
+.rh-field textarea:focus {
+  border-color: var(--brand-lite);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(255, 149, 0, 0.13);
+}
+
+.rh-form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.6rem;
+}
+
+.rh-form-fineprint {
+  font-size: 0.78rem;
+  color: var(--faint);
+}
+
+/* ═════════════════════════════════════════════════════════════════════════
+   FOUNDER / QUOTE
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.rh-quote-grid {
+  display: grid;
+  gap: clamp(2rem, 5vw, 4rem);
+  align-items: center;
+}
+
+@media (min-width: 900px) {
+  .rh-quote-grid { grid-template-columns: 0.8fr 1.2fr; }
+}
+
+.rh-portrait {
+  position: relative;
+  margin: 0;
+  border-radius: 24px;
+  overflow: hidden;
+  border: 1px solid var(--hair);
+  background: #fff;
+  box-shadow: var(--lift);
+  aspect-ratio: 4 / 5;
+  max-width: 380px;
+}
+
+/* Bled past the frame top and bottom so the parallax drift never reveals an
+   edge inside the rounded crop. */
+.rh-portrait-parallax {
+  position: absolute;
+  inset: -30px 0;
+}
+
+.rh-portrait-parallax > * {
+  height: 100%;
+}
+
+.rh-portrait-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.rh-portrait img {
+  object-fit: cover;
+}
+
+.rh-portrait::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 55%, rgba(224, 102, 0, 0.14));
+  pointer-events: none;
+}
+
+.rh-quote-mark {
+  display: block;
+  font-family: var(--font-instrument-serif), Georgia, serif;
+  font-size: clamp(3rem, 6vw, 4.4rem);
+  line-height: 0.4;
+  color: rgba(224, 102, 0, 0.3);
+  margin-bottom: 1.5rem;
+}
+
+.rh-quote {
+  margin: 0;
+  font-family: var(--font-instrument-serif), Georgia, serif;
+  font-size: clamp(1.5rem, 3vw, 2.35rem);
+  line-height: 1.34;
+  letter-spacing: -0.012em;
+  color: var(--ink);
+}
+
+.rh-quote-by {
+  margin-top: clamp(1.5rem, 2.6vw, 2rem);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+/* ═════════════════════════════════════════════════════════════════════════
+   CLOSING CTA
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.rh-cta {
+  position: relative;
+  overflow: hidden;
+  border-radius: 28px;
+  padding: clamp(3rem, 6.5vw, 5rem) clamp(1.6rem, 5vw, 4rem);
+  text-align: center;
+  color: #fff;
+  background:
+    radial-gradient(ellipse 70% 90% at 50% 118%, rgba(167, 139, 250, 0.42), transparent 66%),
+    linear-gradient(150deg, #d2540a 0%, #a8420a 48%, #241175 100%);
+  box-shadow: 0 40px 90px -46px rgba(122, 62, 8, 0.9);
+}
+
+.rh-cta-ring {
+  position: absolute;
+  left: 50%;
+  bottom: -58%;
+  width: min(120%, 900px);
+  aspect-ratio: 1;
+  translate: -50% 0;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  pointer-events: none;
+}
+
+.rh-cta-ring-2 {
+  bottom: -74%;
+  width: min(150%, 1150px);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.rh-cta .rh-eyebrow { color: rgba(255, 255, 255, 0.75); }
+.rh-cta .rh-eyebrow::before { background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5)); }
+
+.rh-cta-title {
+  position: relative;
+  margin: 0.9rem 0 0;
+  font-size: clamp(2.1rem, 4.8vw, 3.6rem);
+  color: #fff;
+}
+
+.rh-cta-lead {
+  position: relative;
+  margin: 1.3rem auto 0;
+  max-width: 46ch;
+  color: rgba(255, 255, 255, 0.76);
+}
+
+.rh-cta-actions {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.8rem;
+  margin-top: 2.2rem;
+}
+
+.rh-cta .rh-btn-primary {
+  color: var(--brand-deep);
+  border-color: rgba(255, 255, 255, 0.6);
+  background: #fff;
+  box-shadow: 0 18px 40px -20px rgba(0, 0, 0, 0.5);
+}
+
+.rh-cta .rh-btn-primary::after {
+  background: linear-gradient(90deg, transparent, rgba(255, 149, 0, 0.16), transparent);
+}
+
+.rh-cta .rh-btn-ghost {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.32);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: none;
+}
+
+.rh-cta .rh-btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* ═════════════════════════════════════════════════════════════════════════
+   FOOTER
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.rh-foot {
+  border-top: 1px solid var(--hair);
+  background: #fff;
+  padding-block: clamp(3rem, 5vw, 4.2rem) clamp(1.6rem, 2.5vw, 2rem);
+}
+
+.rh-foot-top {
+  display: grid;
+  gap: clamp(2rem, 4vw, 3rem);
+  padding-bottom: clamp(2.2rem, 4vw, 3rem);
+}
+
+@media (min-width: 860px) {
+  .rh-foot-top { grid-template-columns: 1.4fr repeat(3, 1fr); }
+}
+
+.rh-foot-brand {
+  font-family: var(--font-instrument-serif), Georgia, serif;
+  font-size: 1.5rem;
+  color: var(--ink);
+}
+
+.rh-foot-blurb {
+  margin-top: 0.8rem;
+  max-width: 34ch;
+  font-size: 0.88rem;
+  line-height: 1.72;
+  color: var(--muted);
+}
+
+.rh-foot-col h3 {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+  color: var(--faint);
+  margin-bottom: 1.05rem;
+}
+
+.rh-foot-col ul {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  list-style: none;
+}
+
+.rh-foot-col a {
+  font-size: 0.88rem;
+  color: var(--ink-2);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.rh-foot-col a:hover { color: var(--brand); }
+
+.rh-foot-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.1rem;
+  padding-top: clamp(1.4rem, 2.4vw, 1.9rem);
+  border-top: 1px solid var(--hair);
+  font-size: 0.79rem;
+  color: var(--faint);
+}
+
+.rh-foot-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(1rem, 2.4vw, 1.8rem);
+}
+
+.rh-foot-links a {
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.rh-foot-links a:hover { color: var(--brand); }
+
+/* ═════════════════════════════════════════════════════════════════════════
+   MOTION CHROME
+   The surfaces the components in components/royal/motion.tsx animate. Nothing
+   here declares an animation of its own — every one of these is a static box
+   that framer-motion drives, so there is exactly one system moving each
+   element and no chance of a stylesheet and an inline transform overwriting
+   each other.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── reading progress hairline (ScrollProgress) ── */
+.rh-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  z-index: 60;
+  background: var(--grad-brand);
+  /* Set again in the inline style; kept here so the very first paint before
+     hydration is already collapsed rather than a full-width bar. */
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  pointer-events: none;
+}
+
+/* ── back to top (BackToTop) ──
+   Parked above the WhatsApp/call stack rather than beside it: that column is
+   two 56px buttons at bottom:1.6rem with a 0.85rem gap, so its top edge lands
+   at ~151px and this clears it. */
+.rh-totop {
+  position: fixed;
+  right: 1.9rem;
+  bottom: 10.5rem;
+  z-index: 55;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  border: 1px solid var(--hair-2);
+  border-radius: 50%;
+  cursor: pointer;
+  color: var(--brand-deep);
+  background: rgba(255, 253, 249, 0.82);
+  backdrop-filter: blur(14px) saturate(180%);
+  -webkit-backdrop-filter: blur(14px) saturate(180%);
+  box-shadow: 0 10px 26px -14px rgba(122, 62, 8, 0.55);
+}
+
+.rh-totop-ring {
+  position: absolute;
+  inset: -3px;
+  width: calc(100% + 6px);
+  height: calc(100% + 6px);
+  /* The stroke is drawn from 12 o'clock clockwise, like a clock hand. */
+  transform: rotate(-90deg);
+  pointer-events: none;
+}
+
+.rh-totop-track,
+.rh-totop-fill {
+  fill: none;
+  stroke-width: 2;
+}
+
+.rh-totop-track { stroke: var(--hair); }
+.rh-totop-fill {
+  stroke: var(--brand);
+  stroke-linecap: round;
+}
+
+@media (max-width: 640px) {
+  .rh-totop {
+    right: 1.5rem;
+    bottom: 9.6rem;
+    width: 42px;
+    height: 42px;
+  }
+}
+
+/* ── per-word headline reveal (Words) ──
+   Same construction as the hero's h1: each word rides in its own clipped box
+   so it can start fully below the baseline without bleeding into the line
+   above. The padding/margin pair gives descenders (g, y, p) room inside the
+   clip; without it `overflow: hidden` shears their tails off. */
+.rh-word-mask {
+  display: inline-block;
+  overflow: hidden;
+  /* No margin-right: the gap between words is a real space character in the
+     markup, so the heading still reads as a sentence to a crawler and wraps
+     at the spaces like ordinary text. */
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+  vertical-align: bottom;
+}
+
+.rh-word {
+  display: inline-block;
+  will-change: transform;
+}
+
+/* ── section header ── */
+
+/* Wrapper that keeps eyebrow + title + rule as one cell of the two-column
+   .rh-head grid. */
+.rh-head-main {
+  min-width: 0;
+}
+
+.rh-head-rule {
+  display: block;
+  width: min(220px, 46%);
+  height: 2px;
+  margin-top: clamp(0.9rem, 1.6vw, 1.3rem);
+  border-radius: 999px;
+  background: var(--grad-brand);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+/* ── image curtain (Curtain) ──
+   A panel that slides off the artwork instead of a clip-path that repaints
+   it. The panel is the section's own paper tone, so it reads as the page
+   peeling back rather than a coloured card flashing. */
+.rh-curtain {
+  position: relative;
+  overflow: hidden;
+}
+
+.rh-curtain-panel {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background: linear-gradient(150deg, var(--paper-tint) 0%, var(--mist) 100%);
+  pointer-events: none;
+  will-change: transform;
+}
+
+/* The founder portrait is capped at 380px inside a much wider column, so the
+   curtain has to be capped with it or the panel sweeps across empty page. */
+.rh-portrait-curtain {
+  max-width: 380px;
+  border-radius: 24px;
+}
+
+/* ── cursor spotlight (Spotlight) ──
+   --sx/--sy are written by the pointermove handler; opacity is toggled there
+   too, so the glow fades in the first time the pointer enters rather than
+   snapping on at 0,0. */
+.rh-section-lit {
+  position: relative;
+  overflow: hidden;
+}
+
+.rh-spotlight {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0;
+  transition: opacity 0.45s ease;
+  pointer-events: none;
+  background: radial-gradient(
+    260px circle at var(--sx, 50%) var(--sy, 50%),
+    rgba(255, 149, 0, 0.14),
+    transparent 70%
+  );
+}
+
+/* Keeps section content above the glow. */
+.rh-section-lit > .rh-shell {
+  position: relative;
+  z-index: 1;
+}
+
+/* ═════════════════════════════════════════════════════════════════════════
+   REDUCED MOTION — keep the composition, drop the movement
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* framer-motion reads `prefers-reduced-motion` itself, so every JS-driven
+   reveal, tilt and parallax already opts out in the components. What is left
+   here are the pure-CSS loops it cannot see. */
+@media (prefers-reduced-motion: reduce) {
+  .rh-root .tm-track,
+  .rh-root .vh-accent,
+  .rh-root .vh-badge-dot::after {
+    animation: none !important;
+  }
+
+  /* Without its animation the marquee would sit at translateX(0) showing only
+     the first few chips; leaving it static and centred reads as a logo row. */
+  .rh-root .tm-track {
+    transform: none !important;
+  }
+
+  .rh-root .vh-accent { background-position: 50% 0; }
+
+  /* Hover-scale on imagery is movement too. */
+  .rh-root .rh-card-img,
+  .rh-root .rh-solution-img,
+  .rh-root .rh-work-canvas img {
+    transition: none !important;
+    transform: none !important;
+  }
+
+  /* The motion-chrome surfaces. Their components already bail out under
+     reduced motion — Curtain renders no panel, Spotlight and ScrollProgress
+     render nothing at all — but the underline is drawn from scaleX(0) by the
+     stylesheet, so it needs putting back here or it would never appear. */
+  .rh-root .rh-head-rule {
+    transform: none !important;
+  }
+
+  .rh-root .rh-word {
+    will-change: auto;
+  }
+}
+
+/* ═════════════════════════════════════════════════════════════════════════
+   SHOWCASES — the live phone/browser demo sections
+   These three components (PortfolioShowcase, BrowserPortfolioShowcase,
+   RecentProjectsShowcase) predate this theme and carried their own loud
+   `py-24 font-black uppercase` chrome. They now borrow the same rhythm,
+   eyebrow and serif display face as every other section on the page so the
+   demos read as part of the composition rather than bolted onto it.
+   These rules sit outside `.rh-root` because the sections render as siblings
+   of it, so they are keyed to the `.rh-showcase` class instead.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.rh-showcase {
+  padding-block: clamp(5.5rem, 9vw, 9.5rem);
+  background: var(--paper);
+  border-top: 1px solid var(--hair);
+}
+
+.rh-showcase-tint {
+  background: var(--paper-tint);
+}
+
+.rh-showcase-title {
+  margin: 0.9rem 0 0;
+  font-size: clamp(2rem, 3.6vw, 3.1rem);
+  letter-spacing: -0.015em;
+  line-height: 1.06;
+}
+
+/* The lead paragraph under a showcase heading is centred in the browser
+   showcase and right-aligned in the other two; both inherit .rh-lead sizing. */
+.rh-showcase .rh-lead {
+  margin-top: 0.85rem;
+}
+
+/* Below-the-fold demo sections carry heavy subtrees (phone frames, browser
+   chrome, iframes). Skipping layout/paint until they approach the viewport
+   is the single biggest scroll-smoothness win on this page. The size hint
+   keeps the scrollbar from jumping as each one is realised. */
+@media (min-width: 0px) {
+  .rh-showcase {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 720px;
+  }
+}
+
+/* Loading state for the three data-driven showcases. It reserves the same
+   height the realised section will occupy, so the swap from spinner to
+   content is silent instead of shoving ~600px of page down at fetch time. */
+.rh-showcase-skeleton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 720px;
+}
