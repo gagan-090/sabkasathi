@@ -3,7 +3,8 @@
 
    Image rule: every `src` on this page is used exactly once. The page used to
    cycle the same four /projects shots through Services, Solutions and Work,
-   which made three distinct sections read as one repeated card. */
+   which made three distinct sections read as one repeated card. (Work is now
+   the live app demos in components/PortfolioShowcase, so it has no data here.) */
 
 import type { ReactNode } from "react";
 
@@ -176,7 +177,7 @@ export const SERVICES: Service[] = [
     tags: ["Figma", "Design system", "Prototypes"],
     href: "/services",
     icon: <IconPen />,
-    src: "/images/service-uiux.png",
+    src: "/images/services/ui-ux.webp",
   },
   {
     index: "06",
@@ -185,7 +186,7 @@ export const SERVICES: Service[] = [
     tags: ["AWS", "Docker", "CI/CD"],
     href: "/services",
     icon: <IconCloud />,
-    src: "/images/service-cloud.png",
+    src: "/images/services/cloud-solutions.webp",
   },
   {
     index: "07",
@@ -194,7 +195,7 @@ export const SERVICES: Service[] = [
     tags: ["Technical SEO", "Local", "Schema"],
     href: "/services",
     icon: <IconSearch />,
-    src: "/images/service-seo.png",
+    src: "/images/services/seo-services.webp",
   },
   {
     index: "08",
@@ -203,60 +204,54 @@ export const SERVICES: Service[] = [
     tags: ["Performance", "Content", "Analytics"],
     href: "/services",
     icon: <IconMega />,
-    src: "/images/service-marketing.png",
+    src: "/images/services/digital-marketing.webp",
   },
 ];
 
+// Real photorealistic solutions data map - updated
 export const SOLUTIONS = [
   {
     label: "SaaS Dashboard",
     title: "Restaurant Management",
     desc: "Live kitchen tracking, table reservations and real-time order flow.",
     tech: ["Next.js", "Node.js", "MySQL"],
-    src: "/projects/web-1.webp",
+    src: "/projects/web-1.webp?v=real_photo_2026",
   },
   {
     label: "School ERP",
     title: "School Management",
     desc: "Attendance, fee collection, exams and staff records in one portal.",
     tech: ["React", "TypeScript", "PostgreSQL"],
-    src: "/images/services/erp-crm.webp",
+    src: "/images/services/erp-crm.webp?v=real_photo_2026",
   },
   {
     label: "Medical App",
     title: "Healthcare Platform",
     desc: "Appointments, digital prescriptions and patient record management.",
     tech: ["Next.js", "Flutter", "Supabase"],
-    src: "/images/services/ios-app.webp",
+    src: "/images/services/ios-app.webp?v=real_photo_2026",
   },
   {
     label: "E-commerce",
     title: "Online Store",
     desc: "High-converting storefronts, digital catalogues and fast checkouts.",
     tech: ["Next.js", "MongoDB", "Vercel"],
-    src: "/projects/web-2.webp",
+    src: "/projects/web-2.webp?v=real_photo_2026",
   },
   {
     label: "Enterprise Tool",
     title: "Business Automation",
     desc: "CRM, workflow automation and analytics dashboards in one place.",
     tech: ["React", "Node.js", "Docker"],
-    src: "/images/services/cloud-solutions.webp",
+    src: "/images/services/custom-software.webp?v=real_photo_2026",
   },
   {
     label: "Billing System",
     title: "Inventory & Invoicing",
     desc: "GST invoices, stock movement and distributor ledgers, reconciled daily.",
     tech: ["Next.js", "MongoDB", "PDF"],
-    src: "/images/services/billing-system.webp",
+    src: "/images/services/billing-system.webp?v=real_photo_2026",
   },
-];
-
-export const WORK = [
-  { name: "Synergy Analytics", kind: "SaaS Dashboard", src: "/images/about_hero.webp" },
-  { name: "Glowve Commerce", kind: "Mobile Commerce", src: "/projects/mobile-1.webp" },
-  { name: "Field Service CRM", kind: "Custom Software", src: "/projects/mobile-2.webp" },
-  { name: "Aurora Retail", kind: "Web Storefront", src: "/images/industries_hero.webp" },
 ];
 
 export const STEPS = [

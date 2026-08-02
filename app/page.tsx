@@ -65,9 +65,9 @@ export const metadata: Metadata = {
   The "Royal Amethyst" home page.
 
   RoyalHome carries the hero through the closing CTA. The live website and app
-  demos are passed into its `showcase` slot, which renders them straight after
-  the WORK grid — they are the interactive form of that same section, so they
-  belong beside it rather than stranded below the closing CTA.
+  demos are passed into its `showcase` slot, which renders them as the work
+  section itself — that is where the hero's "See the work" link lands, so they
+  belong there rather than stranded below the closing CTA.
 
   RecentProjectsShowcase and BiharServicesSEO are kept from the previous home
   page because they are what ranks for the Bihar/city queries, and the footer

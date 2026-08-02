@@ -19,8 +19,10 @@
    3. Reduced motion tears the instance down entirely rather than shortening
       it. Someone who asked for no motion should get the browser's own scroll.
    4. The `prevent` hook exempts any subtree marked `data-lenis-prevent`
-      (dropdowns, the chat log, the city list), so their inner scrollbars keep
-      behaving normally instead of bubbling into the page ease.
+      (dropdowns, the chat log, the city list) — Lenis ignores the gesture
+      there entirely. Use it only for panes that must never pass a scroll on to
+      the page; `allowNestedScroll` below is the right tool for an inner
+      scroller that should chain out at its ends.
    ───────────────────────────────────────────────────────────────────────── */
 
 import Lenis from "lenis";
@@ -42,6 +44,13 @@ export function SmoothScroll() {
       touchMultiplier: 1.6,
       anchors: { offset: -104 }, // clears the fixed navbar, like scroll-padding-top
       autoRaf: true,
+      // Lets a scrollable element under the cursor take the gesture until it
+      // reaches its own end, then hands it back to the page — the behaviour
+      // the browser gives you for free and that owning the wheel takes away.
+      // Required by the phone demos in components/mockups, whose app screens
+      // scroll inside the frame; without it the page stalls whenever the
+      // pointer is over one. See the note in mockups/kit.tsx.
+      allowNestedScroll: true,
       prevent: (node) => node.hasAttribute?.("data-lenis-prevent") ?? false,
     });
 

@@ -1,46 +1,42 @@
 "use client";
 
 import { motion } from "framer-motion";
-import {
-  Sparkles, ChevronLeft, ChevronRight,
-  Wifi, Battery, Signal, Loader2
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import { fetchProjectsByType, Project } from "@/lib/project";
+import { AppScreen } from "@/components/mockups";
 
-/* The virtual viewport each demo renders at before being scaled down into the
-   frame — an iPhone 14's CSS width. This is the whole reason the previews look
-   like a phone instead of a zoomed-in crop: handed the frame's real ~250px the
-   sites laid out at a width no phone has, so their mobile breakpoints overflowed
-   sideways and the type came out enormous. Same trick RecentProjectsShowcase
-   uses for its 1440px desktop previews. */
+/* The virtual viewport each screen is composed at before being scaled down
+   into the frame — an iPhone 14's CSS width. Every app in components/mockups
+   is written against this width in plain pixel values, so the frame can be any
+   size and the composition stays identical rather than needing a breakpoint
+   for each one. Same trick RecentProjectsShowcase uses for its 1440px desktop
+   previews.
+
+   Until now this scaled a live <iframe> of each client's site. That is gone:
+   three third-party sites were booting inside our home page, each with its own
+   fonts, analytics and hero images, and every card sat on "Loading Demo…"
+   until they did. What runs in the frames now are real React apps built from
+   those clients' own content — see components/mockups. Nothing in this section
+   touches the network. */
 const PHONE_VIEWPORT_WIDTH = 390;
 
-/* Extra width given to the <iframe> beyond the virtual viewport. A parent page
-   cannot style a cross-origin document's scrollbar, so the only way to hide the
-   grey bar that was showing down the inside of each frame is to push it past
-   the screen's clip. 15px is a classic (non-overlay) scrollbar.
-
-   The tradeoff, stated plainly: on platforms that draw *overlay* scrollbars the
-   site has no bar to hide, so this crops the rightmost 15px of its layout
-   instead. That is why it is a scrollbar's width and not a round 20 — anything
-   larger starts eating floating action buttons pinned to the right edge. */
-const SCROLLBAR_BLEED = 15;
-
 /* Height of the two reserved bands inside the screen: the status bar the clock
-   and signal icons sit in, and the strip the home indicator sits on. The demo
-   itself gets everything between them, so nothing ever renders under the clock. */
+   sits in, and the strip the home indicator sits on. The mockup gets
+   everything between them, so nothing ever renders under the clock. */
 const STATUS_BAR_HEIGHT = 30;
 const HOME_BAR_HEIGHT = 16;
 
 interface PhoneCardProps {
   project: Project;
-  isDragging: boolean;
+  /** False until the card has been scrolled into the carousel — see below. */
   isActive: boolean;
+  /** Called as a pointer enters/leaves the screen, so the carousel can stop
+      creeping while someone is tapping around inside an app. */
+  onHold: (holding: boolean) => void;
 }
 
-function PhoneCard({ project, isDragging, isActive }: PhoneCardProps) {
-  const [iframeLoading, setIframeLoading] = useState(true);
+function PhoneCard({ project, isActive, onHold }: PhoneCardProps) {
   const [screen, setScreen] = useState({ width: 0, height: 0 });
   const screenRef = useRef<HTMLDivElement>(null);
   const accentColor = project.accentColor ?? "#f38200";
@@ -87,95 +83,80 @@ function PhoneCard({ project, isDragging, isActive }: PhoneCardProps) {
         }}
       >
         {/* The clipping box for everything on the screen. `isolation` plus a
-            forced compositing layer are load-bearing, not decoration: WebKit
-            does not clip a transformed <iframe> to a rounded `overflow: hidden`
-            ancestor without them, and the demo renders full-size straight
-            through the frame. The other half of that fix is below — the scale
-            lives on a wrapper <div>, never on the <iframe> itself. */}
+            forced compositing layer keep the scaled subtree clipped to the
+            rounded corners in WebKit, which otherwise lets a transformed child
+            paint straight through its rounded `overflow: hidden` ancestor.
+            The other half of that is below — the scale lives on a wrapper
+            <div>, never on the mockup's own root. */}
         <div
-          className="relative w-full h-full overflow-hidden bg-white flex flex-col"
+          className="relative w-full h-full overflow-hidden flex flex-col select-none"
           style={{
             borderRadius: "calc(var(--radius) - var(--bezel))",
+            /* Matches the mockup's own base so the status and home bars read
+               as part of the same screen rather than two grey margins. */
+            background: "#05080d",
             isolation: "isolate",
             transform: "translateZ(0)",
           }}
         >
           {/* Centred punch-hole camera. An island pill belongs to an iPhone;
               on a frame this slim it also ate most of the status bar. */}
-          <div className="absolute top-[7px] left-1/2 -translate-x-1/2 w-[9px] h-[9px] rounded-full bg-slate-950 z-30 pointer-events-none ring-1 ring-slate-800">
+          <div className="absolute top-[7px] left-1/2 -translate-x-1/2 w-[9px] h-[9px] rounded-full bg-black z-30 pointer-events-none ring-1 ring-white/10">
             <span className="absolute inset-[2px] rounded-full bg-slate-800/80" />
           </div>
 
           <div
-            className="shrink-0 flex justify-between items-center px-4 pt-1.5 text-[9px] font-bold z-20 pointer-events-none select-none text-slate-700"
+            className="shrink-0 flex justify-between items-center px-3.5 pt-1.5 text-[9px] font-bold z-20 pointer-events-none text-white/85"
             style={{ height: STATUS_BAR_HEIGHT }}
           >
-            <span>09:41</span>
-            <div className="flex items-center gap-1.5">
-              <Signal className="w-2.5 h-2.5" />
-              <Wifi className="w-2.5 h-2.5" />
-              <Battery className="w-3.5 h-3.5" />
-            </div>
+            <span>9:41</span>
+            <span
+              className="flex items-center gap-1 text-[7px] font-black uppercase tracking-[0.14em] px-1.5 py-[2px] rounded-full"
+              style={{
+                color: accentColor,
+                background: `${accentColor}24`,
+                border: `1px solid ${accentColor}44`,
+              }}
+            >
+              <span className="w-[3px] h-[3px] rounded-full" style={{ background: accentColor }} />
+              Live
+            </span>
           </div>
 
-          <div ref={screenRef} className="relative flex-1 min-h-0 overflow-hidden bg-white">
-            {isActive ? (
-              <>
-                {iframeLoading && (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-50 z-10 pointer-events-none">
-                    <Loader2 className="w-6 h-6 text-orange-600 animate-spin mb-2" />
-                    <span className="text-[9px] uppercase font-bold tracking-widest text-slate-400">Loading Demo...</span>
-                  </div>
-                )}
-
-                {scale > 0 && (
-                  <div
-                    style={{
-                      position: "absolute",
-                      top: 0,
-                      left: 0,
-                      width: PHONE_VIEWPORT_WIDTH,
-                      height: screen.height / scale,
-                      transform: `scale(${scale})`,
-                      transformOrigin: "top left",
-                    }}
-                  >
-                    <iframe
-                      src={project.url}
-                      title={project.title}
-                      className="phone-iframe border-0 block bg-white"
-                      /* Only mounted once the card is on screen — see the
-                         IntersectionObserver in the slider below. */
-                      loading="eager"
-                      onLoad={() => setIframeLoading(false)}
-                      style={{
-                        width: PHONE_VIEWPORT_WIDTH + SCROLLBAR_BLEED,
-                        height: screen.height / scale,
-                        pointerEvents: isDragging ? "none" : "auto",
-                      }}
-                    />
-                  </div>
-                )}
-              </>
-            ) : (
-              <div className="w-full h-full bg-gradient-to-br from-slate-50 to-orange-50/20 flex flex-col items-center justify-center p-4 text-center select-none">
-                <div className="w-10 h-10 rounded-2xl bg-orange-600/10 flex items-center justify-center text-orange-700 mb-2">
-                  <Sparkles className="w-5 h-5" />
-                </div>
-                <h5 className="text-[10px] sm:text-xs font-black text-slate-800 tracking-tight">{project.title}</h5>
-                <p className="text-[8px] sm:text-[9px] text-slate-400 mt-0.5 font-medium max-w-[150px]">Interactive Mobile Demo</p>
-                <span className="mt-2 text-[8px] font-black uppercase tracking-widest text-orange-600 bg-orange-50 px-2 py-0.5 rounded-full">
-                  Activate Preview
-                </span>
+          {/* The app inside is genuinely interactive — tabs, filters, steppers,
+              tel: and WhatsApp links. Pointer events are stopped here so a tap
+              on a button is not swallowed by the carousel's drag handler; the
+              bezel around the screen still drags the track. */}
+          <div
+            ref={screenRef}
+            className="relative flex-1 min-h-0 overflow-hidden"
+            onMouseDown={(e) => e.stopPropagation()}
+            onTouchStart={(e) => e.stopPropagation()}
+            onPointerEnter={() => onHold(true)}
+            onPointerLeave={() => onHold(false)}
+          >
+            {scale > 0 && (
+              <div
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  width: PHONE_VIEWPORT_WIDTH,
+                  height: screen.height / scale,
+                  transform: `scale(${scale})`,
+                  transformOrigin: "top left",
+                }}
+              >
+                <AppScreen project={project} active={isActive} />
               </div>
             )}
           </div>
 
           <div
-            className="shrink-0 flex items-end justify-center pb-1.5 bg-white z-20 pointer-events-none"
+            className="shrink-0 flex items-end justify-center pb-1.5 z-20 pointer-events-none"
             style={{ height: HOME_BAR_HEIGHT }}
           >
-            <span className="w-24 h-[4px] bg-slate-300 rounded-full" />
+            <span className="w-24 h-[4px] bg-white/25 rounded-full" />
           </div>
         </div>
       </div>
@@ -213,18 +194,21 @@ export function PortfolioShowcase({
      to shadow it with an identical value, went with the activation window. */
   const [activeIndex, setActiveIndex] = useState(0);
 
-  /* Which cards have had their demo mounted.
-     This used to be `Math.abs(index - visibleIndex) <= 1`, which describes a
-     one-card-wide window around whichever card is *centred*. On a desktop three
-     phones are on screen at once and the centred one at rest is the first, so
-     the third card sat there showing "Activate Preview" next to two running
-     demos. Asking the browser which cards are actually visible gets it right at
-     every breakpoint instead of guessing from an index.
-     Activation is one-way on purpose: dropping a card back out would tear down
-     its iframe and reload the whole site from scratch the moment the carousel
-     drifted back, which is what made the demos flash "Loading…" repeatedly. */
+  /* Which cards have been seen, and so may run their intro animation. Every
+     phone is fully rendered from the start — there is nothing to load — this
+     only decides when the meters sweep up and the activity line draws, so the
+     motion happens where someone can watch it.
+     Asking the browser which cards are actually visible gets this right at
+     every breakpoint, where an index-based window ("the centred card ± 1")
+     left the third phone on a desktop sitting inert beside two animated ones.
+     Activation stays one-way on purpose: replaying the sweep every time the
+     carousel drifts past would be a twitch, not a flourish. */
   const [activated, setActivated] = useState<Set<number>>(new Set());
   const [isPaused, setIsPaused] = useState(false);
+  /* True while a pointer is inside one of the phone screens. The apps in there
+     are tappable, and a track that keeps creeping sideways under your finger
+     makes them miserable to use. */
+  const [isHolding, setIsHolding] = useState(false);
   const pauseTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const dragTicking = useRef(false);
@@ -233,7 +217,6 @@ export function PortfolioShowcase({
   const [isMouseDown, setIsMouseDown] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeftState, setScrollLeftState] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
 
   const sliderRef = useRef<HTMLDivElement>(null);
   const [paddingStyle, setPaddingStyle] = useState({ paddingLeft: '20px', paddingRight: '20px' });
@@ -313,7 +296,7 @@ export function PortfolioShowcase({
       const elapsed = timestamp - lastTime;
       lastTime = timestamp;
 
-      if (!isMouseDown && !isPaused && slider) {
+      if (!isMouseDown && !isPaused && !isHolding && slider) {
         const maxScroll = slider.scrollWidth - slider.clientWidth;
         if (maxScroll > 0) {
           let next = slider.scrollLeft + speed * elapsed;
@@ -328,7 +311,7 @@ export function PortfolioShowcase({
       cancelAnimationFrame(animationFrameId);
       if (pauseTimeoutRef.current) clearTimeout(pauseTimeoutRef.current);
     };
-  }, [isMouseDown, isPaused, phoneProjects.length]);
+  }, [isMouseDown, isPaused, isHolding, phoneProjects.length]);
 
   const handleMouseDown = (e: React.MouseEvent) => {
     if (!sliderRef.current) return;
@@ -336,20 +319,15 @@ export function PortfolioShowcase({
     setIsMouseDown(true);
     setStartX(e.pageX - sliderRef.current.offsetLeft);
     setScrollLeftState(sliderRef.current.scrollLeft);
-    setIsDragging(false);
   };
 
   const handleMouseLeave = () => {
     setIsMouseDown(false);
-    setIsDragging(false);
   };
 
   const handleMouseUp = () => {
     setIsMouseDown(false);
     triggerPause();
-    setTimeout(() => {
-      setIsDragging(false);
-    }, 50);
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
@@ -365,9 +343,6 @@ export function PortfolioShowcase({
           const x = pageX - offsetLeft;
           const walk = x - startX;
           sliderRef.current.scrollLeft = scrollLeftState - walk;
-          if (Math.abs(walk) > 5) {
-            setIsDragging(true);
-          }
         }
         dragTicking.current = false;
       });
@@ -450,19 +425,25 @@ export function PortfolioShowcase({
       <style jsx global>{`
         #portfolio, #portfolio * { font-family: var(--font-dm-sans), sans-serif; }
         #portfolio .slider-track::-webkit-scrollbar { display: none; }
+        /* The apps inside the frames scroll their own screens. A real phone
+           does not draw a scrollbar down the middle of its UI, and the one
+           here would also be sitting on a 0.64 scale. */
+        #portfolio .phone-scroll { scrollbar-width: none; -ms-overflow-style: none; }
+        #portfolio .phone-scroll::-webkit-scrollbar { display: none; }
       `}</style>
 
       <div className="container mx-auto max-w-5xl px-4 relative z-10">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
           <div className="max-w-2xl">
-            <span className="rh-eyebrow">Live app demos</span>
+            <span className="rh-eyebrow">Mobile app concepts</span>
             <h2 className="rh-display rh-showcase-title">
-              Tap through the actual apps.
+              The same business, as an app.
             </h2>
           </div>
           <p className="rh-lead max-w-sm">
-            Not screenshots — running builds, embedded in a phone frame. Activate any one
-            and use it the way your customers would.
+            Every screen is drawn from a real client&apos;s site — their words, their
+            offerings, their published numbers — reimagined in glass. Open the live
+            site under any phone to compare.
           </p>
         </div>
 
@@ -522,11 +503,7 @@ export function PortfolioShowcase({
                     transform: 'translate3d(0, 0, 0)'
                   }}
                 >
-                  <PhoneCard
-                    project={project}
-                    isDragging={isDragging}
-                    isActive={isActive}
-                  />
+                  <PhoneCard project={project} isActive={isActive} onHold={setIsHolding} />
 
                   <div className="text-center mt-4 select-none">
                     <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{project.category}</span>
@@ -538,7 +515,7 @@ export function PortfolioShowcase({
                       className="text-[10px] font-extrabold hover:underline inline-flex items-center gap-1 mt-1"
                       style={{ color: project.accentColor ?? "#f38200" }}
                     >
-                      Open Demo
+                      Open live site
                       <svg width="9" height="9" viewBox="0 0 12 12" fill="none">
                         <path d="M3 9L9 3M9 3H4M9 3V8" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>

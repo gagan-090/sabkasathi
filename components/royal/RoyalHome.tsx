@@ -35,7 +35,6 @@ import {
   STEPS,
   TECH,
   TESTIMONIALS,
-  WORK,
 } from "./data";
 
 export function RoyalHome({ showcase }: { showcase?: React.ReactNode }) {
@@ -196,59 +195,11 @@ export function RoyalHome({ showcase }: { showcase?: React.ReactNode }) {
       </Section>
 
       {/* ══════════════════════════ WORK ══════════════════════════ */}
-      <Section id="work" tone="tint">
-        <Head
-          eyebrow="Selected work"
-          title="Built, shipped, still running."
-          lead="A sample of platforms in daily use by retailers, clinics and distributors across Bihar, Maharashtra and Gujarat."
-        />
-
-        <div className="rh-work">
-          {WORK.map((item, i) => (
-            <Reveal key={item.name} delay={(i % 2) * 0.12} distance={34}>
-              {/* Hover behaviour for this tile — the lift, the image push-in
-                  and the arrow rotation — is CSS, and stays CSS. Framer sets
-                  inline transforms, which beat a stylesheet `:hover` rule
-                  outright, so driving both from here would silently disable
-                  the ones already in royal.css. */}
-              <a className="rh-work-item" href="#work">
-                <Curtain className="rh-work-canvas" duration={1.1}>
-                  {/* The slow settle from 1.16 is the reveal itself — the image
-                      lands as you reach it rather than just appearing. */}
-                  <motion.div
-                    className="rh-work-canvas-inner"
-                    initial={{ scale: 1.16 }}
-                    whileInView={{ scale: 1 }}
-                    viewport={{ once: true, amount: 0.3 }}
-                    transition={{ duration: 1.2, ease: EASE }}
-                  >
-                    <Image
-                      src={item.src}
-                      alt={`${item.name} — ${item.kind}`}
-                      fill
-                      sizes="(max-width: 780px) 92vw, (max-width: 1240px) 45vw, 520px"
-                    />
-                  </motion.div>
-                </Curtain>
-                <div className="rh-work-meta">
-                  <div>
-                    <div className="rh-work-name">{item.name}</div>
-                    <div className="rh-work-kind">{item.kind}</div>
-                  </div>
-                  <span className="rh-work-go" aria-hidden="true">
-                    <Arrow />
-                  </span>
-                </div>
-              </a>
-            </Reveal>
-          ))}
-        </div>
-      </Section>
-
-      {/* Live phone/browser demos are slotted in here by app/page.tsx — they
-          are the richer form of the WORK grid directly above, so they belong
-          next to it rather than stranded below the closing CTA. */}
-      {showcase}
+      {/* Live phone/browser demos are slotted in here by app/page.tsx. They
+          are the whole of the work section now — the static grid that used to
+          sit above them said less than the demos do — so they carry `#work`
+          for the hero's "See the work" link. */}
+      <div id="work">{showcase}</div>
 
       {/* ══════════════════════════ TECH STACK ══════════════════════════ */}
       <Section id="stack" tone="paper">
