@@ -1,3 +1,5 @@
+import { industryServices, type IndustryServiceInfo } from "./services25";
+
 export interface CityInfo {
   name: string;
   slug: string;
@@ -181,7 +183,12 @@ export const stats = {
   supportAvailability: "24/7"
 };
 
-export const services: Record<string, ServiceInfo> = {
+// The eight original city-page services, written by hand long before the
+// 25-service catalog existed. They stay hand-written rather than being folded
+// into the generated set below: their copy is richer, and — more importantly —
+// their URLs have been live and indexed for months. Regenerating them would
+// change published pages for no gain.
+const handWrittenServices: Record<string, ServiceInfo> = {
   "mobile-app-development": {
     name: "Mobile App Development",
     slug: "mobile-app-development",
@@ -816,6 +823,82 @@ export const services: Record<string, ServiceInfo> = {
   }
 };
 
+/* ─────────────────────────────────────────────────────────────────────────
+   THE REST OF THE CATALOG, ON THE CITY AXIS
+
+   The other 17 services in lib/services25.ts (ERP, CRM, billing, POS,
+   inventory, accounting, HRMS, the platform-specific app builds, AI, SaaS,
+   integrations and maintenance) get city pages too, adapted from the same
+   records that drive the industry axis. One catalog, two axes — a service's
+   price band or module list can never say one thing on /erp-development-
+   company-in-patna and another on /manufacturing-erp-development.
+
+   Two of the 25 (`website-development`, `software-development`) already exist
+   as hand-written entries above and are skipped here, so nothing is
+   overwritten.
+   ───────────────────────────────────────────────────────────────────────── */
+function serviceInfoFromCatalog(svc: IndustryServiceInfo): ServiceInfo {
+  return {
+    name: svc.name,
+    slug: svc.slug,
+    subtitle: svc.summary,
+    tagline: svc.outcome,
+    description: `${svc.summary} ${svc.outcome}`,
+    features: svc.modules,
+    benefits: svc.benefits,
+    /* A real six-step shape rather than filler: the middle two steps name the
+       service's own first and second modules, so the process section differs
+       per service instead of reading identically across all seventeen. */
+    process: [
+      { step: 1, title: "Discovery", desc: "We map how the work happens today — including the parts that only exist in someone's head — before anything is designed." },
+      { step: 2, title: "Prototype", desc: "You approve a clickable prototype while changing the shape of it is still cheap." },
+      { step: 3, title: svc.modules[0].split(" ").slice(0, 4).join(" "), desc: svc.modules[0] },
+      { step: 4, title: svc.modules[1].split(" ").slice(0, 4).join(" "), desc: svc.modules[1] },
+      { step: 5, title: "Testing & Data Migration", desc: "Tested against your real data, not sample records, and migrated from whatever you run today." },
+      { step: 6, title: "Launch & Handover", desc: "Deployment, team training, and handover of source code and documentation." },
+    ],
+    techStack: svc.techStack,
+    useCases: svc.useCases,
+    deliverables: [
+      ...svc.modules.slice(0, 3),
+      "Source code and technical documentation",
+      "Team training and a post-launch support window",
+    ],
+    timeline: svc.timeline,
+    idealFor: svc.useCases.slice(0, 4),
+    industries: INDUSTRY_LABELS_FOR_CITY_PAGES,
+    pricing: svc.tiers,
+    marqueeBase: [svc.name, ...svc.modules.slice(0, 3), `Delivered in ${svc.timeline}`],
+  };
+}
+
+/* Deliberately the broad sector list rather than a per-service guess: on a
+   city page this field answers "who else do you build this for", and an
+   honest wide answer beats a fabricated narrow one. */
+const INDUSTRY_LABELS_FOR_CITY_PAGES = [
+  "Retail & e-commerce",
+  "Healthcare & pharma",
+  "Education & coaching",
+  "Manufacturing & logistics",
+  "Professional services",
+];
+
+const generatedServices: Record<string, ServiceInfo> = Object.fromEntries(
+  industryServices
+    .filter((svc) => !(svc.slug in handWrittenServices))
+    .map((svc) => [svc.slug, serviceInfoFromCatalog(svc)])
+);
+
+export const services: Record<string, ServiceInfo> = {
+  ...handWrittenServices,
+  ...generatedServices,
+};
+
+/* The eight that were live before the catalog expansion. `generateStaticParams`
+   prerenders these at build time and lets the newer ones render on demand —
+   otherwise every deploy would prerender 7,500+ city pages up front. */
+export const originalCityServiceSlugs = Object.keys(handWrittenServices);
+
 /* ══════════════════════════════════════════════
    BIHAR
 ══════════════════════════════════════════════ */
@@ -1250,7 +1333,7 @@ export interface LocalPageData {
   // Every service we offer in this city (all 8), with the current one flagged —
   // rendered on each city page so visitors always see the full service menu.
   allServices: { name: string; url: string; current: boolean }[];
-  schemas: any[];
+  schemas: Record<string, unknown>[];
 }
 
 // Builds the word-for-word Mobile App Development landing copy for a given
@@ -1762,7 +1845,7 @@ export function getContentBySlug(slug: string): LocalPageData | null {
 
 // The three core services in the order we want them presented on the hub.
 // Names are inlined so this list never depends on `services` key ordering.
-export const serviceCatalog: { slug: string; name: string; shortName: string }[] = [
+const coreServiceCatalog: { slug: string; name: string; shortName: string }[] = [
   { slug: "website-development", name: "Website Development", shortName: "Website" },
   { slug: "mobile-app-development", name: "Mobile App Development", shortName: "Mobile App" },
   { slug: "software-development", name: "Software Development", shortName: "Software" },
@@ -1771,6 +1854,23 @@ export const serviceCatalog: { slug: string; name: string; shortName: string }[]
   { slug: "digital-marketing", name: "Digital Marketing", shortName: "Marketing" },
   { slug: "ecommerce-development", name: "E-commerce Development", shortName: "E-commerce" },
   { slug: "cloud-devops", name: "Cloud & DevOps", shortName: "Cloud" }
+];
+
+/* The full menu shown on the hub: the eight core lines first, in the order
+   above, then the rest of the catalog. `shortName` drops the trailing
+   "Development"/"Software Development" so the chips stay one line on mobile. */
+export const serviceCatalog: { slug: string; name: string; shortName: string }[] = [
+  ...coreServiceCatalog,
+  ...industryServices
+    .filter((svc) => !coreServiceCatalog.some((c) => c.slug === svc.slug))
+    .map((svc) => ({
+      slug: svc.slug,
+      name: svc.name,
+      shortName: svc.name
+        .replace(/ Software Development$/, "")
+        .replace(/ Development$/, "")
+        .replace(/ Solutions$/, ""),
+    })),
 ];
 
 // Groups every covered city under its state, preserving the order each state

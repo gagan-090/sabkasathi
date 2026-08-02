@@ -2,6 +2,7 @@ import { MetadataRoute } from 'next';
 import { locationContent, expertiseContent, processContent } from '@/lib/content';
 import { blogPosts } from '@/lib/blogs';
 import { getPagesList } from '@/lib/localSeo';
+import { getIndustryPagesList, industries } from '@/lib/industrySeo';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://sabkasaathidigitalservices.com';
@@ -103,5 +104,33 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.8,
   }));
 
-  return [...staticRoutes, ...dynamicRoutes, ...localSeoPages];
+  // The industry axis: one hub per sector, plus every service × industry leaf.
+  // Hubs rank above the leaves because they are the pages we want crawled and
+  // recrawled first — they are how the 1,300+ leaves get discovered at all.
+  const industryHubs = industries.map((industry) => ({
+    url: `${baseUrl}/industries/${industry.slug}`,
+    lastModified,
+    changeFrequency: 'monthly' as const,
+    priority: 0.9,
+  }));
+
+  const industryServicePages = getIndustryPagesList().map((page) => ({
+    url: `${baseUrl}/${page.slug}`,
+    lastModified,
+    changeFrequency: 'monthly' as const,
+    priority: 0.7,
+  }));
+
+  /* Total is ~8,900 URLs. The sitemap protocol caps a single file at 50,000
+     URLs / 50 MB, so this still fits in one — but it is within one order of
+     magnitude of the limit. If the catalog grows again, split this into a
+     sitemap index (Next supports it via generateSitemaps) rather than letting
+     the file silently truncate. */
+  return [
+    ...staticRoutes,
+    ...dynamicRoutes,
+    ...industryHubs,
+    ...localSeoPages,
+    ...industryServicePages,
+  ];
 }

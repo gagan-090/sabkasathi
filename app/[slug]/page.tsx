@@ -1,4 +1,6 @@
-import { getContentBySlug, getPagesList } from "@/lib/localSeo";
+import { getContentBySlug, getPagesList, originalCityServiceSlugs } from "@/lib/localSeo";
+import { getIndustryContentBySlug, getIndustryPagesList, SITE_URL } from "@/lib/industrySeo";
+import { IndustryServicePage } from "@/components/seo/IndustryServicePage";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { Navbar } from "@/components/Navbar";
@@ -13,24 +15,73 @@ import {
   ChevronRight, MapPin, Sparkles, CheckCircle2, 
   ArrowRight, Smartphone, Laptop, Settings, HelpCircle
 } from "lucide-react";
-import Script from "next/script";
+import { JsonLd } from "@/components/seo/JsonLd";
 
 type Props = {
   params: Promise<{ slug: string }>;
 };
 
+/*
+  This route serves BOTH programmatic axes:
+    service × city      /website-development-company-in-patna   (lib/localSeo)
+    service × industry  /restaurant-billing-software-development (lib/industrySeo)
+
+  They cannot collide: every city slug contains the literal "-company-in-"
+  segment that generateSlug inserts, and no industry slug does. The two lookups
+  are still tried in order rather than sniffed from the string, so the data is
+  the authority on which page a slug is, not a regex.
+*/
+
+/* Prerendering all 8,800+ combinations at build time would put a deploy into
+   the tens of minutes for pages that are mostly long-tail. So: prerender the
+   industry axis in full (1,325 — these are the newer, higher-intent pages) plus
+   the eight original city services that have been live and indexed for months.
+   The rest render on first request and are then cached — `dynamicParams`
+   defaults to true, so nothing 404s in the meantime. */
+export const revalidate = 86400;
+
 export async function generateStaticParams() {
-  const pages = getPagesList();
-  return pages.map((page) => ({
-    slug: page.slug
-  }));
+  const cityPages = getPagesList().filter((p) =>
+    originalCityServiceSlugs.includes(p.serviceSlug)
+  );
+  const industryPages = getIndustryPagesList();
+
+  return [...industryPages, ...cityPages].map((page) => ({ slug: page.slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const data = getContentBySlug(slug);
 
-  if (!data) return { title: "Not Found" };
+  if (!data) {
+    const industry = getIndustryContentBySlug(slug);
+    if (!industry) return { title: "Not Found" };
+
+    return {
+      title: industry.metaTitle,
+      description: industry.metaDescription,
+      keywords: [
+        industry.h1,
+        `${industry.industryName} ${industry.serviceName} company`,
+        `${industry.serviceName} for ${industry.industryLabel}`,
+        `${industry.industryName} software development India`,
+      ],
+      alternates: { canonical: `${SITE_URL}/${industry.slug}` },
+      openGraph: {
+        title: industry.metaTitle,
+        description: industry.metaDescription,
+        url: `${SITE_URL}/${industry.slug}`,
+        siteName: "Sabka Saathi",
+        type: "website",
+        locale: "en_IN",
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: industry.metaTitle,
+        description: industry.metaDescription,
+      },
+    };
+  }
 
   return {
     title: data.metaTitle,
@@ -59,6 +110,8 @@ export default async function LocalSEOPage({ params }: Props) {
   const data = getContentBySlug(slug);
 
   if (!data) {
+    const industry = getIndustryContentBySlug(slug);
+    if (industry) return <IndustryServicePage data={industry} />;
     notFound();
   }
 
@@ -74,15 +127,9 @@ export default async function LocalSEOPage({ params }: Props) {
       <InteractiveBackground />
       <Navbar />
 
-      {/* Schema Injection */}
-      {data.schemas.map((schema, idx) => (
-        <Script
-          key={idx}
-          id={`schema-${idx}`}
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
-        />
-      ))}
+      {/* Structured data — see components/seo/JsonLd for why this is a native
+          <script> and not next/script. */}
+      <JsonLd schemas={data.schemas} />
 
       <main className="flex-1 select-none">
         {/* Breadcrumbs */}
