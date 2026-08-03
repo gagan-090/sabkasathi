@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { Card } from "@/components/ui/Card";
+import { IndustryCardPhone } from "@/components/industries/IndustryCardPhone";
 import { cn } from "@/lib/cn";
 import {
   ShoppingBag,
@@ -121,6 +122,31 @@ const styles = `
     box-shadow: 0 8px 26px rgba(224, 102, 0, 0.32), inset 0 1px 0 rgba(255,255,255,0.26);
   }
 
+  /* The recessed surface each card's phone stands on. A hairline and a soft
+     inward wash, so the phone reads as an exhibit set into the card rather
+     than an image dropped on top of it. */
+  .ind-phone-well {
+    position: relative;
+    /* Cancels the card's p-5 so the well reaches the card's own edges and
+       bottom corners; a floating grey block inset from them read as a stray
+       rectangle rather than a surface the phone stands on. */
+    margin: 1.25rem -1.25rem -1.25rem;
+    padding: 1.15rem 1.25rem 1.1rem;
+    border-top: 1px solid rgba(29,29,31,0.07);
+    background:
+      radial-gradient(120% 70% at 50% 0%, rgba(224, 102, 0, 0.05) 0%, transparent 62%),
+      linear-gradient(180deg, rgba(15,23,42,0.04) 0%, rgba(15,23,42,0) 58%);
+    border-bottom-left-radius: 1.5rem; border-bottom-right-radius: 1.5rem;
+  }
+
+  /* Each card's phone scrolls its own screen. A real phone does not draw a
+     scrollbar down the middle of its UI, and the one here would also be sitting
+     on a ~0.5 scale. Note there is no data-lenis-prevent anywhere near these —
+     see the note in components/mockups/kit.tsx for why that would freeze the
+     page. */
+  .ind-section .phone-scroll { scrollbar-width: none; -ms-overflow-style: none; }
+  .ind-section .phone-scroll::-webkit-scrollbar { display: none; }
+
   .ind-quote {
     position: relative; overflow: hidden;
     background: rgba(255,255,255,0.62);
@@ -141,6 +167,8 @@ const categoryIconMap: Record<string, React.ComponentType<{ className?: string }
   "Food & Hospitality": Utensils,
 };
 
+/* Food & Hospitality was missing here while five industries below carried it,
+   so Restaurant, Hotels, Travel and Catering could not be filtered to at all. */
 const categories = [
   "All",
   "Business & Retail",
@@ -150,64 +178,65 @@ const categories = [
   "Home & Local",
   "Industrial",
   "Creative & Media",
+  "Food & Hospitality",
 ];
 
 const industries = [
-  { id: 1, category: "Business & Retail", icon: "🚀", title: "Startups & New Businesses", desc: "Digital setup, branding, and growth strategies for new ideas." },
-  { id: 2, category: "Medical & Wellness", icon: "🏥", title: "Medical & Healthcare", desc: "Patient reach and management for clinics and hospitals." },
-  { id: 3, category: "Education", icon: "🎓", title: "Education & Coaching", desc: "Management systems for schools and coaching centers." },
-  { id: 4, category: "Business & Retail", icon: "🛒", title: "E-commerce & Retail", desc: "Online store development and marketing for sales growth." },
-  { id: 5, category: "Business & Retail", icon: "🏪", title: "Local Shops", desc: "Attracting nearby customers through local digital presence." },
-  { id: 6, category: "Professional", icon: "🧑‍💼", title: "Service Providers", desc: "Branding and lead generation for consultants and freelancers." },
-  { id: 7, category: "Professional", icon: "🏗️", title: "Real Estate", desc: "Property listing platforms and lead systems for builders." },
-  { id: 8, category: "Food & Hospitality", icon: "🍽️", title: "Food & Restaurant", desc: "Online menus and ordering systems to boost growth." },
-  { id: 9, category: "Food & Hospitality", icon: "🏨", title: "Hotels & Hospitality", desc: "Websites and booking systems for stays and guest houses." },
-  { id: 10, category: "Food & Hospitality", icon: "✈️", title: "Travel & Tourism", desc: "Digital platforms for agencies to attract more clients." },
-  { id: 11, category: "Home & Local", icon: "🚗", title: "Automobile & Services", desc: "Online presence for vehicle dealers and service centers." },
-  { id: 12, category: "Medical & Wellness", icon: "🏋️", title: "Fitness & Gym", desc: "Websites and marketing for wellness centers and trainers." },
-  { id: 13, category: "Medical & Wellness", icon: "💄", title: "Beauty & Salon", desc: "Booking systems for salons and beauty professionals." },
-  { id: 14, category: "Industrial", icon: "📦", title: "Logistics & Delivery", desc: "Solutions for courier, transport, and supply chain." },
-  { id: 15, category: "Business & Retail", icon: "🧵", title: "Fashion & Clothing", desc: "E-commerce and branding for boutiques and fashion brands." },
-  { id: 16, category: "Professional", icon: "🏢", title: "Corporate & Offices", desc: "Professional websites and systems for modern companies." },
-  { id: 17, category: "Professional", icon: "🧾", title: "Finance & Accounting", desc: "Digital tools and presence for CA firms and advisors." },
-  { id: 18, category: "Home & Local", icon: "🏠", title: "Home Services", desc: "Lead generation for electricians, plumbers, and local fixers." },
-  { id: 19, category: "Home & Local", icon: "🎤", title: "Event Management", desc: "Online presence and booking systems for event planners." },
-  { id: 20, category: "Creative & Media", icon: "🎨", title: "Personal Brands", desc: "Brand building and growth for public figures and creators." },
-  { id: 21, category: "Industrial", icon: "🏭", title: "Manufacturing", desc: "Digital solutions for factories and production units." },
-  { id: 22, category: "Education", icon: "📚", title: "Book Stores", desc: "Online platforms for book sellers and publishers." },
-  { id: 23, category: "Medical & Wellness", icon: "🧪", title: "Pharma & Distributors", desc: "Systems for medicine distributors and pharma businesses." },
-  { id: 24, category: "Industrial", icon: "🐄", title: "Agriculture", desc: "Digital tools for agri-business, farmers, and dairy." },
-  { id: 25, category: "Medical & Wellness", icon: "🐾", title: "Pet Care", desc: "Websites and booking systems for pet services." },
-  { id: 26, category: "Professional", icon: "🏫", title: "NGOs", desc: "Digital presence for social organizations and trusts." },
-  { id: 27, category: "Professional", icon: "⚖️", title: "Legal Services", desc: "Professional websites for lawyers and legal advisors." },
-  { id: 28, category: "Education", icon: "🧠", title: "Competitive Exam", desc: "Online systems for UPSC, SSC, and banking coaching." },
-  { id: 29, category: "Professional", icon: "🏦", title: "Banking & Finance", desc: "Digital support for financial institutions and advisors." },
-  { id: 30, category: "Business & Retail", icon: "🛍️", title: "Wholesale Businesses", desc: "Online systems for bulk sellers and distributors." },
-  { id: 31, category: "Business & Retail", icon: "🧰", title: "Hardware Shops", desc: "Digital presence for hardware and electrical stores." },
-  { id: 32, category: "Home & Local", icon: "🪑", title: "Furniture & Interior", desc: "Showcase and marketing for furniture businesses." },
-  { id: 33, category: "Home & Local", icon: "🏡", title: "Home Decor", desc: "Online branding for home decor products and services." },
-  { id: 34, category: "Medical & Wellness", icon: "🧴", title: "Cosmetics", desc: "E-commerce and marketing for beauty products." },
-  { id: 35, category: "Home & Local", icon: "🧼", title: "Cleaning Services", desc: "Lead generation and booking for cleaning businesses." },
-  { id: 36, category: "Industrial", icon: "🧯", title: "Security Services", desc: "Systems for security agencies and CCTV providers." },
-  { id: 37, category: "Creative & Media", icon: "📸", title: "Photography", desc: "Portfolio websites for photographers and studios." },
-  { id: 38, category: "Creative & Media", icon: "🎬", title: "Media & Production", desc: "Digital presence for video and media companies." },
-  { id: 39, category: "Creative & Media", icon: "🎧", title: "Music & Audio", desc: "Platforms for music studios and professionals." },
-  { id: 40, category: "Education", icon: "🧑‍🏫", title: "Online Tutors", desc: "Personal websites and systems for educators." },
-  { id: 41, category: "Industrial", icon: "🧳", title: "Import & Export", desc: "Global business platforms for international traders." },
-  { id: 42, category: "Industrial", icon: "🧊", title: "Cold Storage", desc: "Visibility solutions for storage and warehousing." },
-  { id: 43, category: "Industrial", icon: "🚚", title: "Transport Services", desc: "Digital systems for transport and logistics fleets." },
-  { id: 44, category: "Professional", icon: "🏢", title: "Co-working Spaces", desc: "Websites and booking systems for shared offices." },
-  { id: 45, category: "Business & Retail", icon: "🖨️", title: "Printing Shops", desc: "Online presence for printing and advertising services." },
-  { id: 46, category: "Home & Local", icon: "🪪", title: "ID Services", desc: "Platforms for ID card and documentation providers." },
-  { id: 47, category: "Home & Local", icon: "🧑‍🔧", title: "Repair Services", desc: "Online booking and lead systems for repair services." },
-  { id: 48, category: "Home & Local", icon: "🧑‍🌾", title: "Nursery & Plants", desc: "E-commerce and branding for nursery businesses." },
-  { id: 49, category: "Food & Hospitality", icon: "🧑‍🍳", title: "Catering Services", desc: "Online booking and promotion for catering." },
-  { id: 50, category: "Education", icon: "🧑‍🏭", title: "Skill Training", desc: "Websites and systems for vocational institutes." },
-  { id: 51, category: "Creative & Media", icon: "🎯", title: "Digital Creators", desc: "Brand building and growth for YouTubers and creators." },
-  { id: 52, category: "Professional", icon: "🧑‍💻", title: "IT & Tech Firms", desc: "Advanced digital solutions for technology companies." },
-  { id: 53, category: "Professional", icon: "🧾", title: "Tax Consultants", desc: "Professional platforms for tax and GST advisors." },
-  { id: 54, category: "Professional", icon: "🧍", title: "HR Agencies", desc: "Online systems for recruitment and staffing." },
-  { id: 55, category: "Business & Retail", icon: "🏪", title: "Franchise Businesses", desc: "Multi-location management and branding." },
+  { id: 1, category: "Business & Retail", icon: "🚀", title: "Startups & New Businesses", desc: "Digital setup, branding, and growth strategies for new ideas.", screen: "branding" },
+  { id: 2, category: "Medical & Wellness", icon: "🏥", title: "Medical & Healthcare", desc: "Patient reach and management for clinics and hospitals.", screen: "dental" },
+  { id: 3, category: "Education", icon: "🎓", title: "Education & Coaching", desc: "Management systems for schools and coaching centers.", screen: "school" },
+  { id: 4, category: "Business & Retail", icon: "🛒", title: "E-commerce & Retail", desc: "Online store development and marketing for sales growth.", screen: "ecommerce" },
+  { id: 5, category: "Business & Retail", icon: "🏪", title: "Local Shops", desc: "Attracting nearby customers through local digital presence.", screen: "kirana" },
+  { id: 6, category: "Professional", icon: "🧑‍💼", title: "Service Providers", desc: "Branding and lead generation for consultants and freelancers.", screen: "live-smartedge" },
+  { id: 7, category: "Professional", icon: "🏗️", title: "Real Estate", desc: "Property listing platforms and lead systems for builders.", screen: "realestate" },
+  { id: 8, category: "Food & Hospitality", icon: "🍽️", title: "Food & Restaurant", desc: "Online menus and ordering systems to boost growth.", screen: "restaurant" },
+  { id: 9, category: "Food & Hospitality", icon: "🏨", title: "Hotels & Hospitality", desc: "Websites and booking systems for stays and guest houses.", screen: "hotel" },
+  { id: 10, category: "Food & Hospitality", icon: "✈️", title: "Travel & Tourism", desc: "Digital platforms for agencies to attract more clients.", screen: "travel" },
+  { id: 11, category: "Home & Local", icon: "🚗", title: "Automobile & Services", desc: "Online presence for vehicle dealers and service centers.", screen: "automobile" },
+  { id: 12, category: "Medical & Wellness", icon: "🏋️", title: "Fitness & Gym", desc: "Websites and marketing for wellness centers and trainers.", screen: "gym" },
+  { id: 13, category: "Medical & Wellness", icon: "💄", title: "Beauty & Salon", desc: "Booking systems for salons and beauty professionals.", screen: "salon" },
+  { id: 14, category: "Industrial", icon: "📦", title: "Logistics & Delivery", desc: "Solutions for courier, transport, and supply chain.", screen: "logistics" },
+  { id: 15, category: "Business & Retail", icon: "🧵", title: "Fashion & Clothing", desc: "E-commerce and branding for boutiques and fashion brands.", screen: "boutique" },
+  { id: 16, category: "Professional", icon: "🏢", title: "Corporate & Offices", desc: "Professional websites and systems for modern companies.", screen: "corporate" },
+  { id: 17, category: "Professional", icon: "🧾", title: "Finance & Accounting", desc: "Digital tools and presence for CA firms and advisors.", screen: "ca" },
+  { id: 18, category: "Home & Local", icon: "🏠", title: "Home Services", desc: "Lead generation for electricians, plumbers, and local fixers.", screen: "repair" },
+  { id: 19, category: "Home & Local", icon: "🎤", title: "Event Management", desc: "Online presence and booking systems for event planners.", screen: "events" },
+  { id: 20, category: "Creative & Media", icon: "🎨", title: "Personal Brands", desc: "Brand building and growth for public figures and creators.", screen: "creator" },
+  { id: 21, category: "Industrial", icon: "🏭", title: "Manufacturing", desc: "Digital solutions for factories and production units.", screen: "manufacturing" },
+  { id: 22, category: "Education", icon: "📚", title: "Book Stores", desc: "Online platforms for book sellers and publishers.", screen: "bookstore" },
+  { id: 23, category: "Medical & Wellness", icon: "🧪", title: "Pharma & Distributors", desc: "Systems for medicine distributors and pharma businesses.", screen: "pharmacy" },
+  { id: 24, category: "Industrial", icon: "🐄", title: "Agriculture", desc: "Digital tools for agri-business, farmers, and dairy.", screen: "agriculture" },
+  { id: 25, category: "Medical & Wellness", icon: "🐾", title: "Pet Care", desc: "Websites and booking systems for pet services.", screen: "petcare" },
+  { id: 26, category: "Professional", icon: "🏫", title: "NGOs", desc: "Digital presence for social organizations and trusts.", screen: "ngo" },
+  { id: 27, category: "Professional", icon: "⚖️", title: "Legal Services", desc: "Professional websites for lawyers and legal advisors.", screen: "legal" },
+  { id: 28, category: "Education", icon: "🧠", title: "Competitive Exam", desc: "Online systems for UPSC, SSC, and banking coaching.", screen: "exam" },
+  { id: 29, category: "Professional", icon: "🏦", title: "Banking & Finance", desc: "Digital support for financial institutions and advisors.", screen: "banking" },
+  { id: 30, category: "Business & Retail", icon: "🛍️", title: "Wholesale Businesses", desc: "Online systems for bulk sellers and distributors.", screen: "wholesale" },
+  { id: 31, category: "Business & Retail", icon: "🧰", title: "Hardware Shops", desc: "Digital presence for hardware and electrical stores.", screen: "hardware" },
+  { id: 32, category: "Home & Local", icon: "🪑", title: "Furniture & Interior", desc: "Showcase and marketing for furniture businesses.", screen: "furniture" },
+  { id: 33, category: "Home & Local", icon: "🏡", title: "Home Decor", desc: "Online branding for home decor products and services.", screen: "homedecor" },
+  { id: 34, category: "Medical & Wellness", icon: "🧴", title: "Cosmetics", desc: "E-commerce and marketing for beauty products.", screen: "cosmetics" },
+  { id: 35, category: "Home & Local", icon: "🧼", title: "Cleaning Services", desc: "Lead generation and booking for cleaning businesses.", screen: "cleaning" },
+  { id: 36, category: "Industrial", icon: "🧯", title: "Security Services", desc: "Systems for security agencies and CCTV providers.", screen: "security" },
+  { id: 37, category: "Creative & Media", icon: "📸", title: "Photography", desc: "Portfolio websites for photographers and studios.", screen: "photography" },
+  { id: 38, category: "Creative & Media", icon: "🎬", title: "Media & Production", desc: "Digital presence for video and media companies.", screen: "video" },
+  { id: 39, category: "Creative & Media", icon: "🎧", title: "Music & Audio", desc: "Platforms for music studios and professionals.", screen: "music" },
+  { id: 40, category: "Education", icon: "🧑‍🏫", title: "Online Tutors", desc: "Personal websites and systems for educators.", screen: "live-gravity" },
+  { id: 41, category: "Industrial", icon: "🧳", title: "Import & Export", desc: "Global business platforms for international traders.", screen: "importexport" },
+  { id: 42, category: "Industrial", icon: "🧊", title: "Cold Storage", desc: "Visibility solutions for storage and warehousing.", screen: "coldstorage" },
+  { id: 43, category: "Industrial", icon: "🚚", title: "Transport Services", desc: "Digital systems for transport and logistics fleets.", screen: "transport" },
+  { id: 44, category: "Professional", icon: "🏢", title: "Co-working Spaces", desc: "Websites and booking systems for shared offices.", screen: "coworking" },
+  { id: 45, category: "Business & Retail", icon: "🖨️", title: "Printing Shops", desc: "Online presence for printing and advertising services.", screen: "printing" },
+  { id: 46, category: "Home & Local", icon: "🪪", title: "ID Services", desc: "Platforms for ID card and documentation providers.", screen: "idservices" },
+  { id: 47, category: "Home & Local", icon: "🧑‍🔧", title: "Repair Services", desc: "Online booking and lead systems for repair services.", screen: "repairshop" },
+  { id: 48, category: "Home & Local", icon: "🧑‍🌾", title: "Nursery & Plants", desc: "E-commerce and branding for nursery businesses.", screen: "live-phulwari" },
+  { id: 49, category: "Food & Hospitality", icon: "🧑‍🍳", title: "Catering Services", desc: "Online booking and promotion for catering.", screen: "catering" },
+  { id: 50, category: "Education", icon: "🧑‍🏭", title: "Skill Training", desc: "Websites and systems for vocational institutes.", screen: "skills" },
+  { id: 51, category: "Creative & Media", icon: "🎯", title: "Digital Creators", desc: "Brand building and growth for YouTubers and creators.", screen: "digitalcreator" },
+  { id: 52, category: "Professional", icon: "🧑‍💻", title: "IT & Tech Firms", desc: "Advanced digital solutions for technology companies.", screen: "itfirm" },
+  { id: 53, category: "Professional", icon: "🧾", title: "Tax Consultants", desc: "Professional platforms for tax and GST advisors.", screen: "taxconsultant" },
+  { id: 54, category: "Professional", icon: "🧍", title: "HR Agencies", desc: "Online systems for recruitment and staffing.", screen: "hr" },
+  { id: 55, category: "Business & Retail", icon: "🏪", title: "Franchise Businesses", desc: "Multi-location management and branding.", screen: "franchise" },
 ];
 
 export function IndustriesSection() {
@@ -217,6 +246,7 @@ export function IndustriesSection() {
     activeCategory === "All"
       ? industries
       : industries.filter((item) => item.category === activeCategory);
+
 
   return (
     <section
@@ -275,6 +305,14 @@ export function IndustriesSection() {
           ))}
         </div>
 
+        <p className="text-center text-sm text-slate-500 leading-relaxed max-w-2xl mx-auto mb-10">
+          Every sector below carries its own working screen — tap through the tabs,
+          baskets and slots, they are real. Each is marked{" "}
+          <strong className="font-semibold text-slate-600">Concept</strong> unless it
+          is a client site we actually built, which is marked{" "}
+          <strong className="font-semibold text-slate-600">Live</strong>.
+        </p>
+
         {/* Industries Grid */}
         <div className="relative min-h-[400px]">
           <motion.div
@@ -293,7 +331,7 @@ export function IndustriesSection() {
                     exit={{ opacity: 0, scale: 0.92 }}
                     transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
                   >
-                    <Card className="ind-card p-5 h-full rounded-3xl border-0">
+                    <Card className="ind-card p-5 h-full rounded-3xl border-0 flex flex-col">
                       <div className="flex items-start gap-4">
                         <div className="ind-icon-wrap w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 flex-shrink-0">
                           <IconComponent className="w-5 h-5" />
@@ -309,6 +347,13 @@ export function IndustriesSection() {
                             {item.desc}
                           </p>
                         </div>
+                      </div>
+
+                      {/* This sector's own screen, in its own card. The well
+                          gives the phone a recessed surface to sit on so it
+                          reads as an exhibit rather than a pasted-in image. */}
+                      <div className="ind-phone-well mt-auto">
+                        <IndustryCardPhone screenId={item.screen} />
                       </div>
                     </Card>
                   </motion.div>

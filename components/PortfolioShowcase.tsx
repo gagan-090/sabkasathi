@@ -5,27 +5,19 @@ import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import { fetchProjectsByType, Project } from "@/lib/project";
 import { AppScreen } from "@/components/mockups";
+import { PhoneFrame } from "@/components/mockups/PhoneFrame";
 
-/* The virtual viewport each screen is composed at before being scaled down
-   into the frame — an iPhone 14's CSS width. Every app in components/mockups
-   is written against this width in plain pixel values, so the frame can be any
-   size and the composition stays identical rather than needing a breakpoint
-   for each one. Same trick RecentProjectsShowcase uses for its 1440px desktop
-   previews.
+/* The device itself — bezel, punch-hole, status bar and the scale down from the
+   390px virtual viewport — now lives in components/mockups/PhoneFrame, because
+   the industry rows in IndustriesSection render into the same phone and two
+   hand-maintained copies of that frame would drift.
 
-   Until now this scaled a live <iframe> of each client's site. That is gone:
-   three third-party sites were booting inside our home page, each with its own
-   fonts, analytics and hero images, and every card sat on "Loading Demo…"
-   until they did. What runs in the frames now are real React apps built from
-   those clients' own content — see components/mockups. Nothing in this section
-   touches the network. */
-const PHONE_VIEWPORT_WIDTH = 390;
-
-/* Height of the two reserved bands inside the screen: the status bar the clock
-   sits in, and the strip the home indicator sits on. The mockup gets
-   everything between them, so nothing ever renders under the clock. */
-const STATUS_BAR_HEIGHT = 30;
-const HOME_BAR_HEIGHT = 16;
+   Until this section was rewritten it scaled a live <iframe> of each client's
+   site. That is gone: three third-party sites were booting inside our home
+   page, each with its own fonts, analytics and hero images, and every card sat
+   on "Loading Demo…" until they did. What runs in the frames now are real React
+   apps built from those clients' own content — see components/mockups. Nothing
+   in this section touches the network. */
 
 interface PhoneCardProps {
   project: Project;
@@ -37,130 +29,10 @@ interface PhoneCardProps {
 }
 
 function PhoneCard({ project, isActive, onHold }: PhoneCardProps) {
-  const [screen, setScreen] = useState({ width: 0, height: 0 });
-  const screenRef = useRef<HTMLDivElement>(null);
-  const accentColor = project.accentColor ?? "#f38200";
-
-  /* Measured rather than computed from the breakpoint classes: the frame width
-     comes from Tailwind, so the scale would silently go wrong the moment one of
-     those sizes is edited. */
-  useEffect(() => {
-    const el = screenRef.current;
-    if (!el) return;
-    const update = () => setScreen({ width: el.offsetWidth, height: el.offsetHeight });
-    update();
-    const observer = new ResizeObserver(update);
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
-  const scale = screen.width ? screen.width / PHONE_VIEWPORT_WIDTH : 0;
-
   return (
-    /* --bezel and --radius drive the whole frame. The screen's corner radius is
-       derived from them (`--radius` minus the bezel it sits inside) rather than
-       being a second hand-picked value, which is what makes the two curves
-       concentric instead of the mismatched pair they were before. The card's
-       height is the screen's 390x844 ratio plus the bezel, top and bottom, so
-       the demo is never letterboxed inside its own frame.
-
-       Proportions follow a Galaxy S25 Ultra rather than an iPhone: a ~5-6px
-       bezel (about 1.5mm at this scale) and a noticeably squarer corner —
-       Ultra bodies round at roughly 11% of their width where an iPhone is
-       nearer 14%. Both numbers are per-breakpoint because a 5px bezel reads as
-       thicker on a 250px frame than on a 280px one. */
-    <div
-      className="relative flex-shrink-0 snap-center select-none
-                 w-[250px] h-[530px] [--bezel:5px] [--radius:28px]
-                 sm:w-[268px] sm:h-[568px] sm:[--bezel:5px] sm:[--radius:30px]
-                 md:w-[280px] md:h-[592px] md:[--bezel:6px] md:[--radius:32px]"
-    >
-      <div
-        className="w-full h-full rounded-[var(--radius)] p-[var(--bezel)]
-                   bg-gradient-to-b from-slate-800 via-slate-900 to-slate-950"
-        style={{
-          boxShadow: `0 25px 50px -12px rgba(0,0,0,0.28), 0 0 0 1px rgba(255,255,255,0.06) inset, 0 0 18px ${accentColor}1a`,
-        }}
-      >
-        {/* The clipping box for everything on the screen. `isolation` plus a
-            forced compositing layer keep the scaled subtree clipped to the
-            rounded corners in WebKit, which otherwise lets a transformed child
-            paint straight through its rounded `overflow: hidden` ancestor.
-            The other half of that is below — the scale lives on a wrapper
-            <div>, never on the mockup's own root. */}
-        <div
-          className="relative w-full h-full overflow-hidden flex flex-col select-none"
-          style={{
-            borderRadius: "calc(var(--radius) - var(--bezel))",
-            /* Matches the mockup's own base so the status and home bars read
-               as part of the same screen rather than two grey margins. */
-            background: "#05080d",
-            isolation: "isolate",
-            transform: "translateZ(0)",
-          }}
-        >
-          {/* Centred punch-hole camera. An island pill belongs to an iPhone;
-              on a frame this slim it also ate most of the status bar. */}
-          <div className="absolute top-[7px] left-1/2 -translate-x-1/2 w-[9px] h-[9px] rounded-full bg-black z-30 pointer-events-none ring-1 ring-white/10">
-            <span className="absolute inset-[2px] rounded-full bg-slate-800/80" />
-          </div>
-
-          <div
-            className="shrink-0 flex justify-between items-center px-3.5 pt-1.5 text-[9px] font-bold z-20 pointer-events-none text-white/85"
-            style={{ height: STATUS_BAR_HEIGHT }}
-          >
-            <span>9:41</span>
-            <span
-              className="flex items-center gap-1 text-[7px] font-black uppercase tracking-[0.14em] px-1.5 py-[2px] rounded-full"
-              style={{
-                color: accentColor,
-                background: `${accentColor}24`,
-                border: `1px solid ${accentColor}44`,
-              }}
-            >
-              <span className="w-[3px] h-[3px] rounded-full" style={{ background: accentColor }} />
-              Live
-            </span>
-          </div>
-
-          {/* The app inside is genuinely interactive — tabs, filters, steppers,
-              tel: and WhatsApp links. Pointer events are stopped here so a tap
-              on a button is not swallowed by the carousel's drag handler; the
-              bezel around the screen still drags the track. */}
-          <div
-            ref={screenRef}
-            className="relative flex-1 min-h-0 overflow-hidden"
-            onMouseDown={(e) => e.stopPropagation()}
-            onTouchStart={(e) => e.stopPropagation()}
-            onPointerEnter={() => onHold(true)}
-            onPointerLeave={() => onHold(false)}
-          >
-            {scale > 0 && (
-              <div
-                style={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  width: PHONE_VIEWPORT_WIDTH,
-                  height: screen.height / scale,
-                  transform: `scale(${scale})`,
-                  transformOrigin: "top left",
-                }}
-              >
-                <AppScreen project={project} active={isActive} />
-              </div>
-            )}
-          </div>
-
-          <div
-            className="shrink-0 flex items-end justify-center pb-1.5 z-20 pointer-events-none"
-            style={{ height: HOME_BAR_HEIGHT }}
-          >
-            <span className="w-24 h-[4px] bg-white/25 rounded-full" />
-          </div>
-        </div>
-      </div>
-    </div>
+    <PhoneFrame accent={project.accentColor ?? "#f38200"} badge="Live" onHold={onHold}>
+      <AppScreen project={project} active={isActive} />
+    </PhoneFrame>
   );
 }
 
