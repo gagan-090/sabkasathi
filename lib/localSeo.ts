@@ -1267,6 +1267,29 @@ const otherCities: CityInfo[] = [
   { name: "Vasco da Gama", slug: "vasco-da-gama", state: "Goa", type: "growing", tagline: "Goa's port and railway town near Mormugao harbour", context: "the port logistics, tourism, and fisheries trade", nearby: ["panaji", "margao", "mangaluru", "mumbai"] }
 ];
 
+/* The north-east, the Himalayan states and the island/enclave UTs. Added so
+   that every state and UT in lib/geo.ts has at least one city with real
+   service pages behind it — a state hub with nothing to link to is a dead end,
+   and its Service schema would otherwise advertise a URL that 404s. */
+const northeastHimalayanAndUtCities: CityInfo[] = [
+  { name: "Shillong", slug: "shillong", state: "Meghalaya", type: "major", tagline: "the capital of Meghalaya and the commercial centre of the Khasi Hills", context: "the tourism and hospitality trade, education institutions, and government contractors", nearby: ["guwahati", "silchar", "agartala", "aizawl"] },
+  { name: "Agartala", slug: "agartala", state: "Tripura", type: "major", tagline: "the capital of Tripura and a border-trade city on the Bangladesh frontier", context: "the cross-border trade, rubber and bamboo processing, and healthcare and education services", nearby: ["silchar", "guwahati", "shillong", "kolkata"] },
+  { name: "Aizawl", slug: "aizawl", state: "Mizoram", type: "major", tagline: "the capital of Mizoram, built along the ridges of the Lushai Hills", context: "the horticulture and handloom trade, government offices, and a fast-growing retail sector", nearby: ["silchar", "shillong", "agartala", "guwahati"] },
+  { name: "Imphal", slug: "imphal", state: "Manipur", type: "major", tagline: "the capital of Manipur and the commercial heart of the Imphal Valley", context: "the handloom and handicraft trade, the Moreh border route, and education and healthcare services", nearby: ["silchar", "kohima", "dimapur", "guwahati"] },
+  { name: "Kohima", slug: "kohima", state: "Nagaland", type: "major", tagline: "the hill capital of Nagaland", context: "the government offices, festival and heritage tourism, and retail and education services", nearby: ["dimapur", "imphal", "guwahati", "jorhat"] },
+  { name: "Dimapur", slug: "dimapur", state: "Nagaland", type: "major", tagline: "Nagaland's largest city and its commercial and transport gateway", context: "the wholesale trade, transport and logistics fleets, and auto and construction suppliers", nearby: ["kohima", "guwahati", "jorhat", "imphal"] },
+  { name: "Itanagar", slug: "itanagar", state: "Arunachal Pradesh", type: "major", tagline: "the capital of Arunachal Pradesh in the Himalayan foothills", context: "the government offices, hydropower and construction contractors, and tour operators", nearby: ["guwahati", "tezpur", "jorhat", "dibrugarh"] },
+  { name: "Gangtok", slug: "gangtok", state: "Sikkim", type: "major", tagline: "the capital of Sikkim in the eastern Himalaya", context: "the tourism and hospitality trade, pharmaceutical manufacturing, and organic-farming exports", nearby: ["siliguri", "kolkata", "guwahati", "shillong"] },
+  { name: "Shimla", slug: "shimla", state: "Himachal Pradesh", type: "major", tagline: "the capital of Himachal Pradesh and a Himalayan hill station", context: "the tourism and hospitality trade, apple horticulture supply chains, and education institutions", nearby: ["chandigarh", "dharamshala", "ludhiana", "dehradun"] },
+  { name: "Dharamshala", slug: "dharamshala", state: "Himachal Pradesh", type: "headquarters", tagline: "the Kangra valley headquarters town and a year-round tourism destination", context: "the hospitality and homestay trade, tea estates, and education and wellness institutions", nearby: ["shimla", "chandigarh", "ludhiana", "amritsar"] },
+  { name: "Leh", slug: "leh", state: "Ladakh", type: "major", tagline: "the high-altitude capital of Ladakh on the upper Indus", context: "the adventure-tourism and trekking trade, hospitality, and handicraft businesses", nearby: ["srinagar", "jammu", "chandigarh", "dehradun"] },
+  { name: "Puducherry", slug: "puducherry", state: "Puducherry", type: "major", tagline: "a former French colonial town and union-territory capital on the Coromandel coast", context: "the tourism and hospitality trade, garment units, and education and wellness institutions", nearby: ["chennai", "madurai", "coimbatore", "bengaluru"] },
+  { name: "Port Blair", slug: "port-blair", state: "Andaman & Nicobar Islands", type: "major", tagline: "the capital of the Andaman & Nicobar Islands and the archipelago's only city", context: "the island tourism trade, fisheries, and shipping and government services", nearby: ["chennai", "kolkata", "visakhapatnam", "bhubaneswar"] },
+  { name: "Kavaratti", slug: "kavaratti", state: "Lakshadweep", type: "headquarters", tagline: "the administrative capital of Lakshadweep", context: "the coconut and coir processing, fisheries, and island tourism", nearby: ["kochi", "kozhikode", "mangaluru", "thiruvananthapuram"] },
+  { name: "Silvassa", slug: "silvassa", state: "Dadra & Nagar Haveli and Daman & Diu", type: "major", tagline: "the capital of Dadra & Nagar Haveli and a duty-advantaged industrial town", context: "the textile, plastics and engineering units in its industrial estates", nearby: ["surat", "mumbai", "vadodara", "nashik"] },
+  { name: "Daman", slug: "daman", state: "Dadra & Nagar Haveli and Daman & Diu", type: "growing", tagline: "a coastal district headquarters on the Gujarat seaboard", context: "the tourism and hospitality trade, fisheries, and small manufacturing units", nearby: ["silvassa", "surat", "mumbai", "vadodara"] }
+];
+
 export const cities: CityInfo[] = [
   ...biharCities,
   ...jharkhandCities,
@@ -1288,6 +1311,7 @@ export const cities: CityInfo[] = [
   ...chhattisgarhCities,
   ...assamCities,
   ...uttarakhandCities,
+  ...northeastHimalayanAndUtCities,
   ...otherCities
 ];
 

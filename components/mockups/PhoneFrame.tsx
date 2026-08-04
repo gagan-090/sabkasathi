@@ -69,11 +69,11 @@ export function PhoneFrame({
   children: React.ReactNode;
 }) {
   const [screen, setScreen] = useState({ width: 0, height: 0 });
+  const [contentHeight, setContentHeight] = useState<number | null>(null);
   const screenRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
 
-  /* Measured rather than computed from the breakpoint classes: the frame width
-     comes from Tailwind, so the scale would silently go wrong the moment one of
-     those sizes is edited. */
+  /* Measured frame size for exact viewport scaling */
   useEffect(() => {
     const el = screenRef.current;
     if (!el) return;
@@ -84,15 +84,22 @@ export function PhoneFrame({
     return () => observer.disconnect();
   }, []);
 
+  /* Measures actual scrollHeight of child app screen to allow native vertical scrolling */
+  useEffect(() => {
+    const el = contentRef.current;
+    if (!el) return;
+    const update = () => setContentHeight(el.scrollHeight);
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [children]);
+
   const scale = screen.width ? screen.width / PHONE_VIEWPORT_WIDTH : 0;
+  const scaledViewportHeight = scale > 0 ? screen.height / scale : 0;
+  const effectiveUnscaledHeight = contentHeight ? Math.max(contentHeight, scaledViewportHeight) : scaledViewportHeight;
 
   return (
-    /* --bezel and --radius drive the whole frame. The screen's corner radius is
-       derived from them (`--radius` minus the bezel it sits inside) rather than
-       being a second hand-picked value, which is what makes the two curves
-       concentric instead of a mismatched pair. The card's height is the
-       screen's 390x844 ratio plus the bezel, top and bottom, so the demo is
-       never letterboxed inside its own frame. */
     <div className={`relative flex-shrink-0 snap-center select-none ${sizeClass}`}>
       <div
         className="w-full h-full rounded-[var(--radius)] p-[var(--bezel)]
@@ -101,25 +108,16 @@ export function PhoneFrame({
           boxShadow: `0 25px 50px -12px rgba(0,0,0,0.28), 0 0 0 1px rgba(255,255,255,0.06) inset, 0 0 18px ${accent}1a`,
         }}
       >
-        {/* The clipping box for everything on the screen. `isolation` plus a
-            forced compositing layer keep the scaled subtree clipped to the
-            rounded corners in WebKit, which otherwise lets a transformed child
-            paint straight through its rounded `overflow: hidden` ancestor.
-            The other half of that is below — the scale lives on a wrapper
-            <div>, never on the mockup's own root. */}
         <div
           className="relative w-full h-full overflow-hidden flex flex-col select-none"
           style={{
             borderRadius: "calc(var(--radius) - var(--bezel))",
-            /* Matches the mockups' own base so the status and home bars read as
-               part of the same screen rather than two grey margins. */
             background: "#05080d",
             isolation: "isolate",
             transform: "translateZ(0)",
           }}
         >
-          {/* Centred punch-hole camera. An island pill belongs to an iPhone; on
-              a frame this slim it also ate most of the status bar. */}
+          {/* Centred punch-hole camera */}
           <div className="absolute top-[7px] left-1/2 -translate-x-1/2 w-[9px] h-[9px] rounded-full bg-black z-30 pointer-events-none ring-1 ring-white/10">
             <span className="absolute inset-[2px] rounded-full bg-slate-800/80" />
           </div>
@@ -144,13 +142,10 @@ export function PhoneFrame({
             )}
           </div>
 
-          {/* The app inside is genuinely interactive — tabs, filters, steppers,
-              tel: and WhatsApp links. Pointer events are stopped here so a tap
-              on a button is not swallowed by a parent drag handler; the bezel
-              around the screen still drags the track. */}
+          {/* Interactive & Scrollable screen area inside phone */}
           <div
             ref={screenRef}
-            className="relative flex-1 min-h-0 overflow-hidden"
+            className="relative flex-1 min-h-0 overflow-y-auto overflow-x-hidden scrollbar-none touch-pan-y"
             onMouseDown={(e) => e.stopPropagation()}
             onTouchStart={(e) => e.stopPropagation()}
             onPointerEnter={() => onHold?.(true)}
@@ -159,16 +154,25 @@ export function PhoneFrame({
             {scale > 0 && (
               <div
                 style={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  width: PHONE_VIEWPORT_WIDTH,
-                  height: screen.height / scale,
-                  transform: `scale(${scale})`,
-                  transformOrigin: "top left",
+                  position: "relative",
+                  width: "100%",
+                  height: effectiveUnscaledHeight * scale,
                 }}
               >
-                {children}
+                <div
+                  ref={contentRef}
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: PHONE_VIEWPORT_WIDTH,
+                    minHeight: scaledViewportHeight,
+                    transform: `scale(${scale})`,
+                    transformOrigin: "top left",
+                  }}
+                >
+                  {children}
+                </div>
               </div>
             )}
           </div>

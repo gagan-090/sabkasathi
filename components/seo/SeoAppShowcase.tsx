@@ -5,83 +5,72 @@ import { motion, AnimatePresence } from "framer-motion";
 import { PhoneFrame, PHONE_SIZE_DEFAULT, PHONE_SIZE_MINI } from "@/components/mockups/PhoneFrame";
 import { Sparkles, CheckCircle2, ShieldCheck, Zap } from "lucide-react";
 
+import { GroceryApp } from "@/components/mockups/GroceryApp";
+import { HomeServiceApp } from "@/components/mockups/HomeServiceApp";
+import { FoodDeliveryApp } from "@/components/mockups/FoodDeliveryApp";
+import { BusinessApp } from "@/components/mockups/BusinessApp";
+import { FashionApp } from "@/components/mockups/FashionApp";
+import { EducationApp } from "@/components/mockups/EducationApp";
+
 interface AppCategory {
   id: string;
   label: string;
-  leftPng: string;
-  centerPng: string;
-  rightPng: string;
   features: string[];
+  left: React.ReactNode;
+  center: React.ReactNode;
+  right: React.ReactNode;
 }
 
 const CATEGORIES: AppCategory[] = [
   {
-    id: "services",
-    label: "Home Service App",
-    leftPng: "/images/screen-home-services.png",
-    centerPng: "/images/screen-home-services.png",
-    rightPng: "/images/screen-home-services.png",
-    features: ["Time Slot Booking", "Service Estimator", "Professional Dispatch", "Rating & Feedback"],
-  },
-  {
-    id: "web",
-    label: "Website & Business App",
-    leftPng: "/images/screen-web-dev.png",
-    centerPng: "/images/screen-web-dev.png",
-    rightPng: "/images/screen-web-dev.png",
-    features: ["SEO & High Speed", "Custom CMS Portal", "Lead Capture Form", "Payment Gateway"],
-  },
-  {
     id: "grocery",
     label: "Grocery & Supermarket",
-    leftPng: "/images/screen-grocery.png",
-    centerPng: "/images/screen-grocery.png",
-    rightPng: "/images/screen-grocery.png",
-    features: ["Quick Delivery Checkout", "Inventory Sync", "Live Order Tracking", "Multilingual Support"],
+    features: ["8-Min Quick Delivery", "Smart Address Picker", "Festive Finds & Deals", "Live Order Tracking"],
+    left: <GroceryApp screen="category" />,
+    center: <GroceryApp screen="home" />,
+    right: <GroceryApp screen="cart" />,
+  },
+  {
+    id: "services",
+    label: "Home Service App",
+    features: ["Time Slot Booking", "Service Estimator", "Professional Dispatch", "Rating & Feedback"],
+    left: <HomeServiceApp screen="booking" />,
+    center: <HomeServiceApp screen="home" />,
+    right: <HomeServiceApp screen="profile" />,
   },
   {
     id: "food",
     label: "Food Delivery App",
-    leftPng: "/images/screen-restaurant.png",
-    centerPng: "/images/screen-restaurant.png",
-    rightPng: "/images/screen-restaurant.png",
-    features: ["Digital Menu & Cart", "Veg / Non-Veg Badges", "Instant WhatsApp Order", "Table Reservations"],
+    features: ["Digital Menu & Cart", "Veg / Non-Veg Badges", "20-Min Delivery ETA", "Table Reservations"],
+    left: <FoodDeliveryApp screen="restaurant" />,
+    center: <FoodDeliveryApp screen="home" />,
+    right: <FoodDeliveryApp screen="menu" />,
+  },
+  {
+    id: "web",
+    label: "Website & Business App",
+    features: ["SEO & High Speed", "Voice & Camera Search", "Deals of the Day", "Payment Gateway"],
+    left: <BusinessApp screen="deals" />,
+    center: <BusinessApp screen="home" />,
+    right: <BusinessApp screen="product" />,
   },
   {
     id: "fashion",
     label: "Fashion & Store",
-    leftPng: "/images/screen-fashion.png",
-    centerPng: "/images/screen-fashion.png",
-    rightPng: "/images/screen-fashion.png",
-    features: ["Rich Product Catalogs", "Category Filters", "Wishlist & Cart Management", "Discount Coupons"],
+    features: ["Rich Product Catalogs", "Category Stories", "Wishlist & Cart Sync", "Discount Badging"],
+    left: <FashionApp screen="category" />,
+    center: <FashionApp screen="home" />,
+    right: <FashionApp screen="product" />,
   },
   {
     id: "education",
     label: "Education & Coaching",
-    leftPng: "/images/screen-education.png",
-    centerPng: "/images/screen-education.png",
-    rightPng: "/images/screen-education.png",
-    features: ["Student & Parent Portal", "Course Catalog", "Attendance Tracking", "Fee Receipts & Alerts"],
+    features: ["LIVE Interactive Class", "Streak Counter & Goals", "Daily Practice Quizzes", "Recorded Video Library"],
+    left: <EducationApp screen="live" />,
+    center: <EducationApp screen="home" />,
+    right: <EducationApp screen="course" />,
   },
 ];
-
-function SinglePhoneDisplay({ imgSrc, alt, isCenter = false }: { imgSrc: string; alt: string; isCenter?: boolean }) {
-  return (
-    <PhoneFrame
-      accent="#f38200"
-      badge="App Screen"
-      sizeClass={isCenter ? PHONE_SIZE_DEFAULT : PHONE_SIZE_MINI}
-    >
-      <div className="w-full h-full bg-white overflow-hidden flex items-center justify-center">
-        <img
-          src={imgSrc}
-          alt={alt}
-          className="w-full h-full object-cover rounded-[18px]"
-        />
-      </div>
-    </PhoneFrame>
-  );
-}
 
 export function SeoAppShowcase({
   cityName,
@@ -144,9 +133,9 @@ export function SeoAppShowcase({
           })}
         </div>
 
-        {/* 3-Phone Showcase Display with single PNG screens inside PhoneFrames */}
+        {/* 3-Phone Showcase Display */}
         <div className="relative flex flex-col items-center justify-center min-h-[460px] sm:min-h-[580px] py-4">
-          {/* Circular backdrop disc matching user's reference */}
+          {/* Circular backdrop disc */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] sm:w-[480px] sm:h-[480px] md:w-[560px] md:h-[560px] rounded-full bg-gradient-to-tr from-slate-100/90 via-orange-50/40 to-blue-50/50 border border-slate-200/60 shadow-inner -z-10 pointer-events-none" />
 
           <AnimatePresence mode="wait">
@@ -160,17 +149,23 @@ export function SeoAppShowcase({
             >
               {/* Left Phone */}
               <div className="hidden sm:block transition-all duration-500 transform -rotate-6 -mr-6 sm:-mr-8 md:-mr-10 opacity-95 hover:rotate-0 hover:z-30 hover:scale-105">
-                <SinglePhoneDisplay imgSrc={currentCategory.leftPng} alt={currentCategory.label} isCenter={false} />
+                <PhoneFrame accent="#f38200" badge="App Screen" sizeClass={PHONE_SIZE_MINI}>
+                  {currentCategory.left}
+                </PhoneFrame>
               </div>
 
               {/* Center Phone (Elevated & Primary) */}
               <div className="z-20 transition-all duration-500 transform hover:scale-105 shadow-2xl rounded-[32px]">
-                <SinglePhoneDisplay imgSrc={currentCategory.centerPng} alt={currentCategory.label} isCenter={true} />
+                <PhoneFrame accent="#f38200" badge="App Screen" sizeClass={PHONE_SIZE_DEFAULT}>
+                  {currentCategory.center}
+                </PhoneFrame>
               </div>
 
               {/* Right Phone */}
               <div className="hidden sm:block transition-all duration-500 transform rotate-6 -ml-6 sm:-ml-8 md:-ml-10 opacity-95 hover:rotate-0 hover:z-30 hover:scale-105">
-                <SinglePhoneDisplay imgSrc={currentCategory.rightPng} alt={currentCategory.label} isCenter={false} />
+                <PhoneFrame accent="#f38200" badge="App Screen" sizeClass={PHONE_SIZE_MINI}>
+                  {currentCategory.right}
+                </PhoneFrame>
               </div>
             </motion.div>
           </AnimatePresence>

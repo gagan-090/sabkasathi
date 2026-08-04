@@ -144,12 +144,16 @@ export function Footer() {
                 </a>
               </li>
               <li className="flex items-center gap-1.5 select-all font-medium text-slate-500">
-                <Phone className="h-3.5 w-3.5 text-orange-600/70" />
-                9431673018
+                <a href="tel:+919431673018" className="inline-flex items-center gap-1.5 transition-all duration-300 hover:translate-x-1.5 hover:text-white">
+                  <Phone className="h-3.5 w-3.5 text-orange-600/70" />
+                  +91 94316 73018
+                </a>
               </li>
               <li className="flex items-center gap-1.5 overflow-hidden text-ellipsis select-all font-medium lowercase text-slate-500">
-                <Mail className="h-3.5 w-3.5 shrink-0 text-orange-600/70" />
-                helpsabkasaathi@gmail.com
+                <a href="mailto:helpsabkasaathi@gmail.com" className="inline-flex items-center gap-1.5 transition-all duration-300 hover:translate-x-1.5 hover:text-white">
+                  <Mail className="h-3.5 w-3.5 shrink-0 text-orange-600/70" />
+                  helpsabkasaathi@gmail.com
+                </a>
               </li>
             </ul>
           </motion.div>

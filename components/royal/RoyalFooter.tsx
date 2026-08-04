@@ -10,7 +10,9 @@ export function RoyalFooter() {
       <div className="rh-shell">
         <div className="rh-foot-top">
           <div>
-            <div className="rh-foot-brand">Sabka Saathi</div>
+            <div className="rh-foot-brand">
+              <Link href="/">Sabka Saathi</Link>
+            </div>
             <p className="rh-foot-blurb">
               A software studio in Patna building web platforms, mobile apps and
               automation for businesses across India. GST registered, remote-first.
@@ -22,9 +24,9 @@ export function RoyalFooter() {
           <div className="rh-foot-col">
             <h3>Services</h3>
             <ul>
-              <li><Link href="/services/web-development">Website Development</Link></li>
-              <li><Link href="/services/mobile-app">Mobile Apps</Link></li>
-              <li><Link href="/services/crm-system">Custom Software &amp; CRM</Link></li>
+              <li><Link href="/expertise/web-development">Website Development</Link></li>
+              <li><Link href="/expertise/mobile-app">Mobile Apps</Link></li>
+              <li><Link href="/expertise/custom-software">Custom Software &amp; CRM</Link></li>
               <li><Link href="/services">All services</Link></li>
             </ul>
           </div>

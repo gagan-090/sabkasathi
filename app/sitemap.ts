@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next';
-import { locationContent, expertiseContent, processContent } from '@/lib/content';
+import { expertiseContent, processContent } from '@/lib/content';
+import { stateHubSlugs } from '@/lib/stateSeo';
 import { blogPosts } from '@/lib/blogs';
 import { getPagesList } from '@/lib/localSeo';
 import { getIndustryPagesList, industries } from '@/lib/industrySeo';
@@ -14,11 +15,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const lastModified = new Date('2026-07-16');
 
   const dynamicRoutes = [
-    ...Object.keys(locationContent).map((slug) => ({
+    /* State hubs come from lib/stateSeo (23 of them), not from
+       lib/content.locationContent — that only ever held three states, so
+       twenty hubs would have been missing from the sitemap entirely. They rank
+       high here because they are the entry point into the whole location
+       tree. */
+    ...stateHubSlugs.map((slug) => ({
       url: `${baseUrl}/location/${slug}`,
       lastModified,
       changeFrequency: 'monthly' as const,
-      priority: 0.8,
+      priority: 0.9,
     })),
     ...Object.keys(expertiseContent).map((slug) => ({
       url: `${baseUrl}/expertise/${slug}`,
