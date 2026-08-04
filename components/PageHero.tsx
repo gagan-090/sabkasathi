@@ -97,6 +97,18 @@ export function PageHero({
     <section className="relative overflow-hidden pt-2 pb-4 md:pt-4 max-w-6xl mx-auto px-4 z-10">
       <div className="relative overflow-hidden rounded-[2rem] border border-white/70 bg-white/45 px-5 py-6 md:py-12 md:px-12 shadow-[0_20px_50px_rgba(39,83,166,0.04)] backdrop-blur-xl">
         
+        {/* Background video banner */}
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          aria-hidden="true"
+          className="absolute inset-0 w-full h-full object-cover opacity-20 pointer-events-none"
+        >
+          <source src="/images/herobagourdveido.mp4" type="video/mp4" />
+        </video>
+
         {/* Subtle grid patterns */}
         <div 
           className="absolute inset-0 opacity-[0.03] pointer-events-none" 

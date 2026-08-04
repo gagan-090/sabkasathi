@@ -16,6 +16,7 @@ import {
   ArrowRight, Smartphone, Laptop, Settings, HelpCircle
 } from "lucide-react";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { SeoAppShowcase } from "@/components/seo/SeoAppShowcase";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -202,6 +203,9 @@ export default async function LocalSEOPage({ params }: Props) {
             </div>
           </div>
         </section>
+
+        {/* 3-Phone Interactive App Showcase */}
+        <SeoAppShowcase cityName={data.cityName} serviceName={data.serviceName} />
 
         {/* About Section */}
         <section id="about" className="py-16 md:py-28 bg-slate-50/40 border-y border-slate-100/50">

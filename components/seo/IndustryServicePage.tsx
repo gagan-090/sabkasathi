@@ -14,6 +14,7 @@ import { Footer } from "@/components/Footer";
 import { InteractiveBackground } from "@/components/InteractiveBackground";
 import { Button } from "@/components/ui/LiquidButton";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { SeoAppShowcase } from "@/components/seo/SeoAppShowcase";
 import type { IndustryPageData } from "@/lib/industrySeo";
 
 /*
@@ -169,6 +170,9 @@ export function IndustryServicePage({ data }: { data: IndustryPageData }) {
             </div>
           </div>
         </section>
+
+        {/* 3-Phone Interactive App Showcase */}
+        <SeoAppShowcase serviceName={data.serviceName} />
 
         {/* ── Why this industry ─────────────────────────────────────────── */}
         <section className="py-16 md:py-24">

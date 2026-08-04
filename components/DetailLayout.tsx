@@ -8,6 +8,7 @@ import { Button, ButtonLink } from "./ui/LiquidButton";
 import Link from "next/link";
 import { Footer } from "./Footer";
 import { DetailedContent } from "@/lib/content";
+import { SeoAppShowcase } from "./seo/SeoAppShowcase";
 
 interface DetailLayoutProps {
   content: DetailedContent;
@@ -285,6 +286,11 @@ export function DetailLayout({ content, category }: DetailLayoutProps) {
                 </div>
               </Card>
             </motion.div>
+          </div>
+
+          {/* 3-Phone Interactive App Showcase */}
+          <div className="mb-20">
+            <SeoAppShowcase serviceName={content.title} />
           </div>
 
           {/* Deep dive grid */}

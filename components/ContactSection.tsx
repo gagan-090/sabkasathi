@@ -422,39 +422,11 @@ export function ContactSection() {
   const [lastSubmission, setLastSubmission] = useState<SubmissionData | null>(null);
   const [phone, setPhone] = useState("");
   const [timeline, setTimeline] = useState("");
-  const [videoShow, setVideoShow] = useState(false);
-  // Defer loading the (background) video file until the section is near the
-  // viewport — it lives at the bottom of the page, so eagerly fetching it hurts
-  // initial load with no visible benefit.
-  const [videoReady, setVideoReady] = useState(false);
   const [headerVis, setHeaderVis] = useState(false);
   const [cardVis, setCardVis] = useState(false);
 
-  const videoRef   = useRef<HTMLVideoElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
   const cardRef    = useRef<HTMLDivElement>(null);
-
-  /* Lazy-load + fade-in the background video only when near the viewport */
-  useEffect(() => {
-    const el = sectionRef.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(([e]) => {
-      if (e.isIntersecting) {
-        setVideoReady(true);
-        obs.disconnect();
-      }
-    }, { rootMargin: "400px 0px" });
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
-
-  useEffect(() => {
-    if (!videoReady) return;
-    const vid = videoRef.current;
-    if (vid) { vid.load(); vid.play().catch(() => {}); }
-    const t = setTimeout(() => setVideoShow(true), 120);
-    return () => clearTimeout(t);
-  }, [videoReady]);
 
   /* intersection observer for header + card */
   useEffect(() => {
@@ -492,25 +464,6 @@ export function ContactSection() {
     return () => { if (frame) cancelAnimationFrame(frame); card.removeEventListener("mousemove", onMove); card.removeEventListener("mouseleave", onLeave); };
   }, [cardVis]);
 
-  /* parallax video (rAF-throttled; skipped on coarse pointers) */
-  useEffect(() => {
-    const wrap = sectionRef.current;
-    const vid  = videoRef.current;
-    if (!wrap || !vid) return;
-    if (window.matchMedia("(hover: none)").matches) return;
-    let frame = 0, tx = 0, ty = 0;
-    const apply = () => { frame = 0; vid.style.transform = `translate(${tx}px,${ty}px) scale(1.06)`; };
-    const onMove = (e: MouseEvent) => {
-      tx = (e.clientX / window.innerWidth  - 0.5) * 14;
-      ty = (e.clientY / window.innerHeight - 0.5) * 10;
-      if (!frame) frame = requestAnimationFrame(apply);
-    };
-    const onLeave = () => { if (frame) { cancelAnimationFrame(frame); frame = 0; } vid.style.transform = "translate(0,0) scale(1.04)"; };
-    wrap.addEventListener("mousemove", onMove, { passive: true });
-    wrap.addEventListener("mouseleave", onLeave);
-    return () => { if (frame) cancelAnimationFrame(frame); wrap.removeEventListener("mousemove", onMove); wrap.removeEventListener("mouseleave", onLeave); };
-  }, []);
-
   /* WA redirect on success */
   useEffect(() => {
     if (state.succeeded && lastSubmission) {
@@ -530,17 +483,13 @@ export function ContactSection() {
     <section id="contact" ref={sectionRef} className="cs-section">
       <style dangerouslySetInnerHTML={{ __html: styles }} />
 
-      {/* Video bg — source injected only once the section nears the viewport */}
-      <video
-        ref={videoRef}
-        className={`cs-video${videoShow ? " show" : ""}`}
-        autoPlay muted loop playsInline aria-hidden="true"
-        preload="none"
-        poster="/images/contact-poster.jpg"
-        style={{ transition: "opacity 1.2s ease, transform 0.12s ease" }}
-      >
-        {videoReady && <source src="/images/contactbg.mp4" type="video/mp4" />}
-      </video>
+      {/* Static bg image replacing animated video */}
+      <img
+        src="/images/contact-poster.jpg"
+        className="cs-video show"
+        alt=""
+        style={{ objectFit: "cover" }}
+      />
 
       {/* Overlays matching hero */}
       <div className="cs-overlay" aria-hidden="true" />
