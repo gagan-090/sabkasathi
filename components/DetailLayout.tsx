@@ -6,7 +6,7 @@ import { InteractiveBackground } from "./InteractiveBackground";
 import { Card } from "./ui/Card";
 import { Button, ButtonLink } from "./ui/LiquidButton";
 import Link from "next/link";
-import { Footer } from "./Footer";
+import { RoyalFooter } from "./royal/RoyalFooter";
 import { DetailedContent } from "@/lib/content";
 import { SeoAppShowcase } from "./seo/SeoAppShowcase";
 
@@ -398,7 +398,7 @@ export function DetailLayout({ content, category }: DetailLayoutProps) {
         </div>
       </main>
 
-      <Footer />
+      <RoyalFooter />
     </div>
   );
 }

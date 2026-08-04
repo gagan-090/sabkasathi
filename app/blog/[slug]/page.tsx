@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { blogPosts, BlogPost } from "@/lib/blogs";
 import { Navbar } from "@/components/Navbar";
 import { InteractiveBackground } from "@/components/InteractiveBackground";
-import { Footer } from "@/components/Footer";
+import { RoyalFooter } from "@/components/royal/RoyalFooter";
 import { ContactSection } from "@/components/ContactSection";
 import { Button } from "@/components/ui/LiquidButton";
 import Link from "next/link";
@@ -226,7 +226,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         </article>
       </main>
 
-      <Footer />
+      <RoyalFooter />
     </div>
   );
 }

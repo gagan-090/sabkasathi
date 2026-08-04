@@ -3,7 +3,7 @@ import { Navbar } from "@/components/Navbar";
 import { InteractiveBackground } from "@/components/InteractiveBackground";
 import { ContactSection } from "@/components/ContactSection";
 import { PageHero } from "@/components/PageHero";
-import { Footer } from "@/components/Footer";
+import { RoyalFooter } from "@/components/royal/RoyalFooter";
 import { Building2, Mail, Phone } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -86,7 +86,7 @@ export default function ContactPage() {
             </div>
         </section>
       </main>
-      <Footer />
+      <RoyalFooter />
     </div>
   );
 }

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { PageHero } from "@/components/PageHero"; // adjust path to wherever you saved PageHero.tsx
 import { ChevronDown } from "lucide-react";
+import { RoyalFooter } from "@/components/royal/RoyalFooter";
 
 const faqStyles = `
   .faq-wrap { background: #f2f2f4; padding: clamp(2.5rem,6vw,4.5rem) clamp(1.25rem,4vw,3rem) clamp(4rem,8vw,6rem); }
@@ -133,6 +134,7 @@ export default function FaqPage() {
         ctaHref="/#contact"
       />
       <FaqAccordion />
+      <RoyalFooter />
     </>
   );
 }

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowRight, Building2, CheckCircle2, ChevronRight, Sparkles } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
+import { RoyalFooter } from "@/components/royal/RoyalFooter";
 import { InteractiveBackground } from "@/components/InteractiveBackground";
 import { Button } from "@/components/ui/LiquidButton";
 import { JsonLd } from "@/components/seo/JsonLd";
@@ -276,7 +276,7 @@ export default async function IndustryHubPage({ params }: Props) {
         </section>
       </main>
 
-      <Footer />
+      <RoyalFooter />
     </div>
   );
 }

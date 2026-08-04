@@ -3,7 +3,7 @@ import Link from "next/link";
 import Script from "next/script";
 import { ChevronRight, MapPin, Sparkles, Globe, Building2 } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
+import { RoyalFooter } from "@/components/royal/RoyalFooter";
 import { InteractiveBackground } from "@/components/InteractiveBackground";
 import { Button } from "@/components/ui/LiquidButton";
 import {
@@ -264,7 +264,7 @@ export default function LocationsPage() {
         </section>
       </main>
 
-      <Footer />
+      <RoyalFooter />
     </div>
   );
 }

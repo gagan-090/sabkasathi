@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { Navbar } from "@/components/Navbar";
 import { InteractiveBackground } from "@/components/InteractiveBackground";
-import { Footer } from "@/components/Footer";
+import { RoyalFooter } from "@/components/royal/RoyalFooter";
 import { PageHero } from "@/components/PageHero";
 import { processContent } from "@/lib/content";
 import Link from "next/link";
@@ -94,7 +94,7 @@ export default function ProcessOverviewPage() {
           </div>
         </section>
       </main>
-      <Footer />
+      <RoyalFooter />
     </div>
   );
 }

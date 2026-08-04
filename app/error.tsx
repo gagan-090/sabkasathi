@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
+import { RoyalFooter } from "@/components/royal/RoyalFooter";
 import { InteractiveBackground } from "@/components/InteractiveBackground";
 import { Button, ButtonLink } from "@/components/ui/LiquidButton";
 
@@ -151,7 +151,7 @@ export default function Error({
         </div>
       </main>
 
-      <Footer />
+      <RoyalFooter />
     </div>
   );
 }

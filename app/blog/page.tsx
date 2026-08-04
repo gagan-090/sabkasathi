@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { Navbar } from "@/components/Navbar";
 import { InteractiveBackground } from "@/components/InteractiveBackground";
-import { Footer } from "@/components/Footer";
+import { RoyalFooter } from "@/components/royal/RoyalFooter";
 import { ContactSection } from "@/components/ContactSection";
 import { blogPosts, BlogPost } from "@/lib/blogs";
 import { BlogCard } from "@/components/BlogCard";
@@ -131,7 +131,7 @@ export default async function BlogListingPage() {
         </section>
       </main>
 
-      <Footer />
+      <RoyalFooter />
     </div>
   );
 }

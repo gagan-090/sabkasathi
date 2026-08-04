@@ -10,7 +10,7 @@ import {
   Wrench,
 } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
+import { RoyalFooter } from "@/components/royal/RoyalFooter";
 import { InteractiveBackground } from "@/components/InteractiveBackground";
 import { Button } from "@/components/ui/LiquidButton";
 import { JsonLd } from "@/components/seo/JsonLd";
@@ -471,7 +471,7 @@ export function IndustryServicePage({ data }: { data: IndustryPageData }) {
         </section>
       </main>
 
-      <Footer />
+      <RoyalFooter />
     </div>
   );
 }

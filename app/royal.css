@@ -1786,8 +1786,14 @@
   padding-bottom: clamp(2.2rem, 4vw, 3rem);
 }
 
-@media (min-width: 860px) {
-  .rh-foot-top { grid-template-columns: 1.4fr repeat(3, 1fr); }
+/* Five columns is too many to sit side by side below a laptop, so the stack
+   goes 1 → 2 → 5 rather than jumping straight from stacked to full width. */
+@media (min-width: 560px) {
+  .rh-foot-top { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (min-width: 1024px) {
+  .rh-foot-top { grid-template-columns: 1.5fr repeat(4, 1fr); }
 }
 
 .rh-foot-brand {
@@ -1828,6 +1834,30 @@
 }
 
 .rh-foot-col a:hover { color: var(--brand); }
+
+/* The locations column pairs each hub link with the cities it covers, so its
+   items are two-line while every other column's stay single-line. */
+.rh-foot-col li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.rh-foot-sub {
+  font-size: 0.76rem;
+  line-height: 1.5;
+  color: var(--faint);
+}
+
+.rh-foot-more {
+  color: var(--brand);
+  font-weight: 500;
+}
+
+.rh-foot-gstin {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
 
 .rh-foot-row {
   display: flex;

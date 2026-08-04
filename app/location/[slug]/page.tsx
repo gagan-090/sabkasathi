@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
+import { RoyalFooter } from "@/components/royal/RoyalFooter";
 import { StateHub } from "@/components/seo/StateHub";
 import { getStateHubPage, stateHubSlugs } from "@/lib/stateSeo";
 
@@ -60,7 +60,7 @@ export default async function LocationPage({ params }: Props) {
       <main className="flex-1">
         <StateHub page={page} />
       </main>
-      <Footer />
+      <RoyalFooter />
     </div>
   );
 }

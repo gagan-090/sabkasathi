@@ -28,10 +28,19 @@ interface ChatWidgetProps {
 const WELCOME_MESSAGE: Message = {
   role: "assistant",
   content:
-    "Namaste! 👋 Main Sabka Saathi ka AI assistant hoon. Website, app ya CRM automation ke baare mein kuch poochna hai?",
+    "Namaste! 👋 Main Sabka Saathi ka AI assistant hoon. Humari 25 services, pricing, timeline ya aapke business ke liye kya banega — kuch bhi poochiye.",
 };
 
-const QUICK_REPLIES = ["Our Services", "Get a Quote", "Pricing kya hai?", "Talk to a human"];
+/* Deliberately mapped to what the assistant now actually knows from the site
+   catalog — services, real price bands, delivery timelines, city coverage —
+   so the first tap lands on a question it can answer well. */
+const QUICK_REPLIES = [
+  "What services do you offer?",
+  "Pricing kya hai?",
+  "How long will it take?",
+  "Do you work in my city?",
+  "Talk to a human",
+];
 
 const BRAND_GRADIENT = "linear-gradient(135deg, #4338CA 0%, #7C3AED 100%)";
 const FONT = "var(--font-poppins), ui-sans-serif, system-ui, sans-serif";

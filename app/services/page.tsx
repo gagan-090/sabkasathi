@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { Navbar } from "@/components/Navbar";
 import { InteractiveBackground } from "@/components/InteractiveBackground";
-import { Footer } from "@/components/Footer";
+import { RoyalFooter } from "@/components/royal/RoyalFooter";
 import { expertiseContent } from "@/lib/content";
 import { getCitiesGroupedByState, locationStats, generateSlug } from "@/lib/localSeo";
 import Link from "next/link";
@@ -235,7 +235,7 @@ export default function ServicesPage() {
 {/*         
         <ContactSection /> */}
       </main>
-      <Footer />
+      <RoyalFooter />
     </div>
   );
 }

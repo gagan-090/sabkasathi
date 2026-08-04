@@ -1,9 +1,40 @@
 import Link from "next/link";
 
-/* Split out of RoyalHome so the home page can slot its SEO sections
-   (BiharServicesSEO, RecentProjectsShowcase) between the closing CTA and the
-   footer. Styles are the flat `.rh-foot*` rules in app/royal.css — they are
-   not nested under `.rh-root`, so this renders correctly outside it. */
+/* The site's single footer. It started as the home page's, split out of
+   RoyalHome so the home page could slot its SEO sections between the closing
+   CTA and the footer — then replaced the separate dark `components/Footer`
+   that the inner pages used, so every route now ends the same way.
+
+   Styles are the flat `.rh-foot*` rules in app/royal.css — they are not
+   nested under `.rh-root`, so this renders correctly on the inner pages too. */
+
+const SERVICE_LINKS = [
+  { href: "/expertise/web-development", label: "Website Development" },
+  { href: "/expertise/mobile-app", label: "Mobile Apps" },
+  { href: "/expertise/custom-software", label: "Custom Software & CRM" },
+  { href: "/expertise/billing-system", label: "Billing & Management" },
+  { href: "/expertise/seo-services", label: "SEO Services" },
+  { href: "/services", label: "All 25 services" },
+];
+
+const COMPANY_LINKS = [
+  { href: "/about", label: "About" },
+  { href: "/process", label: "Process" },
+  { href: "/expertise", label: "Expertise" },
+  { href: "/industries", label: "Industries" },
+  { href: "/blog", label: "Blog" },
+  { href: "/faq", label: "FAQ" },
+];
+
+/* Regional hubs carried over from the old footer. These are real state hub
+   pages sitting above the city pages, so the links are load-bearing for
+   internal linking, not decoration. */
+const HUB_LINKS = [
+  { href: "/location/bihar", label: "Bihar", cities: "Patna, Muzaffarpur, Gaya" },
+  { href: "/location/maharashtra", label: "Maharashtra", cities: "Pune, Mumbai, Nagpur" },
+  { href: "/location/gujarat", label: "Gujarat", cities: "Ahmedabad, Surat, Vadodara" },
+];
+
 export function RoyalFooter() {
   return (
     <footer className="rh-foot">
@@ -19,26 +50,42 @@ export function RoyalFooter() {
             </p>
           </div>
 
-          {/* Real routes, not in-page anchors — this footer is the home
-              page's only footer, so it carries the site's internal linking. */}
           <div className="rh-foot-col">
             <h3>Services</h3>
             <ul>
-              <li><Link href="/expertise/web-development">Website Development</Link></li>
-              <li><Link href="/expertise/mobile-app">Mobile Apps</Link></li>
-              <li><Link href="/expertise/custom-software">Custom Software &amp; CRM</Link></li>
-              <li><Link href="/services">All services</Link></li>
+              {SERVICE_LINKS.map((l) => (
+                <li key={l.href}>
+                  <Link href={l.href}>{l.label}</Link>
+                </li>
+              ))}
             </ul>
           </div>
 
           <div className="rh-foot-col">
             <h3>Company</h3>
             <ul>
-              <li><Link href="/about">About</Link></li>
-              <li><Link href="/process">Process</Link></li>
-              <li><Link href="/expertise">Expertise</Link></li>
-              <li><Link href="/industries">Industries</Link></li>
-              <li><Link href="/blog">Blog</Link></li>
+              {COMPANY_LINKS.map((l) => (
+                <li key={l.href}>
+                  <Link href={l.href}>{l.label}</Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="rh-foot-col">
+            <h3>Locations</h3>
+            <ul>
+              {HUB_LINKS.map((l) => (
+                <li key={l.href}>
+                  <Link href={l.href}>{l.label}</Link>
+                  <span className="rh-foot-sub">{l.cities}</span>
+                </li>
+              ))}
+              <li>
+                <Link href="/locations" className="rh-foot-more">
+                  Browse all cities →
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -59,9 +106,11 @@ export function RoyalFooter() {
             <Link href="/services">Services</Link>
             <Link href="/locations">Locations</Link>
             <Link href="/faq">FAQ</Link>
-            <Link href="/trust">Trust</Link>
+            <Link href="/trust">Legal &amp; Trust</Link>
+            <Link href="/seo">SEO</Link>
             <Link href="/contact">Contact</Link>
           </nav>
+          <span className="rh-foot-gstin">GSTIN: 10LAHPK8872L1Z3</span>
         </div>
       </div>
     </footer>

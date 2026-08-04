@@ -4,7 +4,7 @@ import { IndustryServicePage } from "@/components/seo/IndustryServicePage";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
+import { RoyalFooter } from "@/components/royal/RoyalFooter";
 import { InteractiveBackground } from "@/components/InteractiveBackground";
 import { Button } from "@/components/ui/LiquidButton";
 import { Card } from "@/components/ui/Card";
@@ -566,7 +566,7 @@ export default async function LocalSEOPage({ params }: Props) {
         />
       </main>
 
-      <Footer />
+      <RoyalFooter />
     </div>
   );
 }

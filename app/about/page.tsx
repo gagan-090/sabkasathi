@@ -4,7 +4,7 @@ import { StatsShowcase } from "@/components/StatsShowcase";
 import { Navbar } from "@/components/Navbar";
 import { InteractiveBackground } from "@/components/InteractiveBackground";
 import { ContactSection } from "@/components/ContactSection";
-import { Footer } from "@/components/Footer";
+import { RoyalFooter } from "@/components/royal/RoyalFooter";
 import { PageHero } from "@/components/PageHero";
 
 export const metadata: Metadata = {
@@ -60,7 +60,7 @@ export default function AboutPage() {
 
         <ContactSection />
       </main>
-      <Footer />
+      <RoyalFooter />
     </div>
   );
 }

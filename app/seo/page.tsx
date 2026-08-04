@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { cities, services, generateSlug } from "@/lib/localSeo";
+import { RoyalFooter } from "@/components/royal/RoyalFooter";
 
 const seoStyles = `
   .seo-card {
@@ -143,5 +144,10 @@ export function BiharServicesSEO() {
 /* Required by Next.js: app/seo/page.tsx must have exactly one default export
    that is a React component. This wraps the named component above. */
 export default function SeoPage() {
-  return <BiharServicesSEO />;
+  return (
+    <>
+      <BiharServicesSEO />
+      <RoyalFooter />
+    </>
+  );
 }
