@@ -7,8 +7,11 @@ const WHATSAPP_NUMBER = "919431673018";
 const CALL_NUMBER = "+919431673018";
 
 const styles = `
+  /* Bottom 6rem, not 1.6rem: <ChatWidget /> owns the actual corner (54px tall,
+     1.5rem from the edge) and this stack sits above it. If the chat widget is
+     ever moved to the left side, this can go back to 1.6rem / 1.1rem. */
   .fc-wrap {
-    position: fixed; bottom: 1.6rem; right: 1.6rem; z-index: 9999;
+    position: fixed; bottom: 6rem; right: 1.6rem; z-index: 9999;
     display: flex; flex-direction: column; align-items: flex-end; gap: 0.85rem;
     pointer-events: none;
   }
@@ -107,7 +110,7 @@ const styles = `
   .fc-btn:hover .fc-tip { opacity: 1; transform: translateY(-50%) translateX(0); }
 
   @media (max-width: 600px) {
-    .fc-wrap { bottom: 1.1rem; right: 1.1rem; gap: 0.7rem; }
+    .fc-wrap { bottom: 5.2rem; right: 1.1rem; gap: 0.7rem; }
     .fc-btn { width: 50px; height: 50px; border-radius: 16px; }
     .fc-icon { width: 21px; height: 21px; }
     .fc-tip { display: none; }

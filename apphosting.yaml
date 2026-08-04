@@ -59,5 +59,11 @@ env:
       - RUNTIME
   - variable: MONGODB_URI
     secret: MONGODB_URI
-  - variable: GROQ_API_KEY
-    secret: GROQ_API_KEY
+  # Powers /api/chat. Create the secret first:
+  #   firebase apphosting:secrets:set OPENROUTER_API_KEY
+  - variable: OPENROUTER_API_KEY
+    secret: OPENROUTER_API_KEY
+  - variable: OPENROUTER_MODEL
+    value: openai/gpt-4o
+    availability:
+      - RUNTIME

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { PageHero } from "@/components/PageHero"; // adjust path to wherever you saved PageHero.tsx
 import { ChevronDown } from "lucide-react";
 import { RoyalFooter } from "@/components/royal/RoyalFooter";
+import { primaryFaqs } from "@/lib/faqs";
 
 const faqStyles = `
   .faq-wrap { background: #f2f2f4; padding: clamp(2.5rem,6vw,4.5rem) clamp(1.25rem,4vw,3rem) clamp(4rem,8vw,6rem); }
@@ -61,32 +62,9 @@ const faqStyles = `
   }
 `;
 
-const FAQS: { q: string; a: string }[] = [
-  {
-    q: "What services does Sabka Saathi Digital Services offer?",
-    a: "We build websites, mobile apps, and custom software automation, along with digital marketing and CRM setup for startups, retailers, and local businesses.",
-  },
-  {
-    q: "How long does a typical project take?",
-    a: "Timelines depend on scope and requirements. Simple websites usually take 1-2 weeks, while custom apps or automation systems can take 4-8 weeks. We'll give you a clear estimate before starting.",
-  },
-  {
-    q: "Do you work with businesses outside Bihar?",
-    a: "Yes. While we have strong roots across Bihar, we serve clients pan-India and work remotely with smooth communication throughout the project.",
-  },
-  {
-    q: "What is the payment structure?",
-    a: "We typically work with a milestone-based payment plan — an advance to begin, and remaining payments tied to project milestones or delivery.",
-  },
-  {
-    q: "Do you provide support after the project is delivered?",
-    a: "Yes, we offer post-launch support and maintenance packages so your website or app keeps running smoothly.",
-  },
-  {
-    q: "How do I get started?",
-    a: "Reach out via call, WhatsApp, or the contact form. We'll discuss your requirements, share a proposal, and get started once you're ready.",
-  },
-];
+/* Single source of truth: lib/faqs.ts. The chat assistant reads the same
+   list, so an edit there updates this page and the bot together. */
+const FAQS = primaryFaqs;
 
 function FaqAccordion() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
@@ -104,12 +82,12 @@ function FaqAccordion() {
                 onClick={() => setOpenIndex(isOpen ? null : i)}
                 aria-expanded={isOpen}
               >
-                <span>{item.q}</span>
+                <span>{item.question}</span>
                 <span className="faq-icon"><ChevronDown className="w-4 h-4" /></span>
               </button>
               <div className="faq-a-wrap">
                 <div className="faq-a-inner">
-                  <p className="faq-a">{item.a}</p>
+                  <p className="faq-a">{item.answer}</p>
                 </div>
               </div>
             </div>

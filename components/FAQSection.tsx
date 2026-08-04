@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback, useEffect } from "react";
 import { cn } from "@/lib/cn";
+import { generalFaqs } from "@/lib/faqs";
 
 /* ══════════════════════════════════════════════
    Shared design tokens — mirrors Hero.tsx exactly
@@ -220,23 +221,9 @@ const styles = `
 /* ══════════════════════════════════════════════
    Data
 ══════════════════════════════════════════════ */
-export const faqs = [
-  { question: "How long does it take to complete a website or app?", answer: "The timeline depends on your requirements and project complexity. Most standard websites are completed within a few days, while advanced projects may take longer. We always aim for fast delivery without compromising quality." },
-  { question: "I don't have technical knowledge. Can I still work with you?", answer: "Absolutely. Our process is simple and beginner-friendly. We guide you step-by-step and handle all technical aspects so you can focus on your business." },
-  { question: "Will my website be mobile-friendly?", answer: "Yes. Every website we create is fully responsive and optimized for mobile, tablet, and desktop devices." },
-  { question: "Can I update or manage my website later?", answer: "Yes. We build user-friendly systems so you can easily update content. We also provide guidance if you need help managing your website." },
-  { question: "Do you provide support after project completion?", answer: "Yes. We provide support and assistance even after delivery to ensure everything runs smoothly." },
-  { question: "Will my business get customers through your services?", answer: "Our goal is to help you build a strong online presence and reach the right audience. Results depend on multiple factors like your business type, market, and consistency." },
-  { question: "Do you provide digital marketing services?", answer: "Yes. We offer digital marketing solutions to help your business grow and attract more customers online." },
-  { question: "What information do I need to get started?", answer: "You only need basic details like: Business name, Services/products, and Contact details. We guide you with everything else." },
-  { question: "Can you create custom solutions for my business?", answer: "Yes. Every business is different, so we provide customized solutions based on your goals and requirements." },
-  { question: "Is my data safe with you?", answer: "Yes. We maintain strict privacy and security standards. Your information is kept confidential and used only for service purposes." },
-  { question: "Do you work with clients outside my city?", answer: "Yes. We work with clients across India through online communication and smooth delivery processes." },
-  { question: "What makes your service different?", answer: "We focus on simple and practical solutions, clear communication, and real results—not false promises." },
-  { question: "Can I request changes during the project?", answer: "Yes. Minor changes can be discussed during the development process. We ensure your final product matches your expectations." },
-  { question: "Do you help with business growth strategy?", answer: "Yes. We don't just build — we guide you with strategies to grow your business online." },
-  { question: "How do I get started?", answer: "It's simple: Contact us → Discuss your requirement → Get started." },
-];
+/* The list itself now lives in lib/faqs.ts so the FAQ page and the chat
+   assistant read the same answers. Re-exported here for existing importers. */
+export const faqs = generalFaqs;
 
 const TITLE_WORDS = ["Frequently", "Asked", "Questions"];
 const ACCENT_INDEX = 2;
