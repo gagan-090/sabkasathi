@@ -7,6 +7,7 @@ import { InteractiveBackground } from "@/components/InteractiveBackground";
 import { ContactSection } from "@/components/ContactSection";
 import { RoyalFooter } from "@/components/royal/RoyalFooter";
 import { PageHero } from "@/components/PageHero";
+import { ogImage } from "@/lib/business";
 
 export const metadata: Metadata = {
   title: "Industries We Serve | Sector-Specific Digital Solutions - Sabka Saathi",
@@ -19,7 +20,8 @@ export const metadata: Metadata = {
     description: "Browse 50+ industries served by Sabka Saathi, including healthcare, education, retail, real estate, and finance. High-performance software solutions for business sectors.",
     url: "https://sabkasaathidigitalservices.com/industries",
     type: "website",
-  },
+    images: [ogImage],
+    },
   twitter: {
     card: "summary_large_image",
     title: "Industries We Serve | Sector-Specific Digital Solutions - Sabka Saathi",

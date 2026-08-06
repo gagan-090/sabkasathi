@@ -41,14 +41,11 @@ export const metadata: Metadata = {
       "Accelerate your business with Sabka Saathi. We build custom Next.js web applications, mobile apps, and CRM systems for startups and local businesses across India.",
     url: "https://sabkasaathidigitalservices.com",
     siteName: "Sabka Saathi",
-    images: [
-      {
-        url: "/logo.png",
-        width: 800,
-        height: 600,
-        alt: "Sabka Saathi Digital Services Logo",
-      },
-    ],
+    // No `images` here on purpose: app/opengraph-image.tsx generates the
+    // 1200×630 share card, and an explicit list would override it. The list
+    // that used to sit here pointed at /logo.png and declared it 800×600 when
+    // the file is 452×392, which is what made link previews collapse to a
+    // thumbnail.
     locale: "en_IN",
     type: "website",
   },
@@ -57,7 +54,6 @@ export const metadata: Metadata = {
     title: "Sabka Saathi - High-Performance Software Development & CRM Automation",
     description:
       "Accelerate your business with Sabka Saathi. Custom Next.js web applications, mobile apps, and CRM systems.",
-    images: ["/logo.png"],
   },
 };
 

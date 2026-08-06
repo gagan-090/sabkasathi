@@ -6,6 +6,7 @@ import { InteractiveBackground } from "@/components/InteractiveBackground";
 import { ContactSection } from "@/components/ContactSection";
 import { RoyalFooter } from "@/components/royal/RoyalFooter";
 import { PageHero } from "@/components/PageHero";
+import { ogImage } from "@/lib/business";
 
 export const metadata: Metadata = {
   title: "About Us | Our Story, Team & Vision - Sabka Saathi Digital Services",
@@ -18,7 +19,8 @@ export const metadata: Metadata = {
     description: "Learn about the mission of Sabka Saathi, our commitment to growth, our modern technology stacks, and our expert software development team.",
     url: "https://sabkasaathidigitalservices.com/about",
     type: "website",
-  },
+    images: [ogImage],
+    },
   twitter: {
     card: "summary_large_image",
     title: "About Us | Our Story, Team & Vision - Sabka Saathi Digital Services",

@@ -4,9 +4,15 @@ import { Navbar } from "@/components/Navbar";
 import { RoyalFooter } from "@/components/royal/RoyalFooter";
 import { StateHub } from "@/components/seo/StateHub";
 import { getStateHubPage, stateHubSlugs } from "@/lib/stateSeo";
+import { ogImage } from "@/lib/business";
 
 /*
-  /location/<state> — the state hub.
+  /location/<state> — the state hub, top of the location tree.
+
+  The segment is named [state] rather than [slug] because two levels now nest
+  beneath it: /location/<state>/<district> and .../<district>/<town>. Next
+  requires one param name per position across a branch, so the rename was
+  forced by adding the children — the published URLs are unchanged.
 
   This route used to render three hand-written entries from
   lib/content.locationContent (bihar, gujarat, maharashtra) through
@@ -18,16 +24,16 @@ import { getStateHubPage, stateHubSlugs } from "@/lib/stateSeo";
   tree without also having a hub.
 */
 
-type Props = { params: Promise<{ slug: string }> };
+type Props = { params: Promise<{ state: string }> };
 
 export const dynamicParams = false;
 
 export async function generateStaticParams() {
-  return stateHubSlugs.map((slug) => ({ slug }));
+  return stateHubSlugs.map((state) => ({ state }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params;
+  const { state: slug } = await params;
   const page = getStateHubPage(slug);
   if (!page) return { title: "Not Found" };
 
@@ -40,6 +46,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: page.metaDescription,
       url: `https://sabkasaathidigitalservices.com/location/${slug}`,
       type: "website",
+      images: [ogImage],
     },
     twitter: {
       card: "summary_large_image",
@@ -50,7 +57,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function LocationPage({ params }: Props) {
-  const { slug } = await params;
+  const { state: slug } = await params;
   const page = getStateHubPage(slug);
   if (!page) notFound();
 

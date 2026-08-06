@@ -10,7 +10,7 @@ export async function GET() {
   const content = `# Sabka Saathi Digital Services - Full Machine-Readable Knowledge Base
 
 ## Overview
-Sabka Saathi Digital Services is an enterprise-grade software engineering and digital transformation company operating from Patna, Bihar, India. We deliver high-reliability mobile applications, web applications, custom CRM/ERP platforms, and cloud infrastructure for businesses across India.
+Sabka Saathi Digital Services is an enterprise-grade software engineering and digital transformation company operating from Sheikhpura, Bihar, India. We deliver high-reliability mobile applications, web applications, custom CRM/ERP platforms, and cloud infrastructure for businesses across India.
 
 ## Technology Stack
 - **Frontend & Web**: Next.js 16 (Turbopack), React 19, TypeScript, TailwindCSS v4, Framer Motion, GSAP, Lenis.
@@ -22,7 +22,9 @@ Sabka Saathi Digital Services is an enterprise-grade software engineering and di
 - ${serviceList}
 
 ## Geographic Coverage & Locations Matrix
-Primary Headquarters: Patna, Bihar (PIN: 800001, Lat: 25.5941, Long: 85.1376)
+Primary Headquarters: Bypass Road, Maharani Puram, Sheikhpura, Bihar (PIN: 811105, Lat: 25.1394, Long: 85.8508)
+Opening Hours: 8:00 AM - 9:00 PM, Monday to Sunday
+Phone / WhatsApp: +91-9431673018 | Email: helpsabkasaathi@gmail.com
 Supported Cities & Districts:
 ${cityList}
 

@@ -12,6 +12,9 @@ import {
   serviceCatalog,
   generateSlug,
 } from "@/lib/localSeo";
+import { GEO } from "@/lib/geo";
+import { stateHubSlugs } from "@/lib/stateSeo";
+import { business, telHref, ogImage } from "@/lib/business";
 
 const SITE = "https://sabkasaathidigitalservices.com";
 
@@ -31,6 +34,7 @@ export const metadata: Metadata = {
     siteName: "Sabka Saathi",
     type: "website",
     locale: "en_IN",
+    images: [ogImage],
   },
   twitter: {
     card: "summary_large_image",
@@ -43,6 +47,17 @@ export const metadata: Metadata = {
 export default function LocationsPage() {
   const grouped = getCitiesGroupedByState();
   const allCities = grouped.flatMap((g) => g.cities);
+
+  /* The location tree, for the state browser below. Only states that have a
+     hub page are listed — linking to a state with no hub would 404. */
+  const stateIndex = GEO.filter((s) => stateHubSlugs.includes(s.slug)).map((s) => ({
+    name: s.state,
+    slug: s.slug,
+    districtCount: s.districts.filter((d) => !d.flat).length,
+    townCount: s.districts.reduce((n, d) => n + d.towns.length, 0),
+  }));
+  const districtCount = stateIndex.reduce((n, s) => n + s.districtCount, 0);
+  const townCount = stateIndex.reduce((n, s) => n + s.townCount, 0);
 
   // ItemList: a structured index of every covered city, each pointing at its
   // primary (website development) service page. Gives search engines a clean
@@ -189,6 +204,51 @@ export default function LocationsPage() {
           </div>
         </section>
 
+        {/* State → district → town browser.
+            Until this existed, /locations linked only to service×city pages
+            and never to a single state hub — so the whole location tree
+            (36 hubs, {districtCount} districts, {townCount} towns) had no
+            entry point from the page that is supposed to be its index. */}
+        <section className="py-14 md:py-20">
+          <div className="container mx-auto max-w-6xl px-4">
+            <span className="mb-2 block text-xs font-black uppercase tracking-[0.3em] text-orange-600">
+              Full Coverage Map
+            </span>
+            <h2 className="text-2xl font-black text-slate-900 md:text-4xl">
+              Browse every state, district and town
+            </h2>
+            <p className="mt-4 max-w-3xl text-base font-medium leading-relaxed text-slate-500">
+              Each state hub opens onto its districts, and each district onto its towns —{" "}
+              <strong className="text-slate-700">
+                {townCount.toLocaleString("en-IN")} towns
+              </strong>{" "}
+              across{" "}
+              <strong className="text-slate-700">{districtCount} districts</strong> in total, every
+              one with a page of its own.
+            </p>
+
+            <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {stateIndex.map((s) => (
+                <Link
+                  key={s.slug}
+                  href={`/location/${s.slug}`}
+                  prefetch={false}
+                  className="rounded-2xl border border-slate-200 bg-white p-4 transition-colors hover:border-orange-300 hover:bg-orange-50/40"
+                >
+                  <span className="flex items-center gap-2 text-sm font-black text-slate-800">
+                    <MapPin className="h-3.5 w-3.5 text-orange-500" />
+                    {s.name}
+                  </span>
+                  <span className="mt-1 block text-xs font-medium text-slate-500">
+                    {s.districtCount > 0 ? `${s.districtCount} districts · ` : ""}
+                    {s.townCount.toLocaleString("en-IN")} towns
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* Per-state city directory */}
         {grouped.map((group) => (
           <section
@@ -243,12 +303,16 @@ export default function LocationsPage() {
               />
               <div className="pointer-events-none absolute right-0 top-0 -mr-40 -mt-40 h-80 w-80 rounded-full bg-orange-600/10 blur-[120px]" />
               <h2 className="mb-5 text-3xl font-black leading-tight text-white sm:text-4xl md:text-5xl">
-                Don&apos;t see your city listed?
+                Don&apos;t see your town listed?
               </h2>
               <p className="mx-auto mb-10 max-w-2xl px-4 text-base leading-relaxed text-slate-300 md:text-lg">
-                We serve businesses everywhere in India remotely. If your town isn&apos;t on the list
-                yet, we still build, launch, and support your project the same way — tell us where you
-                are and what you need.
+                We serve businesses everywhere in India remotely. If your town isn&apos;t among the{" "}
+                {townCount.toLocaleString("en-IN")} above, we still build, launch, and support your
+                project the same way — tell us where you are and what you need. Call or WhatsApp{" "}
+                <a href={telHref} className="font-bold text-orange-400 hover:text-orange-300">
+                  {business.phone.display}
+                </a>
+                , {business.hours.display}.
               </p>
               <Link href="/contact">
                 <Button

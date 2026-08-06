@@ -1854,6 +1854,28 @@
   font-weight: 500;
 }
 
+/* ── NAP block ──
+   The postal address, phone, email and opening hours, rendered on every page
+   because the footer is. <address> is the correct element and browsers
+   italicise it by default, which reads as an aside rather than as the
+   business's real address — hence the reset. */
+.rh-foot-address {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  margin-bottom: 0.95rem;
+  font-style: normal;
+  font-size: 0.88rem;
+  line-height: 1.65;
+  color: var(--ink-2);
+}
+
+.rh-foot-hours {
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
 .rh-foot-gstin {
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.02em;

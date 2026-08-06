@@ -15,6 +15,7 @@ import {
   industries,
   industryStats,
 } from "@/lib/industrySeo";
+import { ogImage } from "@/lib/business";
 
 /*
   The hub for one industry: every service we build for that sector, grouped the
@@ -53,6 +54,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       siteName: "Sabka Saathi",
       type: "website",
       locale: "en_IN",
+      images: [ogImage],
     },
     twitter: { card: "summary_large_image", title, description },
   };

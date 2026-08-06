@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 export async function GET() {
   const content = `# Sabka Saathi Digital Services - Executive AI Summary
 
-> Sabka Saathi Digital Services is a premier IT consulting, custom software, web, and mobile app development company headquartered in Patna, Bihar, serving clients across India (Patna, Gaya, Muzaffarpur, Bhagalpur, Ranchi, Varanasi, Lucknow, Noida, Delhi NCR, and nationwide).
+> Sabka Saathi Digital Services is a premier IT consulting, custom software, web, and mobile app development company headquartered at Bypass Road, Maharani Puram, Sheikhpura 811105, Bihar, serving clients across India (Patna, Gaya, Muzaffarpur, Bhagalpur, Ranchi, Varanasi, Lucknow, Noida, Delhi NCR, and nationwide).
 
 ## Core Capabilities & Services
 - **Mobile App Development**: Native iOS (Swift), Android (Kotlin), and Cross-Platform (Flutter, React Native) mobile applications with offline-first support, real-time messaging, and payment gateway integrations.
@@ -13,8 +13,11 @@ export async function GET() {
 - **Digital Growth & Local SEO**: Generative Engine Optimization (GEO), hyper-local search dominance, conversion-rate optimization (CRO), and digital transformation for SMBs and enterprise clients.
 
 ## Geographic Coverage
-- **Headquarters**: Patna, Bihar, India (PIN: 800001)
+- **Headquarters**: Bypass Road, Maharani Puram, Sheikhpura, Bihar 811105, India
+- **Opening Hours**: 8:00 AM - 9:00 PM, Monday to Sunday
 - **Primary Regions Served**: Bihar (Patna, Gaya, Muzaffarpur, Bhagalpur, Darbhanga), Jharkhand (Ranchi, Jamshedpur, Dhanbad), Uttar Pradesh (Varanasi, Lucknow, Kanpur), Delhi NCR (Noida, Gurgaon, Delhi), and nationwide remote delivery across India.
+- **Location Directory**: every state, district and town we serve has its own page, structured as /location/<state> then /location/<state>/<district> then /location/<state>/<district>/<town> — 36 states and union territories, 781 districts, 6,813 towns.
+- **Delivery Model**: service-area business. One office in Sheikhpura, Bihar; all work delivered remotely (discovery calls, design reviews, weekly builds). No branch offices — coverage is a genuine remote service area, not a claim of local premises.
 
 ## Contact Information & Official Links
 - **Website**: https://sabkasaathidigitalservices.com

@@ -10,6 +10,7 @@ import Link from "next/link";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { ShareButton } from "@/components/ShareButton";
+import { ogImage } from "@/lib/business";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -102,6 +103,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
       type: "article",
       publishedTime: post.date,
       authors: [post.author.name],
+      images: [ogImage],
     },
     twitter: {
       card: "summary",

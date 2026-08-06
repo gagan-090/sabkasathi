@@ -5,6 +5,7 @@ import { ContactSection } from "@/components/ContactSection";
 import { PageHero } from "@/components/PageHero";
 import { RoyalFooter } from "@/components/royal/RoyalFooter";
 import { Building2, Mail, Phone } from "lucide-react";
+import { business, telHref, mailHref, ogImage } from "@/lib/business";
 
 export const metadata: Metadata = {
   title: "Contact Us | Start Your Project - Sabka Saathi Digital Services",
@@ -17,7 +18,8 @@ export const metadata: Metadata = {
     description: "Get in touch with Sabka Saathi for web development, app development, and digital marketing services. Ready to help you launch and grow your business.",
     url: "https://sabkasaathidigitalservices.com/contact",
     type: "website",
-  },
+    images: [ogImage],
+    },
   twitter: {
     card: "summary_large_image",
     title: "Contact Us | Start Your Project - Sabka Saathi Digital Services",
@@ -63,7 +65,13 @@ export default function ContactPage() {
                       </div>
                     </div>
                     <h3 className="text-xl font-bold mb-2">Registered Office</h3>
-                    <p className="text-slate-500 font-medium">Sabka Saathi Digital Services<br/>India</p>
+                    <address className="text-slate-500 font-medium not-italic">
+                      {business.legalName}<br/>
+                      {business.address.lines.map((line) => (
+                        <span key={line}>{line}<br/></span>
+                      ))}
+                    </address>
+                    <p className="text-slate-400 text-sm font-medium mt-3">{business.hours.display}</p>
                 </div>
                 <div className="p-8 bg-white/75 border border-slate-100 rounded-[2.5rem] shadow-sm backdrop-blur-sm flex flex-col items-center">
                     <div className="flex justify-center mb-4">
@@ -72,7 +80,9 @@ export default function ContactPage() {
                       </div>
                     </div>
                     <h3 className="text-xl font-bold mb-2">Email Us</h3>
-                    <p className="text-slate-500 font-medium">helpsabkasaathi@gmail.com</p>
+                    <p className="text-slate-500 font-medium">
+                      <a href={mailHref} className="hover:text-orange-600">{business.email}</a>
+                    </p>
                 </div>
                 <div className="p-8 bg-white/75 border border-slate-100 rounded-[2.5rem] shadow-sm backdrop-blur-sm flex flex-col items-center">
                     <div className="flex justify-center mb-4">
@@ -81,7 +91,10 @@ export default function ContactPage() {
                       </div>
                     </div>
                     <h3 className="text-xl font-bold mb-2">Call/WhatsApp</h3>
-                    <p className="text-slate-500 font-medium">+91 9431673018</p>
+                    <p className="text-slate-500 font-medium">
+                      <a href={telHref} className="hover:text-orange-600">{business.phone.display}</a>
+                    </p>
+                    <p className="text-slate-400 text-sm font-medium mt-3">{business.hours.short}</p>
                 </div>
             </div>
         </section>

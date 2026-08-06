@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { business, telHref, mailHref, whatsappHref } from "@/lib/business";
 
 /* The site's single footer. It started as the home page's, split out of
    RoyalHome so the home page could slot its SEO sections between the closing
@@ -45,8 +46,9 @@ export function RoyalFooter() {
               <Link href="/">Sabka Saathi</Link>
             </div>
             <p className="rh-foot-blurb">
-              A software studio in Patna building web platforms, mobile apps and
-              automation for businesses across India. GST registered, remote-first.
+              A software studio in Sheikhpura, Bihar building web platforms,
+              mobile apps and automation for businesses across India. GST
+              registered, remote-first.
             </p>
           </div>
 
@@ -89,12 +91,31 @@ export function RoyalFooter() {
             </ul>
           </div>
 
-          <div className="rh-foot-col">
+          {/* NAP block. itemProp/address markup mirrors the PostalAddress node
+              in the page's JSON-LD, so the address a crawler reads in the
+              footer is the same string it reads in structured data — that
+              agreement is what local search checks for. */}
+          <div className="rh-foot-col rh-foot-nap">
             <h3>Contact</h3>
+            <address className="rh-foot-address">
+              {business.address.lines.map((line) => (
+                <span key={line}>{line}</span>
+              ))}
+            </address>
             <ul>
-              <li><a href="mailto:helpsabkasaathi@gmail.com">helpsabkasaathi@gmail.com</a></li>
-              <li><a href="tel:+919431673018">+91 94316 73018</a></li>
-              <li><a href="https://wa.me/919431673018" target="_blank" rel="noopener noreferrer">WhatsApp</a></li>
+              <li>
+                <a href={telHref}>{business.phone.display}</a>
+                <span className="rh-foot-sub">Call or WhatsApp</span>
+              </li>
+              <li>
+                <a href={whatsappHref()} target="_blank" rel="noopener noreferrer">
+                  WhatsApp us
+                </a>
+              </li>
+              <li><a href={mailHref}>{business.email}</a></li>
+              <li>
+                <span className="rh-foot-hours">{business.hours.display}</span>
+              </li>
               <li><Link href="/contact">Send a brief</Link></li>
             </ul>
           </div>

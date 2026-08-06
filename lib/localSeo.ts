@@ -1,4 +1,10 @@
 import { industryServices, type IndustryServiceInfo } from "./services25";
+import {
+  business,
+  postalAddressSchema,
+  geoCoordinatesSchema,
+  openingHoursSchema,
+} from "./business";
 
 export interface CityInfo {
   name: string;
@@ -144,26 +150,26 @@ export interface ServiceInfo {
   marqueeBase: string[];
 }
 
-// Fill in your real business details once here — every generated page pulls from this.
-// NOTE: address should be your one real, physical HQ address. Schema markup
-// below uses this single real address plus an "areaServed" field per page,
-// instead of pretending to have a branch office in every city — claiming a
-// local presence you don't have violates Google's spam policies and risks a
-// site-wide ranking penalty.
+// Real business details, re-exported from lib/business.ts so this file keeps
+// its existing `contactInfo` shape while the values live in one place.
+// NOTE: address is the one real, physical HQ address. Schema markup below uses
+// that single real address plus an "areaServed" field per page, instead of
+// pretending to have a branch office in every city — claiming a local presence
+// you don't have violates Google's spam policies and risks a site-wide
+// ranking penalty.
 export const contactInfo: ContactInfo = {
-  phone: "+91-9431673018",
-  email: "helpsabkasaathi@gmail.com",
-  address: "TODO: your real street address (single HQ)",
-  hours: "TODO: your business hours"
+  phone: business.phone.display,
+  email: business.email,
+  address: business.address.full,
+  hours: business.hours.display
 };
 
 // Registered business identifiers / region. GSTIN is public (shown in the site
-// footer); its "10" state code and the stated HQ place the business in Bihar,
-// so addressRegion is honest even before a full street address is supplied.
+// footer); its "10" state code matches the Sheikhpura, Bihar HQ above.
 export const businessIdentity = {
-  gstin: "10LAHPK8872L1Z3",
-  addressRegion: "Bihar",
-  founderName: "Ashish Kumar"
+  gstin: business.gstin,
+  addressRegion: business.address.region,
+  founderName: business.founderName
 };
 
 // Treat empty or "TODO:"-prefixed values as unset. Used to guard schema/UI so
@@ -1759,15 +1765,12 @@ export function getContentBySlug(slug: string): LocalPageData | null {
     "telephone": contactInfo.phone,
     "taxID": businessIdentity.gstin,
     "founder": { "@type": "Person", "name": businessIdentity.founderName },
-    // Only emit email / streetAddress once real values replace the TODO
-    // placeholders — never ship placeholder NAP data into structured data.
-    ...(isRealValue(contactInfo.email) ? { email: contactInfo.email } : {}),
-    "address": {
-      "@type": "PostalAddress",
-      ...(isRealValue(contactInfo.address) ? { streetAddress: contactInfo.address } : {}),
-      "addressRegion": businessIdentity.addressRegion,
-      "addressCountry": "IN"
-    }
+    "email": contactInfo.email,
+    // The real, single HQ — same bytes as the footer and the root layout's
+    // graph, which is what lets Google resolve them to one entity.
+    "address": postalAddressSchema,
+    "geo": geoCoordinatesSchema,
+    "openingHoursSpecification": openingHoursSchema
   };
 
   const serviceSchema = {

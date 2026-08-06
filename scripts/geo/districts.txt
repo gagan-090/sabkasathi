@@ -1,0 +1,725 @@
+# Source of truth for district → town assignment.
+#
+# Format:   State name on a "@" line, then one district per line as
+#           District name | town, town, town
+# Comments: lines starting with "#" and blank lines are ignored.
+#
+# This file exists because lib/geo.ts held nine states as one flat, ungrouped
+# town list — the towns were real but nobody knew which district they sat in,
+# and guessing would have put factual errors on public pages. These groupings
+# were supplied by the business owner. scripts/geo/build.mjs merges them into
+# lib/geo.ts; edit here and re-run that, never hand-edit lib/geo.ts.
+#
+# Deduplication is by slug within a state, first district wins. India reuses
+# town names heavily (Uttar Pradesh has two Bandas; Chhattisgarh has a Patna),
+# so a town can only be filed under one district for URL purposes.
+
+@ Uttar Pradesh
+Agra | Agra, Achhnera, Fatehabad, Kheragarh, Etmadpur, Bah, Pinahat, Shamsabad, Jagner, Dayalbagh
+Firozabad | Firozabad, Tundla, Shikohabad, Jasrana, Sirsaganj, Fariha, Kotla, Eka
+Mainpuri | Mainpuri, Bhogaon, Karhal, Kurawali, Ghiror, Kishni, Bewar
+Mathura | Mathura, Vrindavan, Kosi Kalan, Govardhan, Chhata, Mahavan, Baldeo, Raya, Farah, Nandgaon, Barsana
+Aligarh | Aligarh, Khair, Atrauli, Iglas, Gabhana, Jalali, Chharra, Harduaganj, Jawan Sikandarpur, Beswan
+Etah | Etah, Jalesar, Aliganj, Awagarh, Marehra, Sakit, Nidhauli Kalan
+Hathras | Hathras, Sikandra Rao, Sadabad, Sasni, Mursan, Hasayan
+Kasganj | Kasganj, Sahawar, Patiyali, Ganj Dundwara, Amanpur, Soron
+Azamgarh | Azamgarh, Atraulia, Jiyanpur, Mubarakpur, Mehnagar, Nizamabad, Phulpur, Lalganj, Azmatgarh, Bilariaganj, Mahrajganj
+Ballia | Ballia, Rasra, Bansdih, Belthara Road, Sikanderpur, Maniyar, Revati, Bairia
+Mau | Mau, Ghosi, Muhammadabad Gohna, Kopaganj, Adari, Amila
+Ayodhya | Ayodhya, Faizabad, Rudauli, Bikapur, Milkipur, Gosainganj, Sohawal
+Ambedkar Nagar | Akbarpur, Tanda, Jalalpur, Ashrafpur Kichhauchha, Dostpur, Kadipur, Bhiti
+Amethi | Gauriganj, Amethi, Jais, Musafirkhana, Jagdishpur, Tiloi
+Barabanki | Barabanki, Nawabganj, Zaidpur, Fatehpur, Ramsanehi Ghat, Haidergarh, Dewa, Subeha, Dariyabad, Ramnagar
+Sultanpur | Sultanpur, Lambhua, Jaisinghpur, Koeripur
+Prayagraj | Prayagraj, Allahabad, Naini, Jhusi, Soraon, Mau Aima, Lal Gopalganj, Handia, Koraon, Meja, Bara, Shankargarh
+Fatehpur | Bindki, Khaga, Kishunpur, Hathgam, Asothar
+Kaushambi | Manjhanpur, Sirathu, Bharwari, Karari, Chail, Ajhuwa, Sarai Akil
+Pratapgarh | Pratapgarh, Bela Pratapgarh, Kunda, Patti, Manikpur, Antu, Katra Medniganj, Raniganj
+Bareilly | Bareilly, Aonla, Baheri, Faridpur, Bhojipura, Mirganj, Shahi, Sirauli, Richha
+Budaun | Budaun, Bisauli, Bilsi, Dataganj, Sahaswan, Ujhani, Kakrala, Islamnagar, Gunnaur, Wazirganj
+Pilibhit | Pilibhit, Puranpur, Bisalpur, Jahanabad, Kalinagar
+Shahjahanpur | Shahjahanpur, Tilhar, Powayan, Jalalabad, Katra, Kanth, Allahganj, Khutar
+Basti | Basti, Harraiya, Rudhauli, Babhnan, Munderwa, Kaptanganj
+Sant Kabir Nagar | Khalilabad, Mehdawal, Ghanghata, Maghar, Baghauli
+Siddharthnagar | Naugarh, Bansi, Shohratgarh, Itwa, Domariyaganj, Uska Bazar, Kapilvastu
+Banda | Banda, Atarra, Baberu, Naraini, Tindwari, Bisanda, Mataundh
+Chitrakoot | Karwi, Rajapur, Pahari
+Hamirpur | Hamirpur, Maudaha, Rath, Sarila, Kurara, Sumerpur, Muskara
+Mahoba | Mahoba, Charkhari, Kulpahar, Panwari, Kabrai, Kharela
+Gonda | Gonda, Colonelganj, Mankapur, Tarabganj, Katra Bazar, Dhanepur
+Bahraich | Bahraich, Nanpara, Kaiserganj, Jarwal, Risia, Payagpur, Mahsi, Fakharpur
+Balrampur | Balrampur, Tulsipur, Utraula, Pachperwa, Gainsari
+Shravasti | Bhinga, Ikauna, Jamunaha, Sirsiya
+Gorakhpur | Gorakhpur, Sahjanwa, Khajni, Gola Bazar, Bansgaon, Chauri Chaura, Pipraich, Campierganj, Barhalganj
+Deoria | Deoria, Rudrapur, Barhaj, Salempur, Lar, Bhatpar Rani, Gauri Bazar, Rampur Karkhana, Bhatni, Majhauli Raj
+Kushinagar | Padrauna, Kasya, Hata, Ramkola, Khadda, Tamkuhi Raj, Seorahi, Fazilnagar
+Maharajganj | Maharajganj, Nautanwa, Pharenda, Nichlaul, Siswa Bazar, Anandnagar, Ghughli
+Jhansi | Jhansi, Moth, Samthar, Chirgaon, Garautha, Gursarai, Erich, Mauranipur
+Jalaun | Orai, Jalaun, Kalpi, Konch, Kadaura, Madhogarh, Rampura, Umri, Kotra, Nadigaon
+Lalitpur | Lalitpur, Talbehat, Mahroni, Pali, Jakhaura
+Kanpur Nagar | Kanpur, Bithoor, Ghatampur, Bilhaur, Shivrajpur, Chakeri
+Kanpur Dehat | Pukhrayan, Jhinjhak, Rura, Rasulabad, Derapur, Sikandra, Shivli
+Etawah | Etawah, Jaswantnagar, Bharthana, Bakewar, Lakhna, Saifai, Ekdil
+Farrukhabad | Farrukhabad, Fatehgarh, Kaimganj, Kamalganj, Mohammadabad, Kampil
+Kannauj | Kannauj, Chhibramau, Gursahaiganj, Samdhan, Sikanderpur, Saurikh, Talgram, Tirwaganj
+Auraiya | Auraiya, Dibiyapur, Phaphund, Bidhuna, Achhalda, Babarpur Ajitmal, Atasu
+Lucknow | Lucknow, Kakori, Malihabad, Mohan, Mahona, Itaunja, Nagram, Mohanlalganj
+Hardoi | Hardoi, Shahabad, Sandila, Sandi, Bilgram, Pihani, Madhoganj, Mallawan, Kachhauna
+Lakhimpur Kheri | Lakhimpur, Kheri, Gola Gokarannath, Palia Kalan, Mohammadi, Dhaurehra, Mailani, Singahi, Nighasan
+Raebareli | Raebareli, Dalmau, Bachhrawan, Unchahar, Salon, Parsadepur
+Sitapur | Sitapur, Biswan, Laharpur, Mahmudabad, Sidhauli, Khairabad, Misrikh, Hargaon, Tambaur
+Unnao | Unnao, Safipur, Bangarmau, Purwa, Hasanganj, Auras, Maurawan
+Meerut | Meerut, Mawana, Sardhana, Kithore, Hastinapur, Parikshitgarh, Daurala, Lawar
+Baghpat | Baghpat, Baraut, Khekra, Aminagar Sarai, Chhaprauli, Doghat
+Ghaziabad | Ghaziabad, Loni, Modinagar, Muradnagar, Dasna
+Hapur | Hapur, Pilkhuwa, Garhmukteshwar, Babugarh
+Gautam Buddha Nagar | Noida, Greater Noida, Dadri, Jewar, Dankaur, Rabupura, Bilaspur
+Bulandshahr | Bulandshahr, Khurja, Sikandrabad, Dibai, Shikarpur, Anupshahr, Jahangirabad, Siana, Gulaothi
+Mirzapur | Mirzapur, Chunar, Ahraura, Kachhwa, Vindhyachal
+Sant Ravidas Nagar | Gyanpur, Bhadohi, Gopiganj, Suriyawan, Aurai, Khamaria
+Sonbhadra | Robertsganj, Renukoot, Anpara, Obra, Duddhi, Ghorawal, Pipri, Chopan, Shahganj
+Moradabad | Moradabad, Thakurdwara, Bilari, Kundarki
+Bijnor | Bijnor, Najibabad, Dhampur, Chandpur, Nagina, Noorpur, Seohara, Nehtaur, Kiratpur, Afzalgarh
+Rampur | Rampur, Milak, Swar, Kemri
+Amroha | Amroha, Dhanaura, Gajraula, Hasanpur, Joya, Bachhraon, Naugawan Sadat
+Sambhal | Sambhal, Chandausi, Bahjoi, Babrala, Sarai Tarin
+Saharanpur | Saharanpur, Deoband, Gangoh, Nakur, Behat, Rampur Maniharan, Sarsawa
+Muzaffarnagar | Muzaffarnagar, Khatauli, Jansath, Budhana, Shahpur, Miranpur, Purqazi, Bhopa
+Shamli | Shamli, Kairana, Kandhla, Un, Thana Bhawan, Jhinjhana
+Varanasi | Varanasi, Ramnagar, Pindra, Shivpur, Sewapuri, Lohta
+Chandauli | Chandauli, Mughalsarai, Chakia, Saiyadraja, Sakaldiha, Dhanapur
+Ghazipur | Ghazipur, Zamania, Saidpur, Jakhania, Kasimabad, Dildarnagar, Sadat
+Jaunpur | Jaunpur, Kerakat, Machhlishahr, Mariahu, Badlapur, Mungra Badshahpur, Zafarabad, Kheta Sarai
+
+@ Jharkhand
+Palamu | Medininagar, Daltonganj, Hussainabad, Chhatarpur, Bishrampur, Hariharganj, Japla, Chainpur, Patan, Manatu, Panki, Satbarwa, Lesliganj, Pandu, Untari Road
+Garhwa | Garhwa, Nagar Untari, Majhiaon, Bhawanathpur, Ranka, Kandi, Meral, Ramna, Dhurki, Sagma, Dandai, Chinia, Bhandaria, Bishunpura, Ketar
+Latehar | Latehar, Chandwa, Balumath, Barwadih, Manika, Mahuadanr, Herhanj, Garu, Bariyatu, Netarhat
+Chatra | Chatra, Simaria, Itkhori, Hunterganj, Pratappur, Kunda, Lawalong, Gidhaur, Pathalgada, Kanha Chatti, Mayurhand
+Hazaribagh | Hazaribagh, Barhi, Barkagaon, Bishnugarh, Ichak, Katkamsandi, Keredari, Churchu, Dadi, Daru, Chouparan, Padma, Barkatha
+Koderma | Koderma, Jhumri Telaiya, Domchanch, Jainagar, Markacho, Satgawan, Chandwara
+Giridih | Giridih, Dumri, Bagodar, Bengabad, Birni, Deori, Dhanwar, Gawan, Jamua, Pirtand, Suriya, Tisri, Rajdhanwar
+Ramgarh | Ramgarh, Patratu, Barkakana, Gola, Mandu, Chitarpur, Kuju, Bhurkunda, Saunda
+Bokaro | Bokaro Steel City, Chas, Phusro, Bermo, Chandankiyari, Jaridih, Kasmar, Petarwar, Gomia, Nawadih
+Dhanbad | Dhanbad, Jharia, Sindri, Katras, Chirkunda, Govindpur, Nirsa, Baliapur, Tundi, Topchanchi, Baghmara, Egarkund, Maithon
+Lohardaga | Lohardaga, Kuru, Kisko, Senha, Bhandra, Kairo
+Gumla | Gumla, Basia, Sisai, Ghaghra, Bharno, Kamdara, Raidih, Palkot, Albert Ekka, Bishunpur
+Simdega | Simdega, Kolebira, Jaldega, Thethaitangar, Kurdeg, Bolba, Bano, Kersai, Pakartanr
+Ranchi | Ranchi, Bundu, Tamar, Ormanjhi, Namkum, Kanke, Ratu, Mandar, Chanho, Bero, Lapung, Khelari, Nagri, Angada, Silli, Sonahatu, Burmu, Itki
+Khunti | Khunti, Torpa, Murhu, Karra, Rania, Arki
+West Singhbhum | Chaibasa, Chakradharpur, Chiria, Noamundi, Manoharpur, Jagannathpur, Jhinkpani, Tantnagar, Sonua, Goilkera, Bandgaon, Gudri, Anandpur, Majhgaon, Kumardungi, Manjhari
+Saraikela-Kharsawan | Saraikela, Adityapur, Gamharia, Chandil, Kharsawan, Rajnagar, Ichagarh, Kuchai, Nimdih, Kukru
+East Singhbhum | Jamshedpur, Mango, Jugsalai, Ghatshila, Chakulia, Baharagora, Musabani, Potka, Patamda, Dhalbhumgarh, Dumaria, Boram, Jadugora, Galudih
+Jamtara | Jamtara, Mihijam, Nala, Narayanpur, Kundahit, Karmatar, Fatehpur
+Deoghar | Deoghar, Madhupur, Sarath, Jasidih, Mohanpur, Devipur, Sonaraithari, Palojori, Karau, Sarwan
+Dumka | Dumka, Basukinath, Shikaripara, Jama, Jarmundi, Masalia, Ranishwar, Gopikandar, Kathikund
+Pakur | Pakur, Maheshpur, Hiranpur, Pakuria, Amrapara, Littipara
+Godda | Godda, Mahagama, Pathargama, Meharma, Basantrai, Boarijor, Poreyahat, Sundarpahari, Thakurgangti
+Sahibganj | Sahibganj, Rajmahal, Barharwa, Borio, Mandro, Taljhari, Udhwa, Pathna, Barhait
+
+@ Madhya Pradesh
+Bhopal | Bhopal, Berasia, Phanda, Kolar, Misrod, Mandideep
+Raisen | Raisen, Begamganj, Gairatganj, Bareli, Silwani, Udaipura, Sanchi, Obaidullaganj
+Rajgarh | Rajgarh, Khilchipur, Biaora, Narsinghgarh, Sarangpur, Pachore, Zirapur, Chhapiheda
+Sehore | Sehore, Ashta, Ichhawar, Nasrullaganj, Budhni, Rehti, Jawar, Kothri
+Vidisha | Vidisha, Basoda, Sironj, Lateri, Kurwai, Gyaraspur, Nateran, Shamshabad, Tyonda
+Indore | Indore, Mhow, Depalpur, Sanwer, Rau, Hatod, Manpur
+Dhar | Dhar, Pithampur, Manawar, Kukshi, Dharampuri, Badnawar, Dhamnod, Sardarpur
+Jhabua | Jhabua, Thandla, Petlawad, Meghnagar, Ranapur, Rama
+Alirajpur | Alirajpur, Jobat, Bhabra, Sondwa, Kathiwada, Chandra Shekhar Azad Nagar
+Barwani | Barwani, Sendhwa, Anjad, Rajpur, Pansemal, Thikri, Pati, Niwali
+Khandwa | Khandwa, Pandhana, Punasa, Harsud, Chhegaon Makhan, Mundi, Omkareshwar
+Khargone | Khargone, Barwaha, Sanawad, Kasrawad, Maheshwar, Mandleshwar, Bhikangaon, Bhagwanpura, Segaon, Badwaha
+Burhanpur | Burhanpur, Nepanagar, Shahpur, Khaknar
+Ujjain | Ujjain, Nagda, Khachrod, Mahidpur, Tarana, Badnagar, Maksi, Unhel
+Dewas | Dewas, Sonkatch, Bagli, Kannod, Khategaon, Hatpipliya, Satwas, Tonk Khurd
+Mandsaur | Mandsaur, Malhargarh, Suwasra, Sitamau, Garoth, Bhanpura, Shamgarh
+Neemuch | Neemuch, Manasa, Jawad, Rampura, Singoli, Ratangarh
+Ratlam | Ratlam, Jaora, Alot, Sailana, Piploda, Namli, Tal
+Shajapur | Shajapur, Shujalpur, Akodia, Kalapipal
+Agar Malwa | Agar, Nalkheda, Susner, Barod, Soyat Kalan
+Narmadapuram | Narmadapuram, Itarsi, Sohagpur, Pipariya, Babai, Bankhedi, Seoni Malwa, Dolariya
+Betul | Betul, Multai, Amla, Bhainsdehi, Athner, Shahpur ~Betul, Ghoradongri, Chicholi, Bhimpur
+Harda | Harda, Timarni, Khirkiya, Sirali, Handia, Rahatgaon
+Gwalior | Gwalior, Dabra, Bhitarwar, Morar
+Shivpuri | Shivpuri, Kolaras, Pichhore, Karera, Pohri, Narwar, Bairad, Khaniadhana
+Guna | Guna, Raghogarh, Aron, Chachaura, Kumbhraj
+Ashoknagar | Ashoknagar, Chanderi, Isagarh, Mungaoli, Shadora
+Datia | Datia, Seondha, Bhander, Indergarh
+Morena | Morena, Ambah, Porsa, Joura, Sabalgarh, Kailaras, Banmore
+Bhind | Bhind, Gohad, Mehgaon, Lahar, Mihona, Ater, Raun, Gormi
+Sheopur | Sheopur, Vijaypur, Badoda, Karahal, Beerpur
+Sagar | Sagar, Bina, Khurai, Rehli, Deori ~Sagar, Banda ~Sagar, Shahgarh, Malthone, Rahatgarh, Garhakota
+Chhatarpur | Chhatarpur, Nowgong, Rajnagar, Bijawar, Laundi, Bada Malhera, Harpalpur, Khajuraho, Maharajpur
+Damoh | Damoh, Hatta, Pathariya, Tendukheda, Batiyagarh, Patera, Jabera
+Tikamgarh | Tikamgarh, Jatara, Palera, Mohangarh
+Panna | Panna, Ajaigarh, Amanganj, Pawai, Gunour, Devendranagar
+Niwari | Niwari, Orchha, Prithvipur
+Rewa | Rewa, Gurh, Mangawan, Hanumana, Teonthar, Sirmour, Naigarhi, Semariya
+Satna | Satna, Amarpatan, Rampur Baghelan, Nagod, Unchahara, Raghurajnagar, Majhgawan, Chitrakoot ~Satna
+Sidhi | Sidhi, Churhat, Gopadbanas, Majhauli, Kusmi, Sihawal, Rampur Naikin
+Singrauli | Waidhan, Singrauli, Morwa, Deosar, Chitrangi, Sarai
+Mauganj | Mauganj
+Maihar | Maihar, Ramnagar, Birsinghpur
+Jabalpur | Jabalpur, Sihora, Panagar, Kundam, Shahpura ~Jabalpur, Patan ~Jabalpur, Bargi
+Katni | Katni, Murwara, Vijayraghavgarh, Bahoriband, Dheemerkheda, Badwara, Rithi
+Narsinghpur | Narsinghpur, Gadarwara, Kareli, Gotegaon, Chichli, Saikheda
+Dindori | Dindori, Bajag, Mehandwani, Karanjiya, Amarpur
+Mandla | Mandla, Nainpur, Niwas, Bichhiya, Bamhani, Ghughri, Mawai, Bijadandi, Narayanganj
+Balaghat | Balaghat, Waraseoni, Baihar, Lanji, Katangi, Kirnapur, Lalbarra, Paraswada, Khairlanji
+Shahdol | Shahdol, Burhar, Beohari, Jaisinghnagar
+Umaria | Umaria, Bandhavgarh, Nowrozabad
+Anuppur | Anuppur, Kotma, Jaithari, Pushprajgarh, Amarkantak
+
+@ Bihar
+Patna | Patna, Patna Sadar, Sampatchak, Phulwari Sharif, Patna City, Fatwah, Daniyawan, Khusrupur, Barh, Athmalgola, Mokama, Belchhi, Ghoswari, Pandarak, Bakhtiyarpur, Masaurhi, Punpun, Dhanarua, Danapur, Maner, Bihta, Naubatpur, Paliganj, Dulhinbazar, Bikram, Khagaul
+Nalanda | Bihar Sharif, Rajgir, Hilsa, Islampur, Silao, Harnaut, Ekangarsarai, Chandi, Noorsarai, Asthawan, Pawapuri, Parwalpur, Rahui, Sarmera
+Bhojpur | Arrah, Jagdishpur ~Bhojpur, Piro, Koilwar, Shahpur ~Bhojpur, Behea, Sandesh, Bihiya, Barhara, Agiaon, Charpokhari, Gadhani, Udwantnagar
+Buxar | Buxar, Dumraon, Brahmpur, Rajpur ~Buxar, Itarhi, Nawanagar, Chausa, Simri, Kesath, Chakki
+Rohtas | Sasaram, Dehri, Nokha, Bikramganj, Dinara, Karakat, Nasriganj, Kochas, Chenari, Akorhi Gola, Dawath, Rohtas, Tilauthu
+Kaimur | Bhabua, Mohania, Chainpur ~Kaimur, Kudra, Ramgarh ~Kaimur, Bhagwanpur, Adhaura, Chand, Durgawati, Rampur ~Kaimur
+Muzaffarpur | Muzaffarpur, Kanti, Motipur, Sahebganj, Katra, Aurai, Minapur, Bochahan, Gaighat, Sakra, Kurhani, Marwan, Musahari, Paroo, Saraiya
+East Champaran | Motihari, Raxaul, Dhaka, Chakia Champaran, Areraj, Pakri Dayal, Kesaria, Sugauli, Adapur, Ghorasahan, Ramgarhwa, Turkaulia, Patahi, Madhuban, Mehsi, Kalyanpur, Kotwa, Harsiddhi, Sangrampur, Chhauradano
+West Champaran | Bettiah, Bagaha, Narkatiaganj, Ramnagar Champaran, Chanpatia, Lauriya, Mainatanr, Sikta, Manjhaulia, Nautan, Jogapatti, Gaunaha, Majhaulia
+Sitamarhi | Sitamarhi, Belsand, Pupri, Bairgania, Janakpur Road, Sursand, Parihar, Riga, Sonbarsa, Bajpatti, Bathnaha, Dumra, Majorganj, Nanpur, Bokhra, Choraut, Suppi
+Sheohar | Sheohar, Piprahi, Dumri Katsari, Purnahiya, Tariyani
+Vaishali | Hajipur, Mahnar, Lalganj ~Vaishali, Mahua, Jandaha, Patepur, Bidupur, Bhagwanpur ~Vaishali, Chehrakala, Desri, Goraul, Raghopur, Sahdei Buzurg, Vaishali, Rajapakar, Garaul
+Saran | Chhapra, Sonepur, Revelganj, Dighwara, Marhaura, Ekma, Maker, Parsa, Amnour, Baniapur, Garkha, Jalalpur, Isuapur, Lahladpur, Manjhi, Mashrakh, Nagra, Panapur, Taraiya
+Siwan | Siwan, Maharajganj ~Siwan, Mairwa, Barharia, Darauli, Raghunathpur, Ziradei, Andar, Basantpur, Bhagwanpur Hat, Daroanda, Goreyakothi, Guthani, Hasanpura, Hussainganj, Lakri Nabiganj, Nautan ~Siwan, Pachrukhi, Siswan
+Gopalganj | Gopalganj, Mirganj ~Gopalganj, Barauli, Thawe, Hathua, Kateya, Bhore, Kuchaikote, Manjha, Uchkagaon, Baikunthpur, Sidhwalia, Vijayeepur, Phulwaria, Panchdewari
+Darbhanga | Darbhanga, Benipur, Bahadurpur, Baheri ~Darbhanga, Biraul, Ghanshyampur, Gora Bauram, Hanuman Nagar, Hayaghat, Jale, Keoti, Kiratpur ~Darbhanga, Kusheshwar Asthan, Manigachhi, Singhwara, Tardih, Alinagar
+Madhubani | Madhubani, Benipatti, Jhanjharpur, Jainagar, Phulparas, Ghoghardiha, Andhratharhi, Babubarhi, Basopatti, Bisfi, Harlakhi, Khajauli, Kaluahi, Ladania, Lakhnaur, Laukahi, Madhepur, Pandaul, Rahika, Rajnagar ~Madhubani
+Samastipur | Samastipur, Dalsinghsarai, Rosera, Pusa, Shahpur Patori, Tajpur, Kalyanpur ~Samastipur, Khanpur, Mohiuddinagar, Morwa ~Samastipur, Patori, Sarairanjan, Shivajinagar, Singhia, Ujiarpur, Vidyapati Nagar, Warisnagar, Bibhutipur, Hasanpur ~Samastipur, Jitwarpur, Bachhwara, Bithan, Mohanpur ~Samastipur
+Saharsa | Saharsa, Simri Bakhtiarpur, Saur Bazar, Sonbarsa ~Saharsa, Mahishi, Salkhua, Patarghat, Kahra, Nauhatta
+Madhepura | Madhepura, Murliganj, Bihariganj, Singheshwar, Udakishanganj, Chausa ~Madhepura, Puraini, Gwalpara, Ghailadh, Kumarkhand, Shankarpur
+Supaul | Supaul, Birpur, Nirmali, Tribeniganj, Raghopur ~Supaul, Chhatapur, Kishanpur, Marauna, Pipra, Pratapganj, Saraigarh Bhaptiyahi, Basantpur ~Supaul
+Purnia | Purnia, Banmankhi, Kasba, Baisi, Dhamdaha, Rupauli, Bhawanipur, Amour, Krityanand Nagar, Jalalgarh, Purnia East, Srinagar ~Purnia
+Katihar | Katihar, Barsoi, Manihari, Korha, Balrampur ~Katihar, Kadwa, Azamnagar, Amdabad, Barari, Mansahi, Pranpur, Hasanganj ~Katihar, Sameli, Kursela, Falka
+Araria | Araria, Forbesganj, Jogbani, Raniganj ~Araria, Narpatganj, Jokihat, Palasi, Sikti, Kursakanta, Bhargama
+Kishanganj | Kishanganj, Bahadurganj, Thakurganj, Dighalbank, Kochadhaman, Pothia, Terhagachh
+Bhagalpur | Bhagalpur, Kahalgaon, Naugachhia, Sultanganj, Pirpainti, Sabour, Nathnagar, Jagdishpur ~Bhagalpur, Goradih, Sanhaula, Shahkund, Bihpur, Gopalpur, Ismailpur, Kharik, Narayanpur ~Bhagalpur, Rangra Chowk
+Banka | Banka, Amarpur ~Banka, Katoria, Rajoun, Belhar, Chandan, Dhuraiya, Fullidumar, Barahat, Bausi, Shambhuganj
+Munger | Munger, Jamalpur, Kharagpur ~Munger, Tarapur, Haveli Kharagpur, Bariarpur, Dharhara, Sangrampur ~Munger, Asarganj, Tetiabamber
+Jamui | Jamui, Jhajha, Chakai, Sikandra ~Jamui, Sono, Khaira, Gidhaur ~Jamui, Barhat, Lakshmipur, Islamnagar Aliganj
+Khagaria | Khagaria, Gogri Jamalpur, Mansi, Alauli, Chautham, Beldaur, Parbatta
+Lakhisarai | Lakhisarai, Barahiya, Surajgarha, Halsi, Pipariya ~Lakhisarai, Ramgarh Chowk, Chanan
+Sheikhpura | Sheikhpura, Barbigha, Chewara, Ariari, Sheikhopur Sarai, Ghat Kusumba
+Gaya | Gaya, Bodh Gaya, Sherghati, Tekari, Wazirganj ~Gaya, Fatehpur ~Gaya, Belaganj, Khizarsarai, Guraru, Gurua, Imamganj, Atri, Mohanpur ~Gaya, Barachatti, Dumaria ~Gaya, Konch, Manpur ~Gaya, Paraiya, Tankuppa
+Nawada | Nawada, Hisua, Warisaliganj, Rajauli, Nardiganj, Narhat, Akbarpur ~Nawada, Govindpur ~Nawada, Pakribarawan, Kashichak, Sirdala, Meskaur, Roh, Kawakole
+Jehanabad | Jehanabad, Makhdumpur, Ghosi ~Jehanabad, Kako, Ratni Faridpur, Modanganj, Hulasganj
+Arwal | Arwal, Kurtha, Karpi, Kaler, Sonbhadra Banshi Suryapur
+Aurangabad | Aurangabad ~Bihar, Daudnagar, Rafiganj, Nabinagar, Obra ~Bihar, Goh, Kutumba, Deo, Madanpur, Barun, Haspura, Amba, Dhibra, Sihuli, Kasma
+
+@ Jammu & Kashmir
+Jammu | Jammu, Akhnoor, Gho-Manhasan, Bishnah, Arnia, R.S. Pura, Khour, Jourian, Jammu Cantonment
+Samba | Samba, Vijaypur, Bari-Brahmana, Ramgarh ~Samba
+Kathua | Kathua, Basholi, Lakhanpur, Billawar, Parole, Hiranagar
+Udhampur | Udhampur, Chenani, Ramnagar ~Udhampur
+Reasi | Reasi, Katra
+Rajouri | Rajouri, Sunderbani, Kalakote, Nowshera, Thanamandi
+Poonch | Poonch, Surankote
+Ramban | Ramban, Batote, Banihal
+Doda | Doda, Thathri, Bhaderwah
+Kishtwar | Kishtwar
+Anantnag | Anantnag, Achabal, Bijbehara, Kokernag, Mattan, Qazigund, Aishmuqam, Seer Hamdan, Pahalgam, Dooru-Veerinag
+Pulwama | Pulwama, Pampore, Awantipora, Tral, Khrew
+Kulgam | Kulgam, Devsar, Frisal, Yaripora
+Shopian | Shopian, Zainapora
+Budgam | Budgam, Chadoora, Beerwah, Khansahib, Magam, Narbal
+Srinagar | Srinagar, Badamibagh Cantonment
+Ganderbal | Ganderbal, Kangan, Sumbal
+Bandipora | Bandipora, Hajin
+Kupwara | Kupwara, Handwara, Tangdhar
+Baramulla | Baramulla, Sopore, Uri, Pattan, Tangmarg, Gulmarg, Kunzer
+
+@ Ladakh
+Leh | Leh, Thiksey, Shey, Choglamsar, Spituk, Phyang, Nimoo, Saspol, Khaltsi, Likir, Alchi, Basgo, Hemis, Stok, Nyoma, Tangtse, Durbuk, Diskit, Khardung, Sumur, Hunder, Panamik
+Kargil | Kargil, Drass, Sankoo, Zanskar, Padum, Trespone, Shargole, Shakar Chiktan, Panikhar, Parkachik, Mulbekh, Wakha, Rangdum, Chiktan, Taisuru
+
+@ Delhi
+Central Delhi | Daryaganj, Paharganj, Karol Bagh, Rajinder Nagar, Patel Nagar, Jhandewalan, Sadar Bazar, Chandni Chowk, Civil Lines, Kashmere Gate
+East Delhi | Preet Vihar, Laxmi Nagar, Anand Vihar, Vivek Vihar, Patparganj, Mayur Vihar, Pandav Nagar, Gandhi Nagar, Geeta Colony, Krishna Nagar, Shakarpur
+New Delhi | New Delhi, Connaught Place, Chanakyapuri, Parliament Street, India Gate, Barakhamba, Jor Bagh, Lodhi Road, Sarojini Nagar, Vasant Vihar, R.K. Puram
+North Delhi | Model Town, Kamla Nagar, Mukherjee Nagar, Kingsway Camp, Burari, Timarpur, Adarsh Nagar, Azadpur
+North East Delhi | Seelampur, Yamuna Vihar, Bhajanpura, Karawal Nagar, Gokalpuri, Mustafabad, Khajuri Khas, Sonia Vihar, Dayalpur
+North West Delhi | Rohini, Pitampura, Shalimar Bagh, Mangolpuri, Sultanpuri, Narela, Bawana, Kanjhawala, Kirari, Samaypur Badli, Ashok Vihar
+Shahdara | Shahdara, Jhilmil, Karkardooma, Jagatpuri, Seemapuri, Dilshad Garden
+South Delhi | Saket, Hauz Khas, Greater Kailash, Malviya Nagar, Mehrauli, Chhatarpur ~Delhi, Sangam Vihar, Deoli, Ambedkar Nagar ~Delhi, Kalkaji, Govindpuri
+South East Delhi | Jangpura, Lajpat Nagar, Amar Colony, Okhla, Jamia Nagar, Sarita Vihar, Jasola, New Friends Colony, Maharani Bagh, Badarpur
+South West Delhi | Dwarka, Najafgarh, Palam, Vasant Kunj, Kapashera, Bijwasan, Mahipalpur, Dabri, Janakpuri, Uttam Nagar, Kakrola, Chhawla
+West Delhi | Rajouri Garden, Punjabi Bagh, Tilak Nagar, Vikaspuri, Paschim Vihar, Hari Nagar, Subhash Nagar, Nangloi, Mundka, Kirti Nagar
+
+@ Maharashtra
+Mumbai City | Mumbai, Colaba, Fort, Byculla, Dadar, Worli, Malabar Hill, Girgaon, Kurla, Chembur
+Mumbai Suburban | Andheri, Bandra, Borivali, Goregaon, Kandivali, Malad, Mulund, Powai, Vile Parle, Ghatkopar, Jogeshwari, Bhandup, Dahisar, Santacruz
+Thane | Thane, Kalyan, Dombivli, Ulhasnagar, Bhiwandi, Mira-Bhayandar, Ambernath, Badlapur, Shahapur, Murbad
+Palghar | Palghar, Vasai, Virar, Nalasopara, Boisar, Dahanu, Jawhar, Wada, Vikramgad, Mokhada, Manor
+Raigad | Alibag, Panvel, Khopoli, Pen, Uran, Karjat, Khalapur, Mahad, Roha, Murud, Mangaon, Shrivardhan, Mhasla, Poladpur
+Ratnagiri | Ratnagiri, Chiplun, Khed, Dapoli, Lanja, Rajapur ~Ratnagiri, Guhagar, Sangameshwar, Mandangad
+Sindhudurg | Oros, Kudal, Sawantwadi, Malvan, Vengurla, Kankavli, Devgad, Vaibhavwadi, Dodamarg
+Nashik | Nashik, Malegaon, Sinnar, Igatpuri, Niphad, Yeola, Manmad, Dindori ~Nashik, Kalwan, Chandwad, Deola, Nandgaon ~Nashik, Trimbakeshwar, Peth, Surgana
+Dhule | Dhule, Shirpur, Dondaicha, Sakri, Shindkheda, Songir
+Nandurbar | Nandurbar, Shahada, Taloda, Navapur, Akkalkuwa, Akrani
+Jalgaon | Jalgaon, Bhusawal, Amalner, Chalisgaon, Pachora, Chopda, Yawal, Raver, Dharangaon, Jamner, Erandol, Parola, Bhadgaon, Bodwad
+Ahilyanagar | Ahilyanagar, Sangamner, Shrirampur, Kopargaon, Rahata, Rahuri, Akole, Shrigonda, Karjat ~Ahilyanagar, Jamkhed, Pathardi, Nevasa, Shevgaon, Parner
+Pune | Pune, Pimpri-Chinchwad, Baramati, Daund, Shirur, Junnar, Khed ~Pune, Maval, Mulshi, Bhor, Purandar, Indapur, Haveli, Lonavala, Alandi, Saswad, Jejuri
+Satara | Satara, Karad, Wai, Phaltan, Mahabaleshwar, Panchgani, Koregaon, Man, Khatav, Patan ~Satara, Jaoli
+Sangli | Sangli, Miraj, Kupwad, Islampur, Vita, Tasgaon, Jat, Atpadi, Ashta, Shirala, Kavathe Mahankal, Palus
+Kolhapur | Kolhapur, Ichalkaranji, Jaysingpur, Kagal, Gadhinglaj, Panhala, Murgud, Shirol, Hatkanangale, Radhanagari, Chandgad, Bhudargad, Ajara
+Solapur | Solapur, Akkalkot, Barshi, Pandharpur, Akluj, Sangole, Mangalwedha, Malshiras, Mohol, Madha, Karmala, Kurduwadi
+Chhatrapati Sambhajinagar | Chhatrapati Sambhajinagar, Waluj, Sillod, Kannad, Paithan, Gangapur, Vaijapur, Khuldabad, Phulambri, Soygaon
+Jalna | Jalna, Ambad, Bhokardan, Partur, Ghansawangi, Jafrabad, Mantha, Badnapur
+Beed | Beed, Ambajogai, Georai, Majalgaon, Parli, Kaij, Dharur, Manjlegaon, Ashti, Patoda, Shirur Kasar, Wadwani
+Dharashiv | Dharashiv, Tuljapur, Omerga, Bhoom, Kalamb, Paranda, Lohara, Washi, Murum
+Parbhani | Parbhani, Jintur, Gangakhed, Manwath, Purna, Sonpeth, Pathri, Palam, Selu
+Latur | Latur, Udgir, Nilanga, Ausa, Ahmedpur, Chakur, Renapur, Deoni, Jalkot, Shirur Anantpal
+Nanded | Nanded, Deglur, Dharmabad, Kandhar, Kinwat, Hadgaon, Mukhed, Biloli, Loha, Umri, Naigaon, Himayatnagar, Mudkhed, Ardhapur
+Hingoli | Hingoli, Basmat, Kalamnuri, Sengaon, Aundha Nagnath, Vasmat
+Amravati | Amravati, Achalpur, Anjangaon Surji, Chandur Railway, Chandur Bazar, Daryapur, Morshi, Warud, Dhamangaon Railway, Nandgaon Khandeshwar, Chikhaldara, Dharni, Tiosa
+Akola | Akola, Akot, Balapur, Patur, Murtizapur, Barshitakli, Telhara
+Buldhana | Buldhana, Khamgaon, Malkapur, Shegaon, Mehkar, Chikhli, Deulgaon Raja, Motala, Nandura, Sindkhed Raja, Lonar, Sangrampur ~Buldhana, Jalgaon Jamod
+Washim | Washim, Karanja, Risod, Mangrulpir, Malegaon ~Washim, Manora
+Yavatmal | Yavatmal, Wani, Pusad, Darwha, Digras, Umarkhed, Ghatanji, Arni, Pandharkawada, Ralegaon, Kalamb ~Yavatmal, Ner, Mahagaon, Babhulgaon, Maregaon, Zari-Jamani
+Nagpur | Nagpur, Kamptee, Katol, Umred, Ramtek, Saoner, Kalmeshwar, Hingna, Narkhed, Parseoni, Kuhi, Bhiwapur, Mouda
+Wardha | Wardha, Hinganghat, Arvi, Pulgaon, Deoli ~Wardha, Seloo, Karanja ~Wardha, Ashti ~Wardha, Samudrapur
+Bhandara | Bhandara, Tumsar, Pauni, Sakoli, Lakhandur, Mohadi, Lakhani
+Gondia | Gondia, Tirora, Amgaon, Deori ~Gondia, Arjuni Morgaon, Salekasa, Sadak Arjuni, Goregaon ~Gondia
+Chandrapur | Chandrapur, Ballarpur, Warora, Bhadravati, Rajura, Mul, Brahmapuri, Chimur, Sindewahi, Nagbhir, Gondpipri, Korpana, Pombhurna, Saoli, Jiwati
+Gadchiroli | Gadchiroli, Aheri, Armori, Desaiganj, Chamorshi, Kurkheda, Korchi, Dhanora, Etapalli, Sironcha, Bhamragad, Mulchera
+
+@ Haryana
+Ambala | Ambala, Ambala City, Ambala Cantonment, Naraingarh, Barara, Mullana, Saha, Shahzadpur
+Kurukshetra | Kurukshetra, Thanesar, Pehowa, Shahabad ~Haryana, Ladwa, Ismailabad, Babain
+Kaithal | Kaithal, Cheeka, Guhla, Pundri, Kalayat, Rajaund, Siwan ~Haryana, Dhand
+Panchkula | Panchkula, Kalka, Pinjore, Raipur Rani, Barwala ~Panchkula, Morni
+Yamunanagar | Yamunanagar, Jagadhri, Radaur, Chhachhrauli, Bilaspur ~Yamunanagar, Sadhaura
+Karnal | Karnal, Assandh, Gharaunda, Indri, Nilokheri, Nissing, Taraori
+Panipat | Panipat, Samalkha, Israna, Madlauda, Bapoli
+Sonipat | Sonipat, Gohana, Ganaur, Kharkhoda, Rai, Murthal, Kundli
+Rohtak | Rohtak, Meham, Sampla, Kalanaur, Lakhan Majra
+Jhajjar | Jhajjar, Bahadurgarh, Beri, Badli, Matanhail
+Bhiwani | Bhiwani, Tosham, Loharu, Siwani, Bawani Khera
+Charkhi Dadri | Charkhi Dadri, Badhra, Bond Kalan, Jhojhu Kalan
+Hisar | Hisar, Barwala, Narnaund, Adampur, Uklana, Agroha
+Hansi | Hansi, Bass, Kheri Jalab
+Fatehabad | Fatehabad, Tohana, Ratia, Bhuna, Jakhal, Bhattu Kalan, Dharsul
+Sirsa | Sirsa, Dabwali, Ellenabad, Kalanwali, Rania ~Sirsa, Nathusari Chopta, Odhan, Baragudha
+Jind | Jind, Narwana, Safidon, Uchana, Julana, Alewa, Pillukhera
+Gurugram | Gurugram, Manesar, Sohna, Pataudi, Farrukhnagar, Hailey Mandi, Kadipur ~Gurugram, Badshahpur, Wazirabad
+Rewari | Rewari, Dharuhera, Bawal, Kosli, Kund, Manethi
+Mahendragarh | Narnaul, Mahendragarh, Kanina, Ateli, Nangal Chaudhary
+Nuh | Nuh, Ferozepur Jhirka, Tauru, Punahana, Nagina ~Nuh, Indri ~Nuh
+Faridabad | Faridabad, Ballabhgarh, Tigaon, Greater Faridabad, NIT Faridabad, Old Faridabad
+Palwal | Palwal, Hodal, Hathin, Hassanpur, Prithla
+
+@ Rajasthan
+Ajmer | Ajmer, Kishangarh, Pushkar, Nasirabad, Sarwar, Kekri, Peesangan
+Beawar | Beawar, Masuda, Vijaynagar ~Beawar, Jaitaran, Asind
+Bhilwara | Bhilwara, Shahpura, Gangapur ~Bhilwara, Gulabpura, Mandal, Mandalgarh, Jahazpur, Bijolia, Kotri, Hamirgarh, Raipur ~Bhilwara
+Didwana-Kuchaman | Didwana, Kuchaman City, Ladnun, Makrana, Nawa, Parbatsar
+Nagaur | Nagaur, Merta City, Degana, Jayal, Khinvsar, Mundwa, Kuchera
+Tonk | Tonk, Niwai, Deoli ~Tonk, Malpura, Todaraisingh, Uniara, Peeplu
+Bharatpur | Bharatpur, Bayana, Rupbas, Weir, Nadbai
+Deeg | Deeg, Kaman, Nagar, Pahari, Sikri
+Dholpur | Dholpur, Bari, Rajakhera, Baseri, Sarmathura, Saipau
+Karauli | Karauli, Hindaun, Todabhim, Sapotra, Mandrayal, Shri Mahaveerji
+Sawai Madhopur | Sawai Madhopur, Gangapur City, Bonli, Khandar, Chauth Ka Barwara, Bamanwas, Malarna Dungar
+Bikaner | Bikaner, Nokha, Dungargarh, Lunkaransar, Kolayat, Khajuwala, Chhattargarh, Deshnoke
+Churu | Churu, Sardarshahar, Ratangarh ~Churu, Sujangarh, Taranagar, Rajgarh ~Churu, Bidasar, Rajaldesar
+Hanumangarh | Hanumangarh, Nohar, Bhadra, Sangaria, Pilibanga, Rawatsar, Tibbi
+Sri Ganganagar | Sri Ganganagar, Suratgarh, Raisinghnagar, Sadulshahar, Padampur, Karanpur, Gharsana, Vijaynagar
+Alwar | Alwar, Rajgarh, Ramgarh ~Alwar, Bansur, Thanagazi, Kathumar, Lachhmangarh
+Dausa | Dausa, Bandikui, Lalsot, Mahwa, Baswa, Sikrai, Mandawar
+Jaipur | Jaipur, Chomu, Sambhar, Phulera, Bagru, Shahpura ~Jaipur, Jamwa Ramgarh, Bassi, Chaksu, Kotkhawda, Sanganer, Amer
+Jhunjhunu | Jhunjhunu, Chirawa, Khetri, Nawalgarh, Pilani, Surajgarh, Buhana, Udaipurwati, Mukundgarh
+Khairthal-Tijara | Khairthal, Tijara, Bhiwadi, Tapukara, Kishangarh Bas, Kotkasim
+Kotputli-Behror | Kotputli, Behror, Neemrana, Paota, Shahjahanpur ~Rajasthan
+Sikar | Sikar, Fatehpur ~Sikar, Laxmangarh, Neem Ka Thana, Danta Ramgarh, Khandela, Sri Madhopur, Reengus
+Balotra | Balotra, Pachpadra, Siwana, Samdari, Sindhari, Baytu, Gudamalani, Dhorimanna
+Barmer | Barmer, Chohtan, Sheo, Ramsar
+Jaisalmer | Jaisalmer, Pokaran, Fatehgarh, Ramgarh ~Jaisalmer, Sam, Mohangarh ~Jaisalmer
+Jalore | Jalore, Bhinmal, Ahore, Raniwara, Sayla, Bagoda, Bhadrajun
+Jodhpur | Jodhpur, Bilara, Pipar City, Osian, Bhopalgarh, Shergarh, Luni, Bawari, Tinwari
+Pali | Pali ~Rajasthan, Bali, Sojat, Sumerpur ~Pali, Marwar Junction, Rani, Desuri, Rohat
+Phalodi | Phalodi, Lohawat, Bap, Dechu
+Sirohi | Sirohi, Abu Road, Mount Abu, Pindwara, Sheoganj, Reodar
+Baran | Baran, Chhabra, Anta, Mangrol, Atru, Kishanganj ~Baran, Shahbad
+Bundi | Bundi, Keshoraipatan, Nainwa, Lakheri, Indergarh ~Bundi, Hindoli, Kapren
+Jhalawar | Jhalawar, Bhawani Mandi, Jhalrapatan, Aklera, Khanpur ~Jhalawar, Pirawa, Manohar Thana
+Kota | Kota, Ramganj Mandi, Sangod, Itawa, Pipalda, Kanwas, Digod, Sultanpur ~Kota
+Banswara | Banswara, Kushalgarh, Ghatol, Garhi, Bagidora, Anandpuri, Talwara
+Chittorgarh | Chittorgarh, Nimbahera, Kapasan, Begun, Rawatbhata, Bari Sadri, Rashmi, Gangrar, Bhadesar
+Dungarpur | Dungarpur, Sagwara, Aspur, Galiyakot, Simalwara, Bicchiwara
+Pratapgarh Rajasthan | Pratapgarh ~Rajasthan, Chhoti Sadri, Dhariyawad, Arnod, Peepalkhunt
+Rajsamand | Rajsamand, Nathdwara, Amet, Bhim, Deogarh, Kumbhalgarh
+Salumbar | Salumbar, Jhallara, Sarada, Kherwara, Rishabhdev
+Udaipur | Udaipur, Mavli, Gogunda, Jhadol, Vallabhnagar, Lasadiya
+
+@ Goa
+North Goa | Panaji, Mapusa, Bicholim, Pernem, Valpoi, Porvorim, Calangute, Candolim, Anjuna, Vagator, Arambol, Mandrem, Siolim, Assagao, Aldona, Corlim, Sanquelim, Tivim, Reis Magos, Santa Cruz, Old Goa, Ribandar, Taleigao
+South Goa | Margao, Vasco da Gama, Mormugao, Ponda, Quepem, Canacona, Curchorem, Sanguem, Cuncolim, Navelim, Chinchinim, Benaulim, Colva, Varca, Cansaulim, Verna, Chandor, Loutolim, Assolna, Betul, Palolem, Chaudi, Dharbandora, Sancoale, Rivona
+
+@ Himachal Pradesh
+Chamba | Chamba, Dalhousie, Banikhet, Churah, Bharmour, Pangi, Salooni, Chowari, Bhalai, Tissa
+Kangra | Dharamshala, Kangra, Palampur, Nurpur, Dehra, Baijnath, Nagrota Bagwan, Jawalamukhi, Jawali, Shahpur ~Kangra, Fatehpur ~Kangra, Indora, Nagrota Surian, Dera Gopipur, Rait, Sullah
+Una | Una, Amb, Gagret, Mehatpur Basdehra, Santokhgarh, Daulatpur Chowk, Tahliwal, Bangana, Haroli, Bharwain
+Bilaspur | Bilaspur, Ghumarwin, Naina Devi, Jhanduta, Talai, Swarghat, Berthin, Shah Talai, Namhol
+Hamirpur HP | Hamirpur ~HP, Nadaun, Barsar, Sujanpur Tira, Bhoranj, Badsar, Dera Baba Rudru, Tauni Devi
+Kullu | Kullu, Manali, Bhuntar, Banjar, Kasol, Naggar, Anni, Nirmand, Sainj, Aut, Patlikuhal
+Mandi | Mandi, Sundernagar, Ner Chowk, Jogindernagar, Sarkaghat, Karsog, Gohar, Dharmpur, Thalout, Rewalsar, Balh, Kotli, Chail Chowk
+Lahaul and Spiti | Keylong, Kaza, Tabo, Udaipur ~HP, Sissu, Gondhla, Jispa, Losar, Kunzum
+Kinnaur | Reckong Peo, Kalpa, Sangla, Nichar, Pooh, Bhabanagar, Tapri, Sarahan, Rakcham
+Shimla | Shimla, Rampur, Rohru, Theog, Narkanda, Chopal, Jubbal, Kotkhai, Kumarsain, Rampur Bushahr, Sunni, Junga, Mashobra, Naldehra, Fagu, Matiana, Dhami
+Sirmaur | Nahan, Paonta Sahib, Kala Amb, Rajgarh ~HP, Sangrah, Shillai, Renuka, Dadahu, Haripurdhar
+Solan | Solan, Baddi, Nalagarh, Parwanoo, Kasauli, Arki, Dharampur ~Solan, Kunihar, Ramshehar, Subathu, Barotiwala, Dagshai
+
+@ Uttarakhand
+Dehradun | Dehradun, Rishikesh, Mussoorie, Vikasnagar, Herbertpur, Doiwala, Chakrata, Sahaspur, Clement Town, Prem Nagar, Landour
+Haridwar | Haridwar, Roorkee, Manglaur, Jwalapur, Laksar, Bhagwanpur ~Haridwar, Landhaura, Piran Kaliyar, Bahadrabad, Kankhal, Shivlalpur
+Uttarkashi | Uttarkashi, Barkot, Purola, Dunda, Chinyalisaur, Gangotri, Yamunotri, Bhatwari, Naugaon ~Uttarkashi, Mori
+Chamoli | Gopeshwar, Chamoli, Karnaprayag, Joshimath, Gauchar, Ghat, Pokhari, Tharali, Nandprayag, Pipalkoti, Badrinath, Govindghat
+Rudraprayag | Rudraprayag, Ukhimath, Agastyamuni, Tilwara, Guptkashi, Phata, Sonprayag, Kund ~Rudraprayag
+Pauri Garhwal | Pauri, Kotdwar, Srinagar ~Uttarakhand, Lansdowne, Satpuli, Devprayag, Rikhnikhal, Dhumakot, Thalisain, Bironkhal, Kaljikhal, Yamkeshwar
+Tehri Garhwal | New Tehri, Tehri, Narendra Nagar, Chamba ~Uttarakhand, Dhanaulti, Ghansali, Kirtinagar, Pratapnagar, Gaja, Hindolakhal
+Almora | Almora, Ranikhet, Dwarahat, Someshwar, Chaukhutia, Bhikiyasain, Jageshwar, Dhauladevi, Sult, Lamgara, Takula
+Bageshwar | Bageshwar, Garur, Kapkot, Kanda, Baijnath ~Uttarakhand, Kausani
+Champawat | Champawat, Tanakpur, Lohaghat, Purnagiri, Barakot, Pati
+Nainital | Nainital, Haldwani, Ramnagar ~Uttarakhand, Bhowali, Kaladhungi, Lalkuan, Bhimtal, Mukteshwar, Ramgarh ~Uttarakhand, Dhari
+Pithoragarh | Pithoragarh, Didihat, Dharchula, Berinag, Gangolihat, Munsiyari, Kanalichina, Askote, Thal
+Udham Singh Nagar | Rudrapur, Kashipur, Kichha, Jaspur, Sitarganj, Khatima, Bazpur, Gadarpur, Pantnagar, Dineshpur, Nanakmatta, Mahua Kheraganj
+
+@ Assam
+Kokrajhar | Kokrajhar, Gossaigaon, Dotma, Fakiragram, Serfanguri, Basugaon, Salakati
+Chirang | Kajalgaon, Bijni, Sidli, Amteka, Bengtol
+Baksa | Mushalpur, Tamulpur, Salbari, Goreswar, Barama, Tihu
+Barpeta | Barpeta, Barpeta Road, Howly, Sarthebari, Sorbhog, Pathsala, Patacharkuchi, Mandia
+Bongaigaon | Bongaigaon, Abhayapuri, Dangtal, Boitamari, Srijangram
+South Salmara-Mankachar | Hatsingimari, Mankachar, Fekamari, Sukchar
+Nagaon | Nagaon, Raha, Kampur, Dhing, Samaguri, Kaliabor, Barhampur
+Morigaon | Morigaon, Jagiroad, Dharamtul, Laharighat, Mayong, Bhuragaon
+Hojai | Hojai, Lanka, Lumding, Doboka, Jamunamukh
+Dima Hasao | Haflong, Maibang, Umrangso, Mahur, Diyungbra, Jatinga
+Sonitpur | Tezpur, Dhekiajuli, Rangapara, Jamugurihat, Balipara, Charduar
+Biswanath | Biswanath Chariali, Gohpur, Helem, Behali, Sootea, Borgang
+Lakhimpur | North Lakhimpur, Dhakuakhana, Narayanpur ~Assam, Bihpuria, Nowboicha, Laluk
+Dhemaji | Dhemaji, Silapathar, Jonai, Gogamukh, Bordoloni, Sissiborgaon
+Dibrugarh | Dibrugarh, Chabua, Naharkatia, Namrup, Duliajan, Moran, Khowang, Tengakhat
+Tinsukia | Tinsukia, Digboi, Margherita, Doomdooma, Makum, Sadiya, Dholla, Talap
+Sivasagar | Sivasagar, Nazira, Simaluguri, Demow, Sonari, Amguri
+Charaideo | Sapekhati, Mahmora, Rajapukhuri
+Jorhat | Jorhat, Mariani, Titabor, Teok, Kakajan, Cinnamara
+Majuli | Garamur, Kamalabari, Jengraimukh, Auniati, Garmur
+Golaghat | Golaghat, Bokakhat, Dergaon, Sarupathar, Dhansiri, Numaligarh, Barpathar
+Karbi Anglong | Diphu, Bokajan, Howraghat, Dokmoka, Donkamukam, Langsomepi
+West Karbi Anglong | Hamren, Baithalangso, Kheroni, Jirikindeng
+Cachar | Silchar, Lakhipur, Sonai, Udharbond, Katigorah, Borkhola, Dholai
+Hailakandi | Hailakandi, Lala, Algapur, Katlicherra, Ramkrishna Nagar
+Karimganj | Karimganj, Badarpur, Patharkandi, Nilambazar, Anipur
+
+@ Punjab
+Faridkot | Faridkot, Kotkapura, Jaitu, Sadiq, Golewala
+Bathinda | Bathinda, Rampura Phul, Maur, Talwandi Sabo, Goniana, Nathana, Bhagta Bhaika, Raman
+Mansa | Mansa, Budhlada, Sardulgarh, Bareta, Bhikhi, Joga
+Muktsar | Sri Muktsar Sahib, Malout, Gidderbaha, Lambi, Bariwala, Doda ~Punjab
+Firozpur | Firozpur, Zira, Firozpur Cantt, Makhu, Talwandi Bhai, Guruharsahai, Mudki, Mamdot
+Fazilka | Fazilka, Abohar, Jalalabad ~Punjab, Arniwala Sheikh Subhan, Khuian Sarwar, Sito Gunno
+Moga | Moga, Bagha Purana, Nihal Singh Wala, Dharamkot, Badhni Kalan, Kot Ise Khan
+Jalandhar | Jalandhar, Phagwara, Nakodar, Kartarpur, Adampur ~Jalandhar, Goraya, Nurmahal, Shahkot, Lohian Khas, Phillaur
+Hoshiarpur | Hoshiarpur, Dasuya, Mukerian, Garhshankar, Tanda ~Punjab, Hariana, Mahilpur, Garhdiwala
+Kapurthala | Kapurthala, Sultanpur Lodhi, Bholath, Begowal, Dhilwan, Nadala
+Shaheed Bhagat Singh Nagar | Nawanshahr, Balachaur, Banga, Rahon, Aur
+Tarn Taran | Tarn Taran, Patti, Goindwal Sahib, Bhikhiwind, Khem Karan, Chabal, Harike
+Patiala | Patiala, Rajpura, Nabha, Samana, Ghanaur, Bhadson, Sanaur
+Sangrur | Sangrur, Sunam, Dhuri, Moonak, Lehragaga, Dirba, Bhawanigarh, Longowal
+Malerkotla | Malerkotla, Ahmedgarh, Amargarh
+Fatehgarh Sahib | Fatehgarh Sahib, Sirhind, Mandi Gobindgarh, Amloh, Bassi Pathana, Khamanon
+Barnala | Barnala, Tapa, Dhanaula, Bhadaur, Mehal Kalan
+Rupnagar | Rupnagar, Anandpur Sahib, Nangal, Morinda, Chamkaur Sahib, Kiratpur Sahib, Ghanauli
+SAS Nagar | Sahibzada Ajit Singh Nagar, Mohali, Zirakpur, Kharar, Dera Bassi, Kurali, Nayagaon, Banur, Lalru
+Gurdaspur | Gurdaspur, Batala, Dinanagar, Dhariwal, Dera Baba Nanak, Fatehgarh Churian, Qadian, Kahnuwan
+Pathankot | Pathankot, Sujanpur, Narot Jaimal Singh, Bungal, Madhopur
+Amritsar | Amritsar, Ajnala, Attari, Majitha, Raja Sansi, Ramdas, Rayya, Jandiala Guru
+
+@ Chhattisgarh
+Raipur | Raipur, Abhanpur, Arang, Tilda Newra, Gobra Nawapara, Mandir Hasaud, Birgaon
+Baloda Bazar-Bhatapara | Baloda Bazar, Bhatapara, Simga, Kasdol, Palari, Bilaigarh, Tundra
+Dhamtari | Dhamtari, Kurud, Nagri, Magarlod, Rudri
+Gariaband | Gariaband, Rajim, Chhura, Mainpur, Deobhog, Fingeshwar
+Mahasamund | Mahasamund, Bagbahara, Saraipali, Basna, Pithora
+Durg | Durg, Bhilai, Bhilai Nagar, Risali, Kumhari, Dhamdha, Patan ~Chhattisgarh, Ahiwara
+Balod | Balod, Dondi, Dondi Lohara, Gurur, Gunderdehi, Arjunda
+Bemetara | Bemetara, Nawagarh, Saja, Berla, Maro
+Kabirdham | Kawardha, Pandariya, Bodla, Sahaspur Lohara, Pipariya ~Chhattisgarh
+Rajnandgaon | Rajnandgaon, Dongargarh, Dongargaon, Chhuriya, Ambagarh Chowki
+Khairagarh-Chhuikhadan-Gandai | Khairagarh, Chhuikhadan, Gandai, Salhewara
+Mohla-Manpur-Ambagarh Chowki | Mohla, Manpur ~Chhattisgarh, Aundhi
+Bilaspur | Bilaspur ~Chhattisgarh, Takhatpur, Kota ~Chhattisgarh, Masturi, Bilha, Ratanpur, Tifra
+Gaurela-Pendra-Marwahi | Gaurela, Pendra, Marwahi, Pendra Road
+Korba | Korba, Katghora, Dipka, Darri, Pali ~Chhattisgarh, Kartala, Kusmunda, Balco Nagar
+Janjgir-Champa | Janjgir, Champa, Akaltara, Naila Janjgir
+Sakti | Sakti, Malkharoda, Jaijaipur, Dabhra, Baradwar
+Raigarh | Raigarh, Kharsia, Dharamjaigarh, Gharghoda, Pusaur, Lailunga, Tamnar
+Sarangarh-Bilaigarh | Sarangarh, Baramkela, Sariya
+Surguja | Ambikapur, Sitapur ~Chhattisgarh, Lundra, Lakhanpur ~Chhattisgarh, Udaypur, Batouli, Mainpat
+Koriya | Baikunthpur ~Chhattisgarh, Sonhat, Patna ~Chhattisgarh
+Balrampur-Ramanujganj | Balrampur ~Chhattisgarh, Ramanujganj, Wadrafnagar, Rajpur ~Chhattisgarh, Kusmi ~Chhattisgarh, Shankargarh ~Chhattisgarh, Samri
+Surajpur | Surajpur, Pratappur ~Chhattisgarh, Premnagar, Bhaiyathan, Odgi, Ramanujnagar
+Manendragarh-Chirmiri-Bharatpur | Manendragarh, Chirmiri, Bharatpur ~Chhattisgarh, Khadgawan, Janakpur, Kelhari
+Bastar | Jagdalpur, Bastar, Tokapal, Bakawand, Darbha, Lohandiguda
+Kondagaon | Kondagaon, Keshkal, Makdi, Baderajpur, Pharasgaon
+Narayanpur | Narayanpur ~Chhattisgarh, Orchha ~Chhattisgarh, Benur
+North Bastar Kanker | Kanker, Charama, Bhanupratappur, Antagarh, Pakhanjur, Narharpur, Durgkondal
+Dantewada | Dantewada, Geedam, Barsoor, Kuakonda, Kirandul, Bacheli
+Sukma | Sukma, Konta, Chhindgarh, Dornapal, Gadiras
+Bijapur | Bijapur, Bhairamgarh, Bhopalpatnam, Usur, Basaguda
+
+@ Karnataka
+Bengaluru Urban | Bengaluru, Yelahanka, Whitefield, Electronic City, Anekal, Hoskote, Kengeri
+Bengaluru Rural | Devanahalli, Doddaballapur, Nelamangala, Vijayapura ~Bengaluru
+Chikkaballapur | Chikkaballapur, Sidlaghatta, Chintamani, Bagepalli, Gudibande, Gauribidanur, Chelur
+Kolar | Kolar, Malur, Bangarapet, Mulbagal, Srinivaspur, Robertsonpet
+Ramanagara | Ramanagara, Channapatna, Kanakapura, Magadi, Bidadi
+Tumakuru | Tumakuru, Tiptur, Sira, Gubbi, Kunigal, Madhugiri, Pavagada, Koratagere, Chiknayakanahalli, Turuvekere
+Shivamogga | Shivamogga, Bhadravati ~Karnataka, Sagar, Shikaripura, Sorab, Thirthahalli, Hosanagara
+Belagavi | Belagavi, Athani, Bailhongal, Chikodi, Gokak, Hukkeri, Khanapur, Ramdurg, Raibag, Saundatti, Nippani
+Bagalkot | Bagalkot, Jamkhandi, Mudhol, Badami, Bilagi, Hungund, Ilkal, Guledgudda
+Vijayapura | Vijayapura, Indi, Basavana Bagewadi, Sindagi, Muddebihal, Talikoti, Devar Hippargi
+Gadag | Gadag, Betageri, Ron, Nargund, Gajendragad, Shirahatti, Mundargi
+Haveri | Haveri, Ranebennur, Byadgi, Hangal, Hirekerur, Savanur, Shiggaon, Rattihalli
+Dharwad | Dharwad, Hubballi, Kalghatgi, Kundgol, Navalgund, Alnavar, Annigeri
+Uttara Kannada | Karwar, Sirsi, Kumta, Bhatkal, Honnavar, Ankola, Yellapur, Dandeli, Haliyal, Mundgod, Siddapur, Joida
+Kalaburagi | Kalaburagi, Aland, Afzalpur, Chincholi, Chittapur, Jewargi, Sedam, Wadi
+Bidar | Bidar, Basavakalyan, Bhalki, Aurad, Humnabad, Chitgoppa
+Yadgir | Yadgir, Shahapur ~Karnataka, Shorapur, Gurmitkal, Vadgera
+Raichur | Raichur, Manvi, Sindhanur, Lingasugur, Devadurga, Maski
+Koppal | Koppal, Gangavathi, Kushtagi, Yelburga, Kanakagiri, Karatagi
+Mysuru | Mysuru, Nanjangud, Hunsur, T. Narasipura, Periyapatna, H.D. Kote, K.R. Nagar, Sargur
+Mandya | Mandya, Maddur, Malavalli, Srirangapatna, Pandavapura, Krishnarajpet, Nagamangala
+Hassan | Hassan, Belur, Channarayapatna, Alur, Arkalgud, Arasikere, Sakleshpur, Holenarasipura
+Kodagu | Madikeri, Virajpet, Somwarpet, Kushalnagar, Gonikoppal, Ponnampet
+Chamarajanagar | Chamarajanagar, Gundlupet, Kollegal, Yelandur, Hanur
+Chikkamagaluru | Chikkamagaluru, Kadur, Koppa, Mudigere, Narasimharajapura, Tarikere, Ajjampura, Sringeri
+Dakshina Kannada | Mangaluru, Puttur, Bantwal, Belthangady, Sullia, Moodbidri, Ullal, Mulki
+Udupi | Udupi, Kundapura, Karkala, Brahmavar, Byndoor, Kapu, Hebri
+
+@ Andhra Pradesh
+Srikakulam | Srikakulam, Amadalavalasa, Palasa, Tekkali, Ichchapuram
+Vizianagaram | Vizianagaram, Bobbili, Salur, Gajapathinagaram, Cheepurupalli
+Visakhapatnam | Visakhapatnam, Bheemunipatnam, Pendurthi
+Anakapalli | Anakapalli, Narsipatnam, Yelamanchili, Chodavaram
+Kakinada | Kakinada, Pithapuram, Tuni, Samalkota, Peddapuram
+Dr. B. R. Ambedkar Konaseema | Amalapuram, Mandapeta, Ramachandrapuram, Razole, Kothapeta
+East Godavari | Rajamahendravaram, Kovvur, Nidadavole, Jaggampeta, Rajanagaram
+West Godavari | Bhimavaram, Tadepalligudem, Tanuku, Narsapur, Palakollu
+Eluru | Eluru, Nuzvid, Jangareddygudem, Chintalapudi, Kaikaluru
+NTR | Vijayawada, Nandigama, Jaggayyapeta, Tiruvuru, Mylavaram
+Krishna | Machilipatnam, Gudivada, Pedana, Avanigadda, Pamarru
+Guntur | Guntur, Tenali, Mangalagiri, Ponnur, Tadikonda
+Bapatla | Bapatla, Chirala, Repalle, Addanki, Parchur
+Palnadu | Narasaraopet, Chilakaluripet, Vinukonda, Sattenapalli, Macherla
+Alluri Sitharama Raju | Paderu, Araku Valley, Chintapalle, Rampachodavaram
+Parvathipuram Manyam | Parvathipuram, Kurupam, Palakonda
+Prakasam | Ongole, Markapur, Kandukur, Giddalur, Kanigiri
+Sri Potti Sriramulu Nellore | Nellore, Kavali, Gudur, Atmakur, Sullurpeta
+Kurnool | Kurnool, Adoni, Yemmiganur, Nandikotkur, Pattikonda
+Nandyal | Nandyal, Allagadda, Atmakur ~Nandyal, Banaganapalle, Srisailam
+Anantapur | Anantapur, Hindupur, Guntakal, Dharmavaram, Kadiri
+Sri Sathya Sai | Puttaparthi, Madakasira, Gorantla, Bukkapatnam
+YSR Kadapa | Kadapa, Proddatur, Pulivendula, Jammalamadugu, Badvel
+Annamayya | Rayachoti, Madanapalle, Punganur, Pileru
+Chittoor | Chittoor, Kuppam, Palamaner, Bangarupalem
+Tirupati | Tirupati, Srikalahasti, Renigunta, Chandragiri, Satyavedu
+
+@ Gujarat
+Ahmedabad | Ahmedabad, Sanand, Dholka, Dhandhuka, Bavla, Viramgam, Mandal ~Gujarat, Detroj-Rampura
+Gandhinagar | Gandhinagar, Kalol, Mansa ~Gujarat, Dehgam
+Kheda | Nadiad, Kheda, Kapadvanj, Kathlal, Mahudha, Matar, Thasra, Balasinor
+Anand | Anand, Petlad, Khambhat, Borsad, Umreth, Sojitra, Anklav
+Mahisagar | Lunawada, Santrampur, Kadana, Khanpur ~Gujarat, Virpur
+Vadodara | Vadodara, Padra, Savli, Dabhoi, Karjan, Waghodia, Shinor, Desar
+Chhota Udaipur | Chhota Udaipur, Bodeli, Jetpur Pavi, Kawant, Naswadi, Sankheda
+Panchmahal | Godhra, Halol, Kalol ~Panchmahal, Ghoghamba, Jambughoda, Morwa Hadaf, Shehera
+Dahod | Dahod, Jhalod, Limkheda, Devgadh Baria, Garbada, Dhanpur, Fatepura
+Surat | Surat, Bardoli, Olpad, Kamrej, Mandvi ~Surat, Mangrol ~Surat, Palsana, Choryasi, Umarpada
+Tapi | Vyara, Songadh, Valod, Nizar, Uchhal, Dolvan, Kukarmunda
+Bharuch | Bharuch, Ankleshwar, Jhagadia, Jambusar, Amod, Hansot, Valia, Vagra
+Narmada | Rajpipla, Nandod, Dediapada, Sagbara, Tilakwada, Garudeshwar
+Rajkot | Rajkot, Gondal, Jetpur, Dhoraji, Upleta, Jasdan, Paddhari, Kotda Sangani
+Morbi | Morbi, Wankaner, Tankara, Halvad, Maliya
+Jamnagar | Jamnagar, Dhrol, Kalavad, Lalpur, Jamjodhpur, Jodiya
+Devbhumi Dwarka | Khambhalia, Dwarka, Okha, Salaya, Bhanvad, Kalyanpur ~Gujarat
+Porbandar | Porbandar, Kutiyana, Ranavav
+Bhavnagar | Bhavnagar, Palitana, Mahuva, Sihor, Gariadhar, Talaja, Ghogha, Vallabhipur
+Botad | Botad, Gadhada, Barvala, Ranpur
+Amreli | Amreli, Savarkundla, Rajula, Lathi, Bagasara, Dhari ~Gujarat, Babra, Khambha, Jafrabad, Lilia
+Gir Somnath | Veraval, Somnath, Una, Kodinar, Sutrapada, Talala, Gir Gadhada
+Kutch | Bhuj, Gandhidham, Anjar, Mundra, Mandvi, Rapar, Bhachau, Nakhatrana, Abdasa, Lakhpat, Dayapar
+Mehsana | Mehsana, Unjha, Visnagar, Kadi, Vadnagar, Vijapur, Becharaji, Kheralu, Satlasana
+Patan | Patan, Sidhpur, Radhanpur, Chanasma, Sami, Harij, Santalpur, Saraswati
+Banaskantha | Palanpur, Deesa, Dhanera, Tharad, Vadgam, Deodar, Danta, Amirgadh, Kankrej
+Sabarkantha | Himmatnagar, Idar, Khedbrahma, Prantij, Talod, Vadali, Vijaynagar ~Gujarat
+Aravalli | Modasa, Bayad, Dhansura, Malpur, Meghraj, Bhiloda
+Valsad | Valsad, Vapi, Pardi, Umbergaon, Dharampur ~Gujarat, Kaprada
+Navsari | Navsari, Bilimora, Chikhli ~Navsari, Gandevi, Jalalpore, Vansda
+
+@ West Bengal
+Kolkata | Kolkata
+North 24 Parganas | Barasat, Barrackpore, Basirhat, Bangaon, Habra, Naihati, Madhyamgram, Rajarhat, New Town, Bidhannagar
+South 24 Parganas | Alipore, Baruipur, Diamond Harbour, Canning, Sonarpur, Joynagar, Kakdwip, Falta, Magrahat
+Howrah | Howrah, Bally, Uluberia, Amta, Bagnan, Domjur, Shibpur
+Hooghly | Chinsurah, Chandannagar, Serampore, Arambagh, Chuchura, Singur, Tarakeswar, Rishra, Uttarpara
+Nadia | Krishnanagar, Kalyani, Ranaghat, Nabadwip, Chakdaha, Santipur, Tehatta, Karimpur
+Purba Bardhaman | Bardhaman, Kalna, Katwa, Memari, Guskara
+Paschim Bardhaman | Asansol, Durgapur, Raniganj, Andal, Kulti, Jamuria, Burnpur
+Bankura | Bankura, Bishnupur, Sonamukhi, Khatra, Indas, Onda, Raipur ~West Bengal
+Purulia | Purulia, Raghunathpur ~West Bengal, Jhalda, Adra, Balarampur, Manbazar
+Paschim Medinipur | Midnapore, Kharagpur, Ghatal, Dantan, Garhbeta, Chandrakona
+Purba Medinipur | Tamluk, Haldia, Contai, Digha, Egra, Panskura, Nandakumar
+Jhargram | Jhargram, Gopiballavpur, Nayagram, Belpahari, Binpur, Lalgarh
+Malda | English Bazar, Malda, Chanchal, Kaliachak, Ratua, Gazole, Harishchandrapur, Manikchak, Old Malda
+Murshidabad | Berhampore, Murshidabad, Jangipur, Kandi, Jiaganj, Lalbagh, Dhulian, Raghunathganj
+Uttar Dinajpur | Raiganj, Islampur ~West Bengal, Kaliaganj, Dalkhola, Chopra, Karandighi
+Dakshin Dinajpur | Balurghat, Gangarampur, Buniadpur, Kumarganj, Tapan, Hili
+Jalpaiguri | Jalpaiguri, Malbazar, Dhupguri, Mainaguri, Rajganj, Nagrakata
+Alipurduar | Alipurduar, Falakata, Kalchini, Madarihat, Kumargram, Birpara
+Cooch Behar | Cooch Behar, Dinhata, Tufanganj, Mekhliganj, Mathabhanga, Haldibari
+Darjeeling | Darjeeling, Siliguri, Kurseong, Mirik, Sonada, Ghoom
+Kalimpong | Kalimpong, Lava, Loleygaon, Pedong, Algarah, Gorubathan
+
+@ Chandigarh
+Chandigarh | Chandigarh, Manimajra, Sector 17, Sector 22, Sector 26, Sector 34, Sector 35, Sector 43, Sector 44
+Chandigarh Industrial | Industrial Area Phase I, Industrial Area Phase II, Industrial Area Phase III, Transport Area, Grain Market
+Chandigarh Residential | Dhanas, Dadu Majra, Maloya, Palsora, Burail, Attawa, Badheri, Kajheri, Hallo Majra, Ram Darbar, Behlana, Kaimbwala, Khuda Ali Sher, Khuda Lahora, Sarangpur, Raipur Khurd, Makhan Majra, Kishangarh ~Chandigarh, Raipur Kalan
+
+# ═══════════════════════════════════════════════════════════════════════════
+# SUPPLEMENTARY
+#
+# Districts the primary list above skipped entirely, plus towns that were
+# already in lib/geo.ts with no district to sit under. States reopen here and
+# merge with their block above.
+#
+# Spelling variants of a town already listed above are deliberately NOT added
+# (Sikandarabad/Sikandrabad, Nihtaur/Nehtaur, Jhumri Tilaiya/Telaiya). Two
+# slugs for one town is two pages competing for the same query — the exact
+# duplication that costs rankings rather than winning them.
+# ═══════════════════════════════════════════════════════════════════════════
+
+@ Uttar Pradesh
+Agra | Fatehpur Sikri, Kiraoli
+Jhansi | Babina, Barua Sagar, Mau Ranipur
+Lucknow | Bakshi Ka Talab
+Kushinagar | Kushinagar
+Bulandshahr | Naraura, Pahasu
+Saharanpur | Nanauta
+Muzaffarnagar | Banat, Charthawal, Phalauda, Sewalkhas
+Bijnor | Sherkot, Jhalu, Sahanpur, Mandawar
+Bareilly | Shishgarh, Deoranian, Fatehganj Pashchimi, Dhaura Tanda, Thiriya Nizamat Khan
+Sitapur | Maholi
+Unnao | Gangaghat
+Ballia | Sahatwar
+Etah | Bhargain
+Chitrakoot | Chitrakoot Dham
+Aligarh | Dhanipur
+Moradabad | Pakbara
+Amroha | Ujhari
+Sambhal | Sirsi
+Ghazipur | Muhammadabad
+Fatehpur | Kora Jahanabad
+Mau | Walidpur, Ghosia Bazar
+Kasganj | Purdilnagar
+
+@ Punjab
+Ludhiana | Ludhiana, Khanna, Jagraon, Samrala, Machhiwara, Raikot, Payal, Doraha, Sahnewal, Mullanpur Dakha, Maloud, Jodhan, Halwara, Baddowal, Gill, Tharike, Bhamian Kalan
+Amritsar | Amritsar Cantonment, Chogawan, Khilchian, Baba Bakala
+Jalandhar | Jandiala, Bhogpur, Alawalpur, Apra, Jalandhar Cantonment
+Gurdaspur | Fateh Nangal, Sri Hargobindpur, Tibri
+Hoshiarpur | Gardhiwala, Sham Chaurasi, Chohal, Urmar Tanda, Talwara
+Patiala | Ghagga, Patran
+Sangrur | Khanauri
+Barnala | Handiaya
+Bathinda | Bhucho Mandi, Bhisiana, Sangat, Kot Fatta
+SAS Nagar | Balongi, Sohana, Bhankharpur, Daper
+Kapurthala | Hussainpur
+Firozpur | Firozpur Cantonment, Mallanwala Khass
+Fazilka | Korianwali
+Moga | Mehna
+
+@ Madhya Pradesh
+Chhindwara | Chhindwara, Amarwara, Parasia, Harrai, Tamia
+Pandhurna | Pandhurna, Lodhikheda
+Seoni | Seoni, Lakhnadon, Keolari, Barghat
+Betul | Sarni
+Vidisha | Ganj Basoda
+Anuppur | Bijuri, Pasan
+Katni | Kymore, Barhi
+Damoh | Hindoria
+Chhatarpur | Chandla, Buxwaha
+Tikamgarh | Baldeogarh
+Bhind | Daboh, Alampur
+Rajgarh | Khujner
+Sehore | Shahganj
+Dhar | Mandav
+
+@ Chhattisgarh
+Mungeli | Mungeli, Lormi, Pathariya, Pandatarai, Sargaon
+Jashpur | Jashpurnagar, Kunkuri, Pathalgaon, Bagicha, Kotba
+Durg | Bhilai Charoda, Jamul, Utai, Rawan
+Balod | Dalli-Rajhara
+Bilaspur | Bodri, Koni, Sirgitti, Lingiyadih, Malhar
+Janjgir-Champa | Baloda, Kharod, Shivrinarayan, Adbhar
+Korba | Rajgamar, Katkona, Khongapani
+Surguja | Bhatgaon, Lakhanpur
+Raipur | Mana-Camp, Kharora, Siltara, Lawan
+Dantewada | Bade Bacheli, Barsur
+Kondagaon | Keskal, Farasgaon
+Manendragarh-Chirmiri-Bharatpur | Jhagrakhand
+Surajpur | Bishrampur, Pratappur
+Sakti | Jaijepur, Naya Baradwar
+
+@ Assam
+Kamrup Metropolitan | Guwahati, North Guwahati, Dispur, Azara, Amin Gaon, Dharapur, Changsari
+Kamrup | Rangia, Palasbari, Sualkuchi, Bamun Sualkuchi, Hajo, Boko, Chaygaon
+Nalbari | Nalbari, Belsor, Ghograpar, Mukalmua
+Dhubri | Dhubri, Bilasipara, Gauripur, Golokganj, Chapar, Sapatgram, Bangaon
+Goalpara | Goalpara, Dudhnoi, Krishnai, Agia
+Darrang | Mangaldoi, Kharupetia, Sipajhar, Dalgaon
+Udalguri | Udalguri, Tangla, Kalaigaon, Khaira Bari, Rowta
+Bajali | Bajali, Jalah, Sarupeta
+Barpeta | Howli, Sarbhog
+Morigaon | Mairabari
+Nagaon | Rupahi
+Charaideo | Moranhat
+Tinsukia | Lido
+
+@ Delhi
+Central Delhi | Anand Parbat, Baljeet Nagar, Fatehpuri, Hauz Qazi, Khari Baoli, Inderlok, Malka Ganj, Shastri Nagar, Tis Hazari, Roshanara Road, Pusa, Rajender Nagar, Old Rajinder Nagar, West Patel Nagar, Shadipur, Naraina
+New Delhi | Khan Market, Golf Links, Lodhi Colony, INA, Bhikaji Cama Place, Safdarjung Enclave, Indraprastha, Sarai Kale Khan, Nizamuddin, Sundar Nagar
+North Delhi | Alipur, Bakhtawarpur, Bankner, Holambi Kalan, Libaspur, Samaipur Badli, Badli, Bhalswa, GTB Nagar, North Campus, Qutabgarh, Mungeshpur, Daulatabad, Wazirabad
+North East Delhi | Babarpur, Gokulpuri, New Usmanpur, Usmanpur, Loni Road, Hindon Vihar
+North West Delhi | Karala, Bakkarwala, Jwala Puri, Nihal Vihar, Keshav Puram, Rani Bagh, Rithala, Shakur Basti, Wazirpur, Begumpur
+Shahdara | Vishwas Nagar, Ashok Nagar
+East Delhi | Madhu Vihar, Mandawali, Trilokpuri, Vinod Nagar, East Vinod Nagar, Ghazipur
+South Delhi | Lado Sarai, Neb Sarai, Devli, Madangir, Tigri, Dakshinpuri, Sheikh Sarai, Panchsheel Park, Green Park, Yusuf Sarai, Ber Sarai, Katwaria Sarai, Munirka, Ghitorni, Aya Nagar, Qutub Minar, Alaknanda, CR Park
+South East Delhi | Bhogal, East of Kailash, Friends Colony, Ishwar Nagar, Jangpura Extension, Nehru Place, Okhla Industrial Area, Pul Pehladpur, South Extension, Tughlakabad, Zakir Nagar, Defence Colony
+South West Delhi | Bindapur, Dashrathpuri, Om Vihar, Sagarpur, Rangpuri, Kishangarh, Delhi Cantt
+West Delhi | Fateh Nagar, Khyala, Mansarovar Garden, Moti Nagar, Raghubir Nagar, Ramesh Nagar, Tagore Garden, Tihar, Shivaji Park
+
+@ Jharkhand
+Bokaro | Chandrapura, Dugda, Jaridih Bazar, Balidih
+Dhanbad | Gomoh, Bhojudih, Mahuda, Malkera, Sijhua
+Ranchi | Muri, Irba, Arsande
+West Singhbhum | Barajamda, Gua, Kiriburu, Meghahatuburu, Danguwapasi
+Saraikela-Kharsawan | Sini, Kandra, Sarjamda
+Ramgarh | Barkakana, Kuju, Urimari, Bhurkunda
+Hazaribagh | Charhi, Barkagaon, Chauparan
+Koderma | Isri, Domchanch
+East Singhbhum | Bagbera, Chhota Gobindpur, Haludbani, Ghorabandha, Jugsalai
+
+@ Chandigarh
+Chandigarh Residential | Daria, Karsan, Khuda Jassu, Mauli Jagran, Bair Majra, Buterla, Indira Colony, Railway Colony, Modern Complex, Shahpur
+Chandigarh Industrial | IT Park
+
+@ Jammu & Kashmir
+Anantnag | Dooru
+Kupwara | Drugmulla, Langate, Sogam
+Ganderbal | Lar

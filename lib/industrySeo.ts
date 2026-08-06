@@ -33,11 +33,15 @@ import {
   cities,
   contactInfo,
   generateSlug,
-  isRealValue,
   stats,
   type CityInfo,
 } from "./localSeo";
 import { industryServices, type IndustryServiceInfo } from "./services25";
+import {
+  postalAddressSchema,
+  geoCoordinatesSchema,
+  openingHoursSchema,
+} from "./business";
 
 // Re-exported so consumers can treat this module as the entry point for the
 // industry axis without needing to know the catalog was split out to break an
@@ -1476,13 +1480,10 @@ export function getIndustryContentBySlug(slug: string): IndustryPageData | null 
     telephone: contactInfo.phone,
     taxID: businessIdentity.gstin,
     founder: { "@type": "Person", name: businessIdentity.founderName },
-    ...(isRealValue(contactInfo.email) ? { email: contactInfo.email } : {}),
-    address: {
-      "@type": "PostalAddress",
-      ...(isRealValue(contactInfo.address) ? { streetAddress: contactInfo.address } : {}),
-      addressRegion: businessIdentity.addressRegion,
-      addressCountry: "IN",
-    },
+    email: contactInfo.email,
+    address: postalAddressSchema,
+    geo: geoCoordinatesSchema,
+    openingHoursSpecification: openingHoursSchema,
   };
 
   /* GEO. areaServed is India plus the cities we genuinely publish pages for.

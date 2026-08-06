@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
 import { Poppins, DM_Sans, Instrument_Serif } from "next/font/google";
 import Script from "next/script";
+import {
+  business,
+  postalAddressSchema,
+  geoCoordinatesSchema,
+  openingHoursSchema,
+} from "@/lib/business";
 import "./globals.css";
 import "./royal.css";
 
@@ -48,7 +54,8 @@ export const metadata: Metadata = {
     description: "Custom web, mobile, SaaS & CRM development for businesses across India. Remote-first delivery, nationwide.",
     url: "https://sabkasaathidigitalservices.com",
     siteName: "Sabka Saathi Digital Services",
-    images: [{ url: "/logo.png", width: 800, height: 600 }],
+    // Share card comes from app/opengraph-image.tsx — see the note there on
+    // why an explicit `images` list must not be set at this level.
     locale: "en_IN",
     type: "website",
   },
@@ -56,13 +63,12 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Software Development Company in India — Sabka Saathi",
     description: "Custom software, web, app, SaaS & CRM automation for businesses across India.",
-    images: ["/logo.png"],
   },
   other: {
     "geo.region": "IN-BR",
-    "geo.placename": "Patna, Bihar",
-    "geo.position": "25.5941;85.1376",
-    "ICBM": "25.5941, 85.1376",
+    "geo.placename": "Sheikhpura, Bihar",
+    "geo.position": `${business.geo.latitude};${business.geo.longitude}`,
+    "ICBM": `${business.geo.latitude}, ${business.geo.longitude}`,
     "ai-content-declaration": "verified-expert-author",
     "citation_publisher": "Sabka Saathi Digital Services",
   },
@@ -80,8 +86,9 @@ const organizationSchema = {
   },
   "description":
     "Premier software development company serving businesses across India with custom web apps, mobile apps (Android/iOS), SaaS, CRM & automation solutions.",
-  "email": "helpsabkasaathi@gmail.com",
-  "taxID": "10LAHPK8872L1Z3",
+  "email": business.email,
+  "telephone": business.phone.e164,
+  "taxID": business.gstin,
   "priceRange": "₹₹ - ₹₹₹",
   "founder": { "@id": "https://sabkasaathidigitalservices.com/#founder" },
   "areaServed": [
@@ -91,21 +98,18 @@ const organizationSchema = {
     { "@type": "State", "name": "Jharkhand" },
     { "@type": "City", "name": "Patna" },
   ],
-  "address": {
-    "@type": "PostalAddress",
-    "addressLocality": "Patna",
-    "addressRegion": "Bihar",
-    "postalCode": "800001",
-    "addressCountry": "IN",
-  },
-  "geo": {
-    "@type": "GeoCoordinates",
-    "latitude": "25.5941",
-    "longitude": "85.1376",
-  },
+  // One canonical address, shared with every other schema graph on the site
+  // via lib/business.ts. The old node claimed a Patna HQ with PIN 800001,
+  // which disagreed with the real Sheikhpura address the footer now prints —
+  // and a business whose address differs between its markup and its page is
+  // exactly what local search discounts.
+  "address": postalAddressSchema,
+  "geo": geoCoordinatesSchema,
+  "openingHoursSpecification": openingHoursSchema,
   "contactPoint": {
     "@type": "ContactPoint",
-    "telephone": "+91-9431673018",
+    "telephone": business.phone.e164,
+    "email": business.email,
     "contactType": "customer service",
     "areaServed": "IN",
     "availableLanguage": ["en", "hi"],

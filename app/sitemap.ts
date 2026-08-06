@@ -4,6 +4,7 @@ import { stateHubSlugs } from '@/lib/stateSeo';
 import { blogPosts } from '@/lib/blogs';
 import { getPagesList } from '@/lib/localSeo';
 import { getIndustryPagesList, industries } from '@/lib/industrySeo';
+import { districtParams, townParams } from '@/lib/townSeo';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://sabkasaathidigitalservices.com';
@@ -127,16 +128,36 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
   }));
 
-  /* Total is ~8,900 URLs. The sitemap protocol caps a single file at 50,000
-     URLs / 50 MB, so this still fits in one — but it is within one order of
-     magnitude of the limit. If the catalog grows again, split this into a
-     sitemap index (Next supports it via generateSitemaps) rather than letting
-     the file silently truncate. */
+  /* The location tree below each state hub: ~780 district hubs and ~6,800
+     town pages. Districts outrank towns here because a district hub is how
+     its towns get discovered and recrawled — and because a district page has
+     more to say than any single small town in it. */
+  const districtPages = districtParams.map((p) => ({
+    url: `${baseUrl}/location/${p.state}/${p.district}`,
+    lastModified,
+    changeFrequency: 'monthly' as const,
+    priority: 0.7,
+  }));
+
+  const townPages = townParams.map((p) => ({
+    url: `${baseUrl}/location/${p.state}/${p.district}/${p.town}`,
+    lastModified,
+    changeFrequency: 'monthly' as const,
+    priority: 0.5,
+  }));
+
+  /* Total is ~16,500 URLs. The sitemap protocol caps a single file at 50,000
+     URLs / 50 MB, so this still fits in one — but it is now a third of the way
+     there. If the catalog grows again, split this into a sitemap index (Next
+     supports it via generateSitemaps) rather than letting the file silently
+     truncate. */
   return [
     ...staticRoutes,
     ...dynamicRoutes,
     ...industryHubs,
     ...localSeoPages,
     ...industryServicePages,
+    ...districtPages,
+    ...townPages,
   ];
 }

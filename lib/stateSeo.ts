@@ -4,8 +4,12 @@ import {
   cities,
   contactInfo,
   businessIdentity,
-  isRealValue,
 } from "./localSeo";
+import {
+  postalAddressSchema,
+  geoCoordinatesSchema,
+  openingHoursSchema,
+} from "./business";
 
 const SITE = "https://sabkasaathidigitalservices.com";
 
@@ -37,7 +41,10 @@ export interface StateProfile {
   demand: string;
 }
 
-const PROFILES: Record<string, StateProfile> = {
+/* Exported because the district and town pages below the state hub build their
+   copy from the same hand-written economics. A town page that invented its own
+   idea of what the state's businesses buy would contradict the hub above it. */
+export const PROFILES: Record<string, StateProfile> = {
   bihar: {
     economy:
       "an agrarian economy shifting fast toward retail, education and services, with Patna as its commercial and administrative centre",
@@ -507,13 +514,10 @@ export function getStateHubPage(slug: string): StateHubPage | null {
     telephone: contactInfo.phone,
     taxID: businessIdentity.gstin,
     founder: { "@type": "Person", name: businessIdentity.founderName },
-    ...(isRealValue(contactInfo.email) ? { email: contactInfo.email } : {}),
-    address: {
-      "@type": "PostalAddress",
-      ...(isRealValue(contactInfo.address) ? { streetAddress: contactInfo.address } : {}),
-      addressRegion: businessIdentity.addressRegion,
-      addressCountry: "IN",
-    },
+    email: contactInfo.email,
+    address: postalAddressSchema,
+    geo: geoCoordinatesSchema,
+    openingHoursSpecification: openingHoursSchema,
   };
 
   /* areaServed is the whole point of a state hub: one real HQ, an honest

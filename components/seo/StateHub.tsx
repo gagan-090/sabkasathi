@@ -145,7 +145,7 @@ export function StateHub({ page }: { page: StateHubPage }) {
         <p className="mt-3 max-w-3xl text-base text-slate-600">
           We work remotely with clients in all {townCount.toLocaleString("en-IN")} towns below
           {districtCount ? `, across ${districtCount} districts` : ""}. Same process, same pricing,
-          no travel charged.
+          no travel charged. Tap any district or town for its own page.
         </p>
 
         {districts.length > 0 && (
@@ -153,10 +153,29 @@ export function StateHub({ page }: { page: StateHubPage }) {
             {districts.map((d) => (
               <div key={d.slug}>
                 <h3 className="text-sm font-black uppercase tracking-[0.14em] text-orange-700">
-                  {d.name} district
+                  <Link
+                    href={`/location/${page.slug}/${d.slug}`}
+                    className="transition hover:text-orange-900"
+                  >
+                    {d.name} district
+                  </Link>
                 </h3>
+                {/* Every town links to its own page. This is the crawl path
+                    into the town tier — without it those pages exist but are
+                    reachable only from the sitemap, which is a much weaker
+                    signal than a real internal link. */}
                 <p className="mt-2 text-sm leading-relaxed text-slate-600">
-                  {d.towns.map((t) => t.name).join(" · ")}
+                  {d.towns.map((t, i) => (
+                    <span key={t.slug}>
+                      {i > 0 && <span className="text-slate-300"> · </span>}
+                      <Link
+                        href={`/location/${page.slug}/${d.slug}/${t.slug}`}
+                        className="transition hover:text-orange-700"
+                      >
+                        {t.name}
+                      </Link>
+                    </span>
+                  ))}
                 </p>
               </div>
             ))}
