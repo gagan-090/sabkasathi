@@ -9,8 +9,15 @@
 
    • It pauses whenever it scrolls out of view, so reading the rest of the
      page costs no decode work.
-   • Under `prefers-reduced-motion` it never plays at all — the poster frame
-     stands in, and the poster is what paints for LCP either way.
+   • Under `prefers-reduced-motion` it never plays — it holds on its first
+     frame instead.
+
+   There is deliberately no `poster`. A still frame that paints first and is
+   then replaced by the video reads as the page loading twice, which is what
+   it was doing. Without one the browser paints the video's own first frame
+   as soon as it has data — `preload="auto"` rather than `"metadata"` is what
+   makes that arrive promptly — and .vh's dark brand background covers the
+   gap before it, so there is one image, never two.
    ───────────────────────────────────────────────────────────────────────── */
 
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
@@ -69,12 +76,11 @@ export function VideoHero() {
         <video
           ref={videoRef}
           className="vh-video"
-          poster="/images/hero-poster.jpg"
           muted
           loop
           playsInline
           autoPlay={!reduce}
-          preload="metadata"
+          preload="auto"
           aria-hidden="true"
           tabIndex={-1}
           disablePictureInPicture

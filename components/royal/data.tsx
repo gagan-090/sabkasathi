@@ -4,7 +4,11 @@
    Image rule: every `src` on this page is used exactly once. The page used to
    cycle the same four /projects shots through Services, Solutions and Work,
    which made three distinct sections read as one repeated card. (Work is now
-   the live app demos in components/PortfolioShowcase, so it has no data here.) */
+   the live app demos in components/PortfolioShowcase, so it has no data here.)
+
+   Services carry no `src` at all any more: each card renders a real app screen
+   inside a phone, mapped to the service by `index` in ./serviceScreens. Only
+   SOLUTIONS and the founder portrait are still photographs. */
 
 import type { ReactNode } from "react";
 
@@ -130,7 +134,6 @@ export type Service = {
   tags: string[];
   href: string;
   icon: ReactNode;
-  src: string;
 };
 
 export const SERVICES: Service[] = [
@@ -141,7 +144,6 @@ export const SERVICES: Service[] = [
     tags: ["Next.js", "SSR & SEO", "Headless"],
     href: "/services",
     icon: <IconWindow />,
-    src: "/images/services/web-development.webp",
   },
   {
     index: "02",
@@ -150,7 +152,6 @@ export const SERVICES: Service[] = [
     tags: ["Flutter", "React Native", "Play & App Store"],
     href: "/services",
     icon: <IconPhone />,
-    src: "/images/services/mobile-app.webp",
   },
   {
     index: "03",
@@ -159,7 +160,6 @@ export const SERVICES: Service[] = [
     tags: ["ERP", "CRM", "Automation"],
     href: "/services",
     icon: <IconFlow />,
-    src: "/images/services/custom-software.webp",
   },
   {
     index: "04",
@@ -168,7 +168,6 @@ export const SERVICES: Service[] = [
     tags: ["Razorpay", "Inventory", "Checkout"],
     href: "/services",
     icon: <IconCart />,
-    src: "/images/services/delivery.webp",
   },
   {
     index: "05",
@@ -177,7 +176,6 @@ export const SERVICES: Service[] = [
     tags: ["Figma", "Design system", "Prototypes"],
     href: "/services",
     icon: <IconPen />,
-    src: "/images/services/ui-ux.webp",
   },
   {
     index: "06",
@@ -186,7 +184,6 @@ export const SERVICES: Service[] = [
     tags: ["AWS", "Docker", "CI/CD"],
     href: "/services",
     icon: <IconCloud />,
-    src: "/images/services/cloud-solutions.webp",
   },
   {
     index: "07",
@@ -195,7 +192,6 @@ export const SERVICES: Service[] = [
     tags: ["Technical SEO", "Local", "Schema"],
     href: "/services",
     icon: <IconSearch />,
-    src: "/images/services/seo-services.webp",
   },
   {
     index: "08",
@@ -204,7 +200,6 @@ export const SERVICES: Service[] = [
     tags: ["Performance", "Content", "Analytics"],
     href: "/services",
     icon: <IconMega />,
-    src: "/images/services/digital-marketing.webp",
   },
 ];
 
