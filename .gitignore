@@ -48,3 +48,8 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 env.txt
+
+# Firebase CLI debug logs — capture env/config values, never commit
+firebase-debug.log
+firebase-debug.*.log
+*.log
