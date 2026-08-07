@@ -2,24 +2,29 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { RoyalFooter } from "@/components/royal/RoyalFooter";
 import { DistrictHub } from "@/components/seo/LocalityPage";
-import { districtParams, getDistrictPage } from "@/lib/townSeo";
+import { getDistrictPage } from "@/lib/townSeo";
 import { ogImage } from "@/lib/business";
 
 /*
   /location/<state>/<district> — the district hub.
 
-  Every district is prerendered: there are ~780 of them, they are the pages
-  that make the 6,800 town pages beneath them discoverable, and they are cheap
-  to build. `dynamicParams = false` so a mistyped district 404s rather than
-  rendering an empty hub.
+  Rendered on first request and then cached for a day, not prerendered.
+  Prerendering all 781 was the original plan and it built fine locally, but
+  together with the town pages it put ~470 MB and 18,000 files into the output
+  bundle — enough that the deploy dropped the public/ directory and every image
+  on the site 404'd. Serving these through ISR costs one slow first request per
+  district and nothing after that.
+
+  getDistrictPage returns null for anything not in lib/geo.ts, so a mistyped
+  district still 404s.
 */
+
+export const revalidate = 86400;
 
 type Props = { params: Promise<{ state: string; district: string }> };
 
-export const dynamicParams = false;
-
 export async function generateStaticParams() {
-  return districtParams;
+  return [];
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

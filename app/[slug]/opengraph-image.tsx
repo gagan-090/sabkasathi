@@ -9,9 +9,16 @@ export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 export const alt = "Sabka Saathi — Software Development Company in India";
 
-// Pre-render an OG image for every known page at build time.
+/* Generated on first request, then cached — not prerendered.
+
+   This used to return getPagesList(), which was 242 cities × 8 services when
+   it was written. The catalog has since grown to 33 services, so it had
+   quietly become 7,986 build-time PNG renders: ~16,000 files in the output
+   bundle for images that are only ever fetched when someone shares a link.
+   The output bundle has a size ceiling, and blowing past it is what dropped
+   public/ from a deploy — see the note in app/opengraph-image.tsx. */
 export function generateStaticParams() {
-  return getPagesList().map((p) => ({ slug: p.slug }));
+  return [];
 }
 
 export default async function Image({

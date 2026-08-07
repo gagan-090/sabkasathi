@@ -1,6 +1,5 @@
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
 import { ImageResponse } from "next/og";
+import { ogLogoDataUri } from "@/lib/ogLogo";
 
 /*
   The default share card — what WhatsApp, Facebook, LinkedIn, Slack, X and
@@ -12,7 +11,9 @@ import { ImageResponse } from "next/og";
   1200×630 is the size to build for: it is the 1.91:1 ratio every platform
   crops to, and it is comfortably over WhatsApp's ~300×200 floor for showing a
   large preview instead of a thumbnail. The logo is embedded rather than
-  linked because satori resolves no network requests here.
+  linked because satori resolves no network requests here — and it comes from
+  lib/ogLogo.ts as a literal string rather than a filesystem read, for a
+  reason worth reading before changing it.
 
   Before this, app/page.tsx and app/layout.tsx both set
   openGraph.images = [{ url: "/logo.png", width: 800, height: 600 }], which
@@ -25,9 +26,6 @@ import { ImageResponse } from "next/og";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 export const alt = "Sabka Saathi — Software Development Company in India";
-
-const logo = readFileSync(join(process.cwd(), "public", "logo.png"));
-const logoSrc = `data:image/png;base64,${logo.toString("base64")}`;
 
 export default function Image() {
   return new ImageResponse(
@@ -59,7 +57,7 @@ export default function Image() {
           }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={logoSrc} width={300} height={260} alt="" />
+          <img src={ogLogoDataUri} width={300} height={260} alt="" />
         </div>
 
         {/* Width is pinned rather than left to flex: satori does not shrink a

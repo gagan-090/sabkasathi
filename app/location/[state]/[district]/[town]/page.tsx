@@ -2,22 +2,23 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { RoyalFooter } from "@/components/royal/RoyalFooter";
 import { TownPage } from "@/components/seo/LocalityPage";
-import { primaryTownParams, getTownPage } from "@/lib/townSeo";
+import { getTownPage } from "@/lib/townSeo";
 import { ogImage } from "@/lib/business";
 
 /*
   /location/<state>/<district>/<town> — the smallest unit of the location tree.
 
-  Only one town per district is prerendered (the district headquarters, which
-  is what people actually search); the other ~6,000 render on first request and
-  are then cached for a day. `dynamicParams` stays at its default of true so
-  nothing 404s in the meantime, and getTownPage returns null for any town that
-  is not really in lib/geo.ts — so an invented URL still 404s rather than
-  rendering a page about a place that does not exist.
+  Nothing here is prerendered. Every town renders on first request and is then
+  cached for a day. `dynamicParams` stays at its default of true, and
+  getTownPage returns null for any town not really in lib/geo.ts — so an
+  invented URL 404s rather than rendering a page about a place that does not
+  exist.
 
-  This is the same trade app/[slug]/page.tsx makes on the service×city axis:
-  prerendering every combination would add minutes to each deploy for pages
-  that are long tail by construction.
+  Prerendering even one town per district (781 pages) alongside the district
+  hubs pushed the output bundle to ~3 GB across 66,000 files. That deploy
+  silently shipped without the public/ directory, so every image on the site
+  404'd. Build output size is a correctness constraint here, not just a speed
+  one — keep this route's static params empty.
 */
 
 export const revalidate = 86400;
@@ -25,7 +26,7 @@ export const revalidate = 86400;
 type Props = { params: Promise<{ state: string; district: string; town: string }> };
 
 export async function generateStaticParams() {
-  return primaryTownParams;
+  return [];
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
