@@ -1,4 +1,6 @@
 import { getContentBySlug, getPagesList, originalCityServiceSlugs } from "@/lib/localSeo";
+import { getStateServiceBySlug } from "@/lib/stateServiceSeo";
+import { StateServicePage } from "@/components/seo/StateServicePage";
 import { getIndustryContentBySlug, getIndustryPagesList, SITE_URL } from "@/lib/industrySeo";
 import { IndustryServicePage } from "@/components/seo/IndustryServicePage";
 import { notFound } from "next/navigation";
@@ -55,6 +57,38 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const data = getContentBySlug(slug);
 
   if (!data) {
+    /* Service × state (…-company-in-bihar) before the industry axis: both are
+       fallbacks off the same flat route, and the state slugs are a closed set
+       so there is no chance of one shadowing an industry page. */
+    const stateService = getStateServiceBySlug(slug);
+    if (stateService) {
+      const url = `${SITE_URL}/${stateService.slug}`;
+      return {
+        title: stateService.metaTitle,
+        description: stateService.metaDescription,
+        keywords: [
+          `${stateService.serviceName.toLowerCase()} company in ${stateService.displayState}`,
+          `${stateService.serviceName.toLowerCase()} agency in ${stateService.displayState}`,
+          `best ${stateService.serviceName.toLowerCase()} company in ${stateService.displayState}`,
+          `affordable ${stateService.serviceName.toLowerCase()} in ${stateService.displayState}`,
+        ],
+        alternates: { canonical: url },
+        openGraph: {
+          title: stateService.metaTitle,
+          description: stateService.metaDescription,
+          url,
+          siteName: "Sabka Saathi",
+          type: "website",
+          locale: "en_IN",
+        },
+        twitter: {
+          card: "summary_large_image",
+          title: stateService.metaTitle,
+          description: stateService.metaDescription,
+        },
+      };
+    }
+
     const industry = getIndustryContentBySlug(slug);
     if (!industry) return { title: "Not Found" };
 
@@ -111,6 +145,18 @@ export default async function LocalSEOPage({ params }: Props) {
   const data = getContentBySlug(slug);
 
   if (!data) {
+    const stateService = getStateServiceBySlug(slug);
+    if (stateService) {
+      return (
+        <div className="flex min-h-screen flex-col bg-white">
+          <main className="flex-1">
+            <StateServicePage page={stateService} />
+          </main>
+          <RoyalFooter />
+        </div>
+      );
+    }
+
     const industry = getIndustryContentBySlug(slug);
     if (industry) return <IndustryServicePage data={industry} />;
     notFound();
@@ -419,6 +465,30 @@ export default async function LocalSEOPage({ params }: Props) {
                 </Card>
               ))}
             </div>
+          </div>
+        </section>
+
+        {/* Search-intent variants — "developer vs company", "best",
+            "affordable", "custom", "agency". One page answering all of them
+            beats five near-identical pages competing with each other. */}
+        <section className="py-16 md:py-24 border-t border-slate-100/50">
+          <div className="container mx-auto px-4 max-w-3xl">
+            <div className="text-center mb-12">
+              <span className="text-sm font-black uppercase tracking-[0.3em] text-orange-600 block mb-3">
+                Before You Hire
+              </span>
+              <h2 className="text-3xl md:text-4xl font-black text-slate-900">
+                Choosing a {data.serviceName.toLowerCase()} partner in {data.cityName}
+              </h2>
+            </div>
+            <dl className="space-y-8">
+              {data.intentAnswers.map((item, idx) => (
+                <div key={idx}>
+                  <dt className="text-lg font-black text-slate-900 leading-snug">{item.q}</dt>
+                  <dd className="mt-3 text-base text-slate-500 font-medium leading-relaxed">{item.a}</dd>
+                </div>
+              ))}
+            </dl>
           </div>
         </section>
 

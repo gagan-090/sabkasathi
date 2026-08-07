@@ -34,6 +34,20 @@ export function SmoothScroll() {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const lenis = new Lenis({
+      /* Measure the page from <body>, not <html>.
+
+         Lenis's default `content` is document.documentElement, and it keeps
+         the page height current by holding a ResizeObserver on it. Our <html>
+         carries `h-full` (app/layout.tsx), so its box is pinned to the
+         viewport height and that observer can never fire — Lenis is left with
+         the one measurement it took in its own constructor, which on a
+         client-rendered page is taken before most of the page exists. It had
+         been measuring the document as 900px tall against a real 22,000px,
+         giving `limit = 0`: every scroll clamped to zero, the whole page
+         frozen. <body> is `min-h-full` and grows with its content, so the
+         observer fires and the limit tracks the real page. */
+      content: document.body,
+
       // ~1s glide with a quintic ease-out — the same curve the page's
       // framer-motion transitions use, so scrolling and reveals feel related.
       duration: 1.05,

@@ -5,6 +5,7 @@ import { blogPosts } from '@/lib/blogs';
 import { getPagesList } from '@/lib/localSeo';
 import { getIndustryPagesList, industries } from '@/lib/industrySeo';
 import { districtParams, townParams } from '@/lib/townSeo';
+import { stateServicePagesList } from '@/lib/stateServiceSeo';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://sabkasaathidigitalservices.com';
@@ -128,6 +129,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
   }));
 
+  /* Service × state — "<service> company in <state>". High priority: these are
+     head-term commercial pages, and they sit above the city pages that feed
+     off them. */
+  const stateServicePages = stateServicePagesList().map((p) => ({
+    url: `${baseUrl}/${p.slug}`,
+    lastModified,
+    changeFrequency: 'monthly' as const,
+    priority: 0.9,
+  }));
+
   /* The location tree below each state hub: ~780 district hubs and ~6,800
      town pages. Districts outrank towns here because a district hub is how
      its towns get discovered and recrawled — and because a district page has
@@ -157,6 +168,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...industryHubs,
     ...localSeoPages,
     ...industryServicePages,
+    ...stateServicePages,
     ...districtPages,
     ...townPages,
   ];

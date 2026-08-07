@@ -10,6 +10,7 @@ import {
   geoCoordinatesSchema,
   openingHoursSchema,
 } from "./business";
+import { isStateServiceSlug } from "./stateServiceSlugs";
 
 const SITE = "https://sabkasaathidigitalservices.com";
 
@@ -425,8 +426,15 @@ export function getStateHub(slug: string): StateHubData | null {
     districtCount: districts.length,
     townCount,
     servicedCities,
-    serviceHref: (serviceSlug: string) =>
-      primaryCity ? `/${serviceSlug}-company-in-${primaryCity.slug}` : "/services",
+    /* Point at the service × state page where one exists — that is the page
+       built to answer "<service> company in <state>". Falls back to the
+       primary city (city-states have no separate state page) and then to the
+       services index, so this never emits a URL that 404s. */
+    serviceHref: (serviceSlug: string) => {
+      const hasStatePage = isStateServiceSlug(serviceSlug) && !cityBySlug.has(slug);
+      if (hasStatePage) return `/${serviceSlug}-company-in-${slug}`;
+      return primaryCity ? `/${serviceSlug}-company-in-${primaryCity.slug}` : "/services";
+    },
   };
 }
 

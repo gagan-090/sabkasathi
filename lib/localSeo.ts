@@ -748,6 +748,79 @@ const handWrittenServices: Record<string, ServiceInfo> = {
       "SEO-Ready Product Pages"
     ]
   },
+  "it-services": {
+    name: "IT Services",
+    slug: "it-services",
+    subtitle: "IT Support, Systems & Technology Consulting",
+    tagline: "One technology partner for the systems a growing business actually runs on.",
+    description: "Most small firms do not need an IT department — they need one reliable partner who sets up the systems, keeps them running, and answers the phone when something breaks. We handle business email, cloud storage, backups, device and network setup, software licensing, and the day-to-day technology decisions, so your team can get on with the work.",
+    features: [
+      "Business Email & Google Workspace Setup",
+      "Cloud Storage, Backup & Data Recovery",
+      "Network, Wi-Fi & Device Configuration",
+      "Software Licensing & Vendor Coordination",
+      "Ongoing IT Support & Technology Consulting"
+    ],
+    benefits: [
+      "One point of contact for every technology question",
+      "Fewer outages, and faster recovery when they happen",
+      "Data backed up properly instead of sitting on one laptop",
+      "Technology spend that matches what the business needs"
+    ],
+    process: [
+      { step: 1, title: "IT Audit", desc: "We review what you already run — devices, email, storage, software, and where the weak points are." },
+      { step: 2, title: "Plan & Priorities", desc: "A short written plan covering what to fix first, what can wait, and what it costs." },
+      { step: 3, title: "Setup & Migration", desc: "Email, storage, backups, and accounts configured and migrated with no working day lost." },
+      { step: 4, title: "Security Basics", desc: "Passwords, access control, device protection, and backup verification put in place properly." },
+      { step: 5, title: "Documentation", desc: "Accounts, licences, and configurations written down so nothing depends on one person's memory." },
+      { step: 6, title: "Ongoing Support", desc: "A support window with a real contact, plus periodic reviews as the business grows." }
+    ],
+    techStack: ["Google Workspace", "Microsoft 365", "Cloud Backup", "VPN & Firewall", "Device Management", "Ticketing & Support Tools", "Network Hardware", "Antivirus & Endpoint Security"],
+    useCases: [
+      "Setting up IT for a new office or branch",
+      "Moving business email off personal accounts",
+      "Getting reliable backups in place",
+      "Sorting out slow or unreliable office networks",
+      "Ongoing support for a team without in-house IT"
+    ],
+    deliverables: [
+      "Configured email, storage and backup",
+      "Documented accounts, licences and settings",
+      "Network and device setup",
+      "Written IT plan and recommendations",
+      "Ongoing support window"
+    ],
+    timeline: "1–3 weeks for setup, ongoing thereafter",
+    idealFor: ["Small businesses", "Clinics & practices", "Schools & institutes", "Retail chains", "Professional firms"],
+    industries: ["Healthcare & pharma", "Education & coaching", "Retail & e-commerce", "Professional services", "Manufacturing & logistics"],
+    pricing: [
+      {
+        name: "Setup",
+        priceRange: "₹8,000 – ₹15,000",
+        highlight: false,
+        scope: "One-time setup for a small team",
+        features: ["Email & storage setup", "Backup configuration", "Device and account setup", "Written documentation"],
+        support: "1 month support"
+      },
+      {
+        name: "Managed",
+        priceRange: "₹15,000 – ₹35,000",
+        highlight: true,
+        scope: "Setup plus ongoing managed support",
+        features: ["Everything in Setup", "Network & security configuration", "Priority support contact", "Periodic reviews"],
+        support: "3 months support"
+      },
+      {
+        name: "Business",
+        priceRange: "₹40,000+",
+        highlight: false,
+        scope: "Multi-site or larger team, with consulting",
+        features: ["Multi-location setup", "Access control & policies", "Vendor coordination", "Technology roadmap"],
+        support: "6 months support"
+      }
+    ],
+    marqueeBase: ["IT Services", "IT Support", "Business Email", "Cloud Backup", "Network Setup", "Technology Consulting"]
+  },
   "cloud-devops": {
     name: "Cloud & DevOps",
     slug: "cloud-devops",
@@ -1357,6 +1430,14 @@ export interface LocalPageData {
   // Null for other services until matching verbatim copy is supplied.
   landingCopy: MobileAppFullCopy | null;
   contactInfo: ContactInfo;
+  /* The "developer vs company vs agency", "best", "affordable", "custom"
+     search-intent variants, answered in prose on the page itself. People type
+     all of these for the same job; clustering them onto the one page that
+     already ranks for the city beats minting a near-duplicate page per phrase,
+     which is the doorway pattern. Deliberately worded differently from the
+     state-level equivalent in lib/stateServiceSeo.ts so the two tiers are not
+     duplicates of each other. */
+  intentAnswers: { q: string; a: string }[];
   faqs: { q: string; a: string }[];
   nearbySlugs: { title: string; url: string }[];
   relatedServices: { title: string; url: string }[];
@@ -1665,6 +1746,29 @@ export function getContentBySlug(slug: string): LocalPageData | null {
       : null;
 
 
+  const intentAnswers = [
+    {
+      q: `Do I need a ${serviceName.toLowerCase()} freelancer or a company in ${cityName}?`,
+      a: `For a small, tightly-defined job a freelancer in ${cityName} is often the cheaper answer, and we will say so. What a company adds is cover: design, testing, deployment and support do not stall because one person is unavailable. We are GST-registered (${businessIdentity.gstin}), so you get a written scope, a proper invoice and someone who is still contactable months after launch.`
+    },
+    {
+      q: `Who is the best ${serviceName.toLowerCase()} company in ${cityName}?`,
+      a: `Any firm answering "us" — ourselves included — is guessing. Judge it on four things you can verify before paying: will they put the scope in writing, will they show you a working build every week, do they issue GST invoices, and do you get the source code and accounts in your own name at the end. Ask for all four in writing.`
+    },
+    {
+      q: `Is there affordable ${serviceName.toLowerCase()} in ${cityName}, or does cheap mean poor quality?`,
+      a: `Affordable is realistic. Our ${cityName} work starts at ${service.pricing[0].priceRange} for ${service.pricing[0].scope.toLowerCase()}. Projects go wrong far more often because the scope was never written down — so the work grows while the quote does not — than because the starting price was low. We fix the scope and the price together, before anything begins.`
+    },
+    {
+      q: `Do you build custom ${serviceName.toLowerCase()}, or work from templates?`,
+      a: `Custom, starting from how your business already operates rather than from a theme. Where a template genuinely fits your budget and requirements we will recommend one instead of overselling — but the default for a ${cityName} project is a build designed around your actual workflow.`
+    },
+    {
+      q: `Are you a ${serviceName.toLowerCase()} agency or a development company?`,
+      a: `Practically, both terms describe the same work here: we design and build the system, then support it. What we are not is a reseller — the team that scopes your ${cityName} project is the team that writes the code, so nothing is lost being passed between an agency and a subcontractor.`
+    }
+  ];
+
   const faqs = [
     {
       q: `Why should I choose Sabka Saathi for ${serviceName} in ${cityName}?`,
@@ -1817,7 +1921,7 @@ export function getContentBySlug(slug: string): LocalPageData | null {
   const faqSchema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    "mainEntity": faqs.map((faq) => ({
+    "mainEntity": [...intentAnswers, ...faqs].map((faq) => ({
       "@type": "Question",
       "name": faq.q,
       "acceptedAnswer": { "@type": "Answer", "text": faq.a }
@@ -1853,6 +1957,7 @@ export function getContentBySlug(slug: string): LocalPageData | null {
     stats,
     landingCopy,
     contactInfo,
+    intentAnswers,
     faqs,
     nearbySlugs,
     relatedServices,
@@ -1880,7 +1985,8 @@ const coreServiceCatalog: { slug: string; name: string; shortName: string }[] = 
   { slug: "seo-services", name: "SEO Services", shortName: "SEO" },
   { slug: "digital-marketing", name: "Digital Marketing", shortName: "Marketing" },
   { slug: "ecommerce-development", name: "E-commerce Development", shortName: "E-commerce" },
-  { slug: "cloud-devops", name: "Cloud & DevOps", shortName: "Cloud" }
+  { slug: "cloud-devops", name: "Cloud & DevOps", shortName: "Cloud" },
+  { slug: "it-services", name: "IT Services", shortName: "IT Services" }
 ];
 
 /* The full menu shown on the hub: the eight core lines first, in the order

@@ -55,6 +55,7 @@ export function PhoneFrame({
   badge = "Live",
   clock = "9:41",
   sizeClass = PHONE_SIZE_DEFAULT,
+  interactive = true,
   onHold,
   children,
 }: {
@@ -63,6 +64,26 @@ export function PhoneFrame({
   badge?: string | null;
   clock?: string;
   sizeClass?: string;
+  /**
+   * `false` makes the screen a still preview: it cannot be scrolled, and it is
+   * transparent to the pointer so wheel events land on whatever the phone is
+   * sitting in.
+   *
+   * That second half is the load-bearing one. The page runs Lenis with
+   * `allowNestedScroll`, which walks the composed path of every wheel event
+   * and, on finding any scrollable element, drops the gesture so the browser
+   * can scroll that element natively. A scrollable phone screen is therefore a
+   * hole in the page's own scrolling — fine for one demo you meant to be
+   * scrubbed, but a section tiled with phones becomes a page that will not
+   * move. `pointer-events: none` keeps these frames out of the composed path
+   * entirely, so Lenis never sees them. Clearing `overflow` alone would not:
+   * `overflow-x: auto` on a carousel inside a mockup computes `overflow-y` to
+   * `auto` as well, and Lenis would still find it.
+   *
+   * Set it `false` for phones used as artwork; leave it on for the one or two
+   * a visitor is actually invited to scroll.
+   */
+  interactive?: boolean;
   /** Fires as a pointer enters/leaves the screen, so an auto-scrolling track
       can stop creeping while someone is tapping around inside an app. */
   onHold?: (holding: boolean) => void;
@@ -145,11 +166,15 @@ export function PhoneFrame({
           {/* Interactive & Scrollable screen area inside phone */}
           <div
             ref={screenRef}
-            className="relative flex-1 min-h-0 overflow-y-auto overflow-x-hidden scrollbar-none touch-pan-y"
-            onMouseDown={(e) => e.stopPropagation()}
-            onTouchStart={(e) => e.stopPropagation()}
-            onPointerEnter={() => onHold?.(true)}
-            onPointerLeave={() => onHold?.(false)}
+            className={`relative flex-1 min-h-0 overflow-x-hidden ${
+              interactive
+                ? "overflow-y-auto scrollbar-none touch-pan-y"
+                : "overflow-y-hidden pointer-events-none"
+            }`}
+            onMouseDown={interactive ? (e) => e.stopPropagation() : undefined}
+            onTouchStart={interactive ? (e) => e.stopPropagation() : undefined}
+            onPointerEnter={interactive ? () => onHold?.(true) : undefined}
+            onPointerLeave={interactive ? () => onHold?.(false) : undefined}
           >
             {scale > 0 && (
               <div
