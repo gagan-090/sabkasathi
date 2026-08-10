@@ -203,49 +203,49 @@ export const SERVICES: Service[] = [
   },
 ];
 
-// Real photorealistic solutions data map - updated
+// Real photorealistic solutions data map - updated with Gemini generated real photos
 export const SOLUTIONS = [
   {
     label: "SaaS Dashboard",
     title: "Restaurant Management",
     desc: "Live kitchen tracking, table reservations and real-time order flow.",
     tech: ["Next.js", "Node.js", "MySQL"],
-    src: "/projects/web-1.webp?v=real_photo_2026",
+    src: "/projects/solutions/restaurant-management.png",
   },
   {
     label: "School ERP",
     title: "School Management",
     desc: "Attendance, fee collection, exams and staff records in one portal.",
     tech: ["React", "TypeScript", "PostgreSQL"],
-    src: "/images/services/erp-crm.webp?v=real_photo_2026",
+    src: "/projects/solutions/school-management.png",
   },
   {
     label: "Medical App",
     title: "Healthcare Platform",
     desc: "Appointments, digital prescriptions and patient record management.",
     tech: ["Next.js", "Flutter", "Supabase"],
-    src: "/images/services/ios-app.webp?v=real_photo_2026",
+    src: "/projects/solutions/healthcare-platform.png",
   },
   {
     label: "E-commerce",
     title: "Online Store",
     desc: "High-converting storefronts, digital catalogues and fast checkouts.",
     tech: ["Next.js", "MongoDB", "Vercel"],
-    src: "/projects/web-2.webp?v=real_photo_2026",
+    src: "/projects/solutions/online-store.png",
   },
   {
     label: "Enterprise Tool",
     title: "Business Automation",
     desc: "CRM, workflow automation and analytics dashboards in one place.",
     tech: ["React", "Node.js", "Docker"],
-    src: "/images/services/custom-software.webp?v=real_photo_2026",
+    src: "/projects/solutions/business-automation.png",
   },
   {
     label: "Billing System",
     title: "Inventory & Invoicing",
     desc: "GST invoices, stock movement and distributor ledgers, reconciled daily.",
     tech: ["Next.js", "MongoDB", "PDF"],
-    src: "/images/services/billing-system.webp?v=real_photo_2026",
+    src: "/projects/solutions/inventory-billing.png",
   },
 ];
 

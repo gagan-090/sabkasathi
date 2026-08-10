@@ -1,19 +1,17 @@
 // app/api/chat/route.ts
-// Backend for the site chat assistant — calls OpenRouter server-side so the
+// Backend for the site chat assistant — calls the Gemini API server-side so the
 // key never reaches the browser, and streams the reply back token by token.
 //
 // SETUP:
-//   1. Get a key: https://openrouter.ai/keys
-//   2. Put it in .env.local (never commit, never paste in chat):
-//        OPENROUTER_API_KEY=sk-or-v1-...
-//        OPENROUTER_MODEL=openai/gpt-4o        # optional, this is the default
+//   1. Get a key: https://aistudio.google.com/apikey
+//   2. Put it in .env (gitignored — never commit, never paste in chat):
+//        GEMINI_API_KEY=...
+//        GEMINI_MODEL=gemini-3.6-flash        # optional, this is the default
 //   3. In production it comes from Secret Manager — see apphosting.yaml.
 
 import { NextRequest } from "next/server";
 import {
   CHAT_SYSTEM_PROMPT,
-  COMPANY,
-  SITE_URL,
   languageDirective,
   openerPrompt,
 } from "@/lib/chatKnowledge";
@@ -26,14 +24,29 @@ interface ChatMessage {
   content: string;
 }
 
+/** Gemini's own role names: "assistant" is spelled "model". */
+type GeminiContent = { role: "user" | "model"; parts: { text: string }[] };
+
 /* The system prompt is generated in lib/chatKnowledge.ts from the same modules
    the site renders from — the service catalog, industry list, geo tree, process
    and expertise copy, the published FAQ. It is built once at module load, so the
    visitor pays no per-request cost for assembling it, and it cannot drift out of
    date the way a hand-written prompt does. */
 
-const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
-const MODEL = process.env.OPENROUTER_MODEL || "openai/gpt-4o";
+const GEMINI_BASE = "https://generativelanguage.googleapis.com/v1beta/models";
+const MODEL = process.env.GEMINI_MODEL || "gemini-3.6-flash";
+
+/* Gemini 3 reasons before it answers, and bills the thinking to latency as
+   much as to tokens. Measured on this prompt: "low" costs ~275 thinking tokens
+   and about 4 seconds before the first word; "minimal" costs none and answers
+   in ~1.5s, with no loss of quality on questions this bot actually gets — the
+   answers are recited from the catalog in the system prompt, not worked out.
+   A chat bubble that sits empty for four seconds reads as broken.
+
+   Only Gemini 3 takes `thinkingLevel`; 2.x models reject the field outright,
+   so it is attached by model family rather than unconditionally. */
+const THINKING_LEVEL = "minimal";
+const supportsThinkingLevel = (model: string) => model.includes("gemini-3");
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
@@ -45,7 +58,7 @@ const CORS_HEADERS = {
 const MAX_HISTORY = 20;
 /** Cap a single message — the widget limits this too, but never trust the client. */
 const MAX_CHARS_PER_MESSAGE = 2000;
-/** Time allowed for OpenRouter to send its first byte. */
+/** Time allowed for Gemini to send its first byte. */
 const FIRST_BYTE_TIMEOUT_MS = 25_000;
 
 /* ── Rate limit ────────────────────────────────────────────────────────────
@@ -83,26 +96,99 @@ function jsonError(message: string, status: number) {
 }
 
 /** Shared request builder — the opener and the conversation differ only in body. */
-function callOpenRouter(apiKey: string, body: Record<string, unknown>, signal: AbortSignal) {
-  return fetch(OPENROUTER_URL, {
+function callGemini(
+  apiKey: string,
+  method: "generateContent" | "streamGenerateContent",
+  body: {
+    systemInstruction: string;
+    contents: GeminiContent[];
+    generationConfig: Record<string, unknown>;
+  },
+  signal: AbortSignal
+) {
+  // `?alt=sse` is what makes the streaming endpoint emit Server-Sent Events;
+  // without it Gemini streams a JSON array instead, which cannot be parsed
+  // incrementally.
+  const url = `${GEMINI_BASE}/${MODEL}:${method}${method === "streamGenerateContent" ? "?alt=sse" : ""}`;
+
+  return fetch(url, {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${apiKey}`,
+      // Header rather than ?key= so the key never lands in a URL, where proxies
+      // and access logs would keep a copy of it.
+      "x-goog-api-key": apiKey,
       "Content-Type": "application/json",
-      // OpenRouter uses these for attribution on its dashboard/leaderboards.
-      "HTTP-Referer": SITE_URL,
-      "X-Title": COMPANY.name,
     },
-    body: JSON.stringify({ model: MODEL, ...body }),
+    body: JSON.stringify({
+      systemInstruction: { parts: [{ text: body.systemInstruction }] },
+      contents: body.contents,
+      generationConfig: {
+        ...body.generationConfig,
+        ...(supportsThinkingLevel(MODEL)
+          ? { thinkingConfig: { thinkingLevel: THINKING_LEVEL } }
+          : {}),
+      },
+    }),
     signal,
   });
 }
 
+/**
+ * Turns the widget's transcript into Gemini's `contents`.
+ *
+ * Three things have to be fixed on the way:
+ *  - "assistant" is called "model" here;
+ *  - the transcript opens with Saathi's greeting, and Gemini wants the first
+ *    turn to be the user's, so leading model turns are dropped;
+ *  - consecutive turns from the same speaker are merged, because the API
+ *    expects the two roles to alternate.
+ */
+function toGeminiContents(messages: { role: "user" | "assistant"; content: string }[]): GeminiContent[] {
+  const contents: GeminiContent[] = [];
+
+  for (const message of messages) {
+    const role = message.role === "assistant" ? "model" : "user";
+    if (contents.length === 0 && role === "model") continue;
+
+    const last = contents[contents.length - 1];
+    if (last?.role === role) {
+      last.parts[0].text += `\n\n${message.content}`;
+    } else {
+      contents.push({ role, parts: [{ text: message.content }] });
+    }
+  }
+
+  return contents;
+}
+
+/** The text of one streamed chunk, minus any thought summaries. */
+function textFromChunk(chunk: unknown): string {
+  const parts =
+    (chunk as { candidates?: { content?: { parts?: { text?: string; thought?: boolean }[] } }[] })
+      ?.candidates?.[0]?.content?.parts ?? [];
+
+  return parts
+    .filter((part) => typeof part.text === "string" && part.thought !== true)
+    .map((part) => part.text)
+    .join("");
+}
+
+/** Maps Gemini's status codes onto something a visitor can act on. */
+function upstreamError(status: number, body: string) {
+  // A rejected key is usually 401 UNAUTHENTICATED, but a key that is present
+  // and malformed comes back as 400 INVALID_ARGUMENT with "API key not valid" —
+  // the message is the only thing separating that from a bad request of ours.
+  if (status === 401 || status === 403) return jsonError("Invalid or expired API key", 500);
+  if (status === 400 && /API[_ ]key/i.test(body)) return jsonError("Invalid or expired API key", 500);
+  if (status === 429) return jsonError("Rate limit reached. Please try again in a moment.", 429);
+  return jsonError("Assistant is temporarily unavailable", 502);
+}
+
 export async function POST(request: NextRequest) {
   // 1. Key must be configured
-  const apiKey = process.env.OPENROUTER_API_KEY;
+  const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
-    console.error("OPENROUTER_API_KEY is missing from environment variables");
+    console.error("GEMINI_API_KEY is missing from environment variables");
     return jsonError("Server misconfiguration: missing API key", 500);
   }
 
@@ -148,29 +234,42 @@ export async function POST(request: NextRequest) {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 15_000);
     try {
-      const res = await callOpenRouter(
+      const res = await callGemini(
         apiKey,
+        "generateContent",
         {
-          max_tokens: 320,
-          temperature: 0.6,
-          response_format: { type: "json_object" },
-          messages: [
-            { role: "system", content: systemPrompt },
-            { role: "user", content: openerPrompt(language) },
-          ],
+          systemInstruction: systemPrompt,
+          contents: [{ role: "user", parts: [{ text: openerPrompt(language) }] }],
+          generationConfig: {
+            maxOutputTokens: 320,
+            temperature: 0.6,
+            responseMimeType: "application/json",
+            // The schema, not just the mime type: it is what guarantees four
+            // strings under `suggestions` rather than a paragraph the widget
+            // would have to guess at.
+            responseSchema: {
+              type: "OBJECT",
+              properties: {
+                greeting: { type: "STRING" },
+                suggestions: { type: "ARRAY", items: { type: "STRING" } },
+              },
+              required: ["greeting", "suggestions"],
+            },
+          },
         },
         controller.signal
       );
       clearTimeout(timeout);
 
       if (!res.ok) {
-        console.error(`OpenRouter opener error (${res.status}):`, await res.text().catch(() => ""));
+        console.error(`Gemini opener error (${res.status}):`, await res.text().catch(() => ""));
         return jsonError("Could not prepare the opening message", 502);
       }
 
       const data = await res.json();
-      const raw: string = data?.choices?.[0]?.message?.content ?? "";
-      // Some models still wrap JSON in a fence despite response_format.
+      const raw = textFromChunk(data);
+      // Belt and braces: the schema should make the fence impossible, but a
+      // fenced reply would otherwise take down the whole opener.
       const parsed = JSON.parse(raw.replace(/^```(?:json)?|```$/g, "").trim());
 
       const suggestions = Array.isArray(parsed?.suggestions)
@@ -206,50 +305,57 @@ export async function POST(request: NextRequest) {
         m.content.trim().length > 0
     )
     .slice(-MAX_HISTORY)
-    .map((m) => ({ role: m.role, content: m.content.slice(0, MAX_CHARS_PER_MESSAGE) }));
+    .map((m) => ({
+      role: m.role as "user" | "assistant",
+      content: m.content.slice(0, MAX_CHARS_PER_MESSAGE),
+    }));
 
   if (cleanMessages.length === 0) {
     return jsonError("No valid messages found", 400);
   }
 
-  const payloadMessages: ChatMessage[] = [
-    { role: "system", content: systemPrompt },
-    ...cleanMessages,
-  ];
+  const contents = toGeminiContents(cleanMessages);
 
-  // 4. Call OpenRouter. The abort only guards the connection: it is cleared as
+  // Everything the visitor sent was an assistant turn — nothing to answer.
+  if (contents.length === 0) {
+    return jsonError("No valid messages found", 400);
+  }
+
+  // 4. Call Gemini. The abort only guards the connection: it is cleared as
   //    soon as headers arrive, so a long streamed answer is never cut short.
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), FIRST_BYTE_TIMEOUT_MS);
 
   let upstream: Response;
   try {
-    upstream = await callOpenRouter(
+    upstream = await callGemini(
       apiKey,
+      "streamGenerateContent",
       {
-        stream: true,
-        // The assistant answers from a real catalog; list questions ("what
-        // services do you offer") were being truncated at anything lower.
-        // Non-Latin scripts also cost more tokens per sentence.
-        max_tokens: 800,
-        // The prompt carries real prices and timelines, so the model should
-        // recite them rather than improvise around them. Enough headroom is
-        // left for the conversational tone the persona asks for.
-        temperature: 0.5,
-        // Discourages the model from re-opening every reply the same way.
-        presence_penalty: 0.3,
-        frequency_penalty: 0.2,
-        messages: payloadMessages,
+        systemInstruction: systemPrompt,
+        contents,
+        generationConfig: {
+          // The assistant answers from a real catalog; list questions ("what
+          // services do you offer") were being truncated at anything lower.
+          // Non-Latin scripts also cost more tokens per sentence.
+          maxOutputTokens: 800,
+          // The prompt carries real prices and timelines, so the model should
+          // recite them rather than improvise around them. Enough headroom is
+          // left for the conversational tone the persona asks for.
+          temperature: 0.5,
+          // No presence/frequency penalties here: Gemini rejects the request
+          // outright with "Penalty is not enabled for this model".
+        },
       },
       controller.signal
     );
   } catch (err: unknown) {
     clearTimeout(timeout);
     if ((err as { name?: string })?.name === "AbortError") {
-      console.error("OpenRouter request timed out before first byte");
+      console.error("Gemini request timed out before first byte");
       return jsonError("The assistant took too long to respond. Please try again.", 504);
     }
-    console.error("Unexpected error calling OpenRouter:", err);
+    console.error("Unexpected error calling Gemini:", err);
     return jsonError("Internal server error", 500);
   }
 
@@ -257,14 +363,8 @@ export async function POST(request: NextRequest) {
 
   if (!upstream.ok || !upstream.body) {
     const errText = await upstream.text().catch(() => "");
-    console.error(`OpenRouter API error (${upstream.status}):`, errText);
-
-    if (upstream.status === 401) return jsonError("Invalid or expired API key", 500);
-    if (upstream.status === 402) return jsonError("The assistant is out of credits right now.", 502);
-    if (upstream.status === 429) {
-      return jsonError("Rate limit reached. Please try again in a moment.", 429);
-    }
-    return jsonError("Assistant is temporarily unavailable", 502);
+    console.error(`Gemini API error (${upstream.status}):`, errText);
+    return upstreamError(upstream.status, errText);
   }
 
   // 5. Re-emit the upstream SSE as plain text deltas. The widget only ever
@@ -279,42 +379,45 @@ export async function POST(request: NextRequest) {
       let buffer = "";
       let emittedAnything = false;
 
+      const emitEvent = (event: string) => {
+        for (const line of event.split("\n")) {
+          const trimmed = line.trim();
+          // Anything else is an SSE comment or a blank keep-alive line.
+          if (!trimmed.startsWith("data:")) continue;
+
+          try {
+            const delta = textFromChunk(JSON.parse(trimmed.slice(5).trim()));
+            if (delta) {
+              emittedAnything = true;
+              streamController.enqueue(encoder.encode(delta));
+            }
+          } catch {
+            // A malformed chunk shouldn't kill an otherwise good answer.
+          }
+        }
+      };
+
       try {
         for (;;) {
           const { done, value } = await reader.read();
           if (done) break;
 
-          buffer += decoder.decode(value, { stream: true });
+          // Gemini separates events with CRLF, so the newlines are normalised
+          // before splitting — a parser that only knows "\n\n" holds the whole
+          // reply in its buffer and emits nothing at all.
+          buffer += decoder.decode(value, { stream: true }).replace(/\r\n/g, "\n");
 
           // SSE events are separated by a blank line; keep the trailing partial.
           const events = buffer.split("\n\n");
           buffer = events.pop() ?? "";
 
-          for (const event of events) {
-            for (const line of event.split("\n")) {
-              const trimmed = line.trim();
-              // OpenRouter sends `: OPENROUTER PROCESSING` keep-alive comments.
-              if (!trimmed.startsWith("data:")) continue;
-
-              const data = trimmed.slice(5).trim();
-              if (data === "[DONE]") {
-                streamController.close();
-                return;
-              }
-
-              try {
-                const parsed = JSON.parse(data);
-                const delta: string | undefined = parsed?.choices?.[0]?.delta?.content;
-                if (delta) {
-                  emittedAnything = true;
-                  streamController.enqueue(encoder.encode(delta));
-                }
-              } catch {
-                // A malformed chunk shouldn't kill an otherwise good answer.
-              }
-            }
-          }
+          for (const event of events) emitEvent(event);
         }
+
+        // Gemini has no `[DONE]` sentinel — it just closes — so the final event
+        // is still sitting in the buffer when the read loop ends. Dropping it
+        // would cut the last few words off every single answer.
+        if (buffer.trim()) emitEvent(buffer);
 
         if (!emittedAnything) {
           streamController.enqueue(
@@ -323,7 +426,7 @@ export async function POST(request: NextRequest) {
         }
         streamController.close();
       } catch (err) {
-        console.error("Error while streaming from OpenRouter:", err);
+        console.error("Error while streaming from Gemini:", err);
         if (!emittedAnything) {
           streamController.enqueue(
             encoder.encode("Sorry — my connection dropped mid-sentence. Could you ask me again?")

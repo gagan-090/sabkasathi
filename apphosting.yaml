@@ -60,10 +60,11 @@ env:
   - variable: MONGODB_URI
     secret: MONGODB_URI
   # Powers /api/chat. Create the secret first:
-  #   firebase apphosting:secrets:set OPENROUTER_API_KEY
-  - variable: OPENROUTER_API_KEY
-    secret: OPENROUTER_API_KEY
-  - variable: OPENROUTER_MODEL
-    value: openai/gpt-4o
+  #   firebase apphosting:secrets:set GEMINI_API_KEY
+  #   firebase apphosting:secrets:grantaccess GEMINI_API_KEY --backend <backend>
+  - variable: GEMINI_API_KEY
+    secret: GEMINI_API_KEY
+  - variable: GEMINI_MODEL
+    value: gemini-3.6-flash
     availability:
       - RUNTIME

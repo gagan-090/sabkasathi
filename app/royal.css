@@ -860,6 +860,34 @@
   pointer-events: none;
 }
 
+/* ── the one card that carries a browser instead of a phone ────────────────
+   Website Development shows a desktop storefront, and a 16:10 window squeezed
+   into the phone's column would be a thumbnail. So this card opts out of the
+   sideways layout and stacks: window across the full cell, copy underneath.
+   The two together come out at roughly the height of a phone card, so the row
+   still lines up. */
+
+.rh-card-live.rh-card-web {
+  grid-template-columns: 1fr;
+  /* `1fr auto`, so when the phone card beside it turns out to be the taller of
+     the two the slack goes to the window rather than opening a gap under the
+     tags. */
+  grid-template-rows: 1fr auto;
+  align-items: stretch;
+}
+
+/* The plinth is sized for a portrait device — a landscape window needs the
+   width back, and no bottom bleed, because nothing is standing on it. */
+.rh-card-stage-web {
+  padding: 0.8rem;
+  align-content: center;
+}
+
+.rh-card-stage-web .rh-card-stage-glow {
+  top: -10%;
+  width: 110%;
+}
+
 /* The phone rises a little as the card is hovered — the one bit of motion the
    card keeps now that the tilt has been turned almost all the way down. */
 .rh-card-live .rh-card-stage > *:not(.rh-card-stage-glow):not(.rh-curtain-panel) {

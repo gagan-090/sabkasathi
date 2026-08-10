@@ -4,7 +4,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { useForm, ValidationError } from "@formspree/react";
 import { motion } from "framer-motion";
+import { BrowserFrame } from "@/components/mockups/BrowserFrame";
 import { PhoneFrame, PHONE_SIZE_MINI } from "@/components/mockups/PhoneFrame";
+import { StorefrontSite } from "@/components/mockups/StorefrontSite";
 import { BiharGlobe } from "./BiharGlobe";
 import { VideoHero } from "./VideoHero";
 import { ServiceAppShowcase } from "./ServiceAppShowcase";
@@ -96,76 +98,105 @@ export function RoyalHome({ showcase }: { showcase?: React.ReactNode }) {
             real screen instead of a stock photograph, and a portrait device
             plus its copy does not fit a quarter-width cell. */}
         <Stagger className="rh-cards rh-cards-live" gap={0.07}>
-          {SERVICES.map((service) => (
-            <StaggerItem key={service.index}>
-              {/* Barely any tilt here — the card contains a scrollable phone
-                  screen, and a card that leans away under the pointer while
-                  you are trying to swipe inside it fights the thing it is
-                  showing off. */}
-              <Tilt className="rh-card rh-card-live" max={2} lift={4}>
-                {/* The screen is uncovered by a panel sliding up off it as the
-                    card arrives, so the phone reads as being revealed rather
-                    than fading in with everything else. */}
-                <Curtain className="rh-card-stage">
-                  <span className="rh-card-stage-glow" aria-hidden="true" />
-                  {/* Not interactive: eight scrollable phones tiling one
-                      section would leave the page with almost nowhere left to
-                      take a wheel gesture. The showcase below is where a
-                      screen can actually be scrolled. */}
-                  <PhoneFrame
-                    accent="#f38200"
-                    badge="App Screen"
-                    sizeClass={PHONE_SIZE_MINI}
-                    interactive={false}
-                  >
-                    {SCREENS_BY_INDEX[service.index]?.center}
-                  </PhoneFrame>
-                </Curtain>
+          {SERVICES.map((service) => {
+            /* Website Development is the one card that does not get a phone.
+               A service whose deliverable is a website, illustrated with an
+               app screen, argues against itself — so 01 carries a browser
+               window running a real desktop storefront instead.
 
-                <div className="rh-card-live-body">
-                  <div className="rh-card-headrow">
-                    <motion.span
-                      className="rh-card-icon"
-                      aria-hidden="true"
-                      initial={{ scale: 0.5, rotate: -25, opacity: 0 }}
-                      whileInView={{ scale: 1, rotate: 0, opacity: 1 }}
-                      viewport={{ once: true, amount: 0.6 }}
-                      transition={{ type: "spring", stiffness: 300, damping: 15 }}
-                    >
-                      {service.icon}
-                    </motion.span>
-                    <h3 className="rh-card-title">{service.title}</h3>
-                    <span className="rh-card-index">{service.index}</span>
-                  </div>
+               It costs the card its sideways layout: a 16:10 window at phone
+               width is a postage stamp, so this one stacks the window over its
+               copy and takes the full cell. That also lands it at roughly the
+               height of the phone card beside it, which is why the row still
+               reads as a row. */
+            const isWebsite = service.index === "01";
 
-                  <p className="rh-card-body">{service.body}</p>
-
-                  {/* Tags flick in one after another once the card itself has
-                      landed — the last beat of the card's own entrance. */}
-                  <motion.ul
-                    className="rh-card-list"
-                    initial="hidden"
-                    whileInView="show"
-                    viewport={{ once: true, amount: 0.5 }}
-                    variants={{ hidden: {}, show: { transition: { staggerChildren: 0.05, delayChildren: 0.15 } } }}
-                  >
-                    {service.tags.map((tag) => (
-                      <motion.li
-                        className="rh-tag"
-                        key={tag}
-                        variants={{
-                          hidden: { opacity: 0, y: 10, scale: 0.94 },
-                          show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.45, ease: EASE } },
-                        }}
+            return (
+              <StaggerItem key={service.index}>
+                {/* Barely any tilt here — the card contains a scrollable phone
+                    screen, and a card that leans away under the pointer while
+                    you are trying to swipe inside it fights the thing it is
+                    showing off. */}
+                <Tilt
+                  className={`rh-card rh-card-live${isWebsite ? " rh-card-web" : ""}`}
+                  max={2}
+                  lift={4}
+                >
+                  {/* The screen is uncovered by a panel sliding up off it as
+                      the card arrives, so the device reads as being revealed
+                      rather than fading in with everything else. */}
+                  <Curtain className={`rh-card-stage${isWebsite ? " rh-card-stage-web" : ""}`}>
+                    <span className="rh-card-stage-glow" aria-hidden="true" />
+                    {/* Not interactive: eight scrollable screens tiling one
+                        section would leave the page with almost nowhere left
+                        to take a wheel gesture. The showcase below is where a
+                        screen can actually be scrolled. */}
+                    {isWebsite ? (
+                      <BrowserFrame
+                        accent="#f38200"
+                        url="shopeasy.in"
+                        badge="Live site"
+                        interactive={false}
                       >
-                        {tag}
-                      </motion.li>
-                    ))}
-                  </motion.ul>
-                </div>
-              </Tilt>
-            </StaggerItem>
-          ))}
+                        <StorefrontSite />
+                      </BrowserFrame>
+                    ) : (
+                      <PhoneFrame
+                        accent="#f38200"
+                        badge="App Screen"
+                        sizeClass={PHONE_SIZE_MINI}
+                        interactive={false}
+                      >
+                        {SCREENS_BY_INDEX[service.index]?.center}
+                      </PhoneFrame>
+                    )}
+                  </Curtain>
+
+                  <div className="rh-card-live-body">
+                    <div className="rh-card-headrow">
+                      <motion.span
+                        className="rh-card-icon"
+                        aria-hidden="true"
+                        initial={{ scale: 0.5, rotate: -25, opacity: 0 }}
+                        whileInView={{ scale: 1, rotate: 0, opacity: 1 }}
+                        viewport={{ once: true, amount: 0.6 }}
+                        transition={{ type: "spring", stiffness: 300, damping: 15 }}
+                      >
+                        {service.icon}
+                      </motion.span>
+                      <h3 className="rh-card-title">{service.title}</h3>
+                      <span className="rh-card-index">{service.index}</span>
+                    </div>
+
+                    <p className="rh-card-body">{service.body}</p>
+
+                    {/* Tags flick in one after another once the card itself has
+                        landed — the last beat of the card's own entrance. */}
+                    <motion.ul
+                      className="rh-card-list"
+                      initial="hidden"
+                      whileInView="show"
+                      viewport={{ once: true, amount: 0.5 }}
+                      variants={{ hidden: {}, show: { transition: { staggerChildren: 0.05, delayChildren: 0.15 } } }}
+                    >
+                      {service.tags.map((tag) => (
+                        <motion.li
+                          className="rh-tag"
+                          key={tag}
+                          variants={{
+                            hidden: { opacity: 0, y: 10, scale: 0.94 },
+                            show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.45, ease: EASE } },
+                          }}
+                        >
+                          {tag}
+                        </motion.li>
+                      ))}
+                    </motion.ul>
+                  </div>
+                </Tilt>
+              </StaggerItem>
+            );
+          })}
         </Stagger>
 
         {/* The same eight service lines again, one at a time, on three phones
