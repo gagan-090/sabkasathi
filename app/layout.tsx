@@ -49,6 +49,12 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/",
   },
+  // Search Console site-ownership token. Google Play Console and Google
+  // Business Profile both confirm the website through this same verification,
+  // so it must stay on every page — hence the root layout, not a route.
+  verification: {
+    google: "aw8cpFsSjDSCbKam4ICmXUpqJwdsVqIc1jYUbMPMvYY",
+  },
   openGraph: {
     title: "Software Development Company in India | Web, App & SaaS — Sabka Saathi",
     description: "Custom web, mobile, SaaS & CRM development for businesses across India. Remote-first delivery, nationwide.",

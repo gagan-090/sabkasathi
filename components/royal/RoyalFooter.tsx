@@ -16,6 +16,7 @@ const SERVICE_LINKS = [
   { href: "/expertise/billing-system", label: "Billing & Management" },
   { href: "/expertise/seo-services", label: "SEO Services" },
   { href: "/services", label: "All 25 services" },
+  { href: "/solutions", label: "Solutions we build" },
 ];
 
 const COMPANY_LINKS = [

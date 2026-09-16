@@ -6,6 +6,7 @@ import { getPagesList } from '@/lib/localSeo';
 import { getIndustryPagesList, industries } from '@/lib/industrySeo';
 import { districtParams, townParams } from '@/lib/townSeo';
 import { stateServicePagesList } from '@/lib/stateServiceSeo';
+import { solutionParams } from '@/lib/solutionSeo';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://sabkasaathidigitalservices.com';
@@ -129,6 +130,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
   }));
 
+  /* Solutions — named products ("Zomato clone app", "school ERP"). High
+     priority: these are national head terms with real search demand, and they
+     are the entry point into the solution cluster. */
+  const solutionPages = [
+    { url: `${baseUrl}/solutions`, lastModified, changeFrequency: 'monthly' as const, priority: 0.9 },
+    ...solutionParams.map((p) => ({
+      url: `${baseUrl}/solutions/${p.slug}`,
+      lastModified,
+      changeFrequency: 'monthly' as const,
+      priority: 0.8,
+    })),
+  ];
+
   /* Service × state — "<service> company in <state>". High priority: these are
      head-term commercial pages, and they sit above the city pages that feed
      off them. */
@@ -169,6 +183,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...localSeoPages,
     ...industryServicePages,
     ...stateServicePages,
+    ...solutionPages,
     ...districtPages,
     ...townPages,
   ];
