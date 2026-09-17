@@ -5,6 +5,14 @@ import {
   geoCoordinatesSchema,
   openingHoursSchema,
 } from "./business";
+import { group1Cities } from "./cities/group1-up-bihar-jh-uk-hp";
+import { group2Cities } from "./cities/group2-wb-odisha-sikkim-assam";
+import { group3Cities } from "./cities/group3-northeast";
+import { group4Cities } from "./cities/group4-raj-haryana-punjab";
+import { group5Cities } from "./cities/group5-mp-cg-goa-dnh";
+import { group6Cities } from "./cities/group6-maharashtra-gujarat";
+import { group7Cities } from "./cities/group7-south";
+import { group8Cities } from "./cities/group8-telangana-ap-jk-ladakh";
 
 export interface CityInfo {
   name: string;
@@ -1391,7 +1399,20 @@ export const cities: CityInfo[] = [
   ...assamCities,
   ...uttarakhandCities,
   ...northeastHimalayanAndUtCities,
-  ...otherCities
+  ...otherCities,
+  // Gap-fill batch: every remaining real district headquarters from
+  // lib/geo.ts not already covered above, added as full city-tier entries
+  // (not the thinner district/town tier) so they get the same rich,
+  // per-city rendered content — process, pricing, tech stack, industries,
+  // intent-variant FAQs — as the original cities, not a doorway page.
+  ...group1Cities,
+  ...group2Cities,
+  ...group3Cities,
+  ...group4Cities,
+  ...group5Cities,
+  ...group6Cities,
+  ...group7Cities,
+  ...group8Cities
 ];
 
 export function generateSlug(serviceSlug: string, citySlug: string): string {
